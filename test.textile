@@ -1,0 +1,19 @@
+---
+layout: default
+title: テスト
+lang: ja
+---
+
+h1. テスト
+
+hogehoge
+
+これはテストページです．
+
+h2. foo
+
+foofoo
+
+h2. var
+
+varvar
