@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Madoka
+Description: Count-Min sketch-based approximate counting library
+Version: @VERSION@
+Cflags: -I${includedir}
+Libs: -L${libdir} -lmadoka
