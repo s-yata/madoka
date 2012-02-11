@@ -8,7 +8,7 @@ h1. Documentation
 
 h2. Introduction
 
-Madoka is an implementation of the Count-Min sketch, a data structure for summarizing data streams. Madoka uses a conservative update mechanism to improve the accurary of sketches. In addition, Madoka uses an authorized update mechanism and an approximate counting algorithm for ultimate sketching. For more information, see the following web sites.
+Madoka is an implementation of a Count-Min sketch, a data structure for summarizing data streams. Madoka uses a conservative update mechanism to improve the accurary of sketches. In addition, Madoka uses an authorized update mechanism and an approximate counting algorithm for ultimate sketching. For more information, see the following web sites.
 
 * Count-Min sketch
 ** "Count-Min sketch - Wikipedia, the free encyclopedia":http://en.wikipedia.org/wiki/Count-Min_sketch
@@ -20,12 +20,27 @@ Madoka was developed as a part of the groonga project ("groonga - An open-source
 
 h2. Installation
 
-To be written...
+<div class="float">
+<pre>
+$ wget http://example.com/TO_BE_UPLOADED.tar.gz
+$ tar zxf TO_BE_UPLOADED.tar.gz
+$ cd TO_BE_UPLOADED.tar.gz
+$ ./configure
+$ make
+$ make check
+$ sudo make install
+$ sudo ldconfig
+</pre>
+</div>
+
+Download a package of Madoka and unpack it. Then, run <kbd>configure</kbd> and <kbd>make</kbd>. You may have to run <kbd>ldconfig</kbd> to use Madoka.
+
+Madoka is tested on Ubuntu 11.10. If you have any problems in this process, please report an issue on "GitHub":http://github.com/s-yata/madoka/issues.
 
 h2. Example
 
 <div class="float">
-<pre class="code">
+<pre class>
 #include <iostream>
 #include <madoka.h>
 
@@ -46,7 +61,16 @@ int main() {
 
 This is an example of using Madoka through its C++ interface. This example creates a sketch with default parameters and then increments values associated with <var>"Madoka"</var> and <var>"Homura"</var>. The example will print <var>"Madoka: 1"</var>, <var>"Homura: 2"</var> and <var>"Mami: 0"</var>.
 
-Madoka supports more operations including file I/O. See "To be written":tbd.html for more details.
+h2. Interface
+
+A Count-Min sketch supports not only counting items, as shown in the above example, but also inner products, which enable a sketch to serve as a feature vector. In addition, Madoka supports merging and shrinking sketches so as to make sketching more useful. See the following for more information about the APIs.
+
+* "C API Reference (to be written)":tbw.html
+* "C++ API Reference (to be written)":tbw.html
+
+h2. Implementation
+
+To be written.
 
 h2. License
 

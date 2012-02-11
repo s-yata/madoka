@@ -147,14 +147,7 @@ div.float {
  max-width: 60%;
 }
 
-pre.code {
- line-height: 110%;
- margin: 0px;
- overflow: auto;
- padding: 10px;
-}
-
-pre.console {
+pre {
  line-height: 110%;
  margin: 0px;
  overflow: auto;
