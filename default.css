@@ -1,0 +1,188 @@
+@charset "utf-8";
+
+a {
+ color: inherit;
+ text-decoration: none;
+ padding: 0px 2px;
+}
+
+a:link {
+ color: #075;
+}
+a:link:after {
+ content: "†";
+}
+
+a:visited {
+ color: #057;
+}
+a:visited:after {
+ content: "†";
+}
+
+a:hover {
+ text-decoration: underline;
+}
+a[name]:hover {
+ color: inherit;
+ text-decoration: none;
+}
+
+a:active {
+}
+a[name]:active {
+ color: inherit;
+ padding: 0px;
+}
+
+li {
+ margin: 5px 0px;
+}
+
+ol {
+ list-style-position: outside;
+ margin-left: 2em;
+ padding: 0px;
+}
+
+ul {
+ list-style-position: outside;
+ margin-left: 2em;
+ padding: 0px;
+}
+
+code {
+ color: darkblue;
+ font-family: monospace;
+ font-style: normal;
+ padding: 0px 2px;
+}
+
+kbd {
+ color: darkgreen;
+ font-family: monospace;
+ font-style: normal;
+ padding: 0px 2px;
+}
+
+var {
+ color: darkred;
+ font-family: monospace;
+ font-style: normal;
+ padding: 0px 2px;
+}
+
+sup {
+ font-size: 75%;
+}
+
+body {
+ line-height: 125%;
+ background: white;
+ color: #222;
+ margin: 20px;
+ padding: 0px;
+}
+
+div#header {
+ color: white;
+ font-family: "Lemon", cursive;
+ margin: 20px 10px;
+ text-align: center;
+}
+
+div#header div#name {
+ float: left;
+ font-size: 250%;
+ margin: 0px 10px 0px 0px;
+ padding: 10px;
+ text-shadow: 1px 1px 8px black;
+}
+
+div#header div#description {
+ float: left;
+ margin: 10px 0px 0px 0px;
+ text-shadow: 1px 1px 4px black;
+}
+
+div#body {
+ box-shadow: 1px 1px 8px gray;
+ -webkit-box-shadow: 1px 1px 8px gray;
+ -moz-box-shadow: 1px 1px 8px gray;
+ padding: 20px;
+}
+
+h1 {
+ color: #666;
+ font-family: "Lemon", cursive;
+ font-size: 200%;
+ line-height: 110%;
+ text-align: center;
+}
+
+h2 {
+ border-bottom: 1px dashed darkgray;
+ clear: both;
+ color: #666;
+ font-family: "Lemon", cursive;
+ font-size: 125%;
+}
+
+h3 {
+ border-bottom: 1px dashed darkgray;
+ color: #666;
+ font-family: "Lemon", cursive;
+}
+
+h4 {
+ border-bottom: 1px dashed darkgray;
+ color: #666;
+}
+
+div.float {
+ background: white;
+ border: 1px dashed darkgray;
+ clear: both;
+ float: right;
+ margin: 5px 0px 5px 10px;
+ max-width: 60%;
+}
+
+pre.code {
+ line-height: 110%;
+ margin: 0px;
+ overflow: auto;
+ padding: 10px;
+}
+
+pre.console {
+ line-height: 110%;
+ margin: 0px;
+ overflow: auto;
+ padding: 10px;
+}
+
+table {
+ border-collapse: separate;
+ border-spacing: 5px;
+ empty-cells: hide;
+ padding: 5px;
+}
+
+table caption {
+ padding-top: 5px;
+}
+
+table th {
+ border-bottom: 1px dashed darkgray;
+ padding: 0px 5px;
+}
+
+table td {
+ border-bottom: 1px dashed darkgray;
+ padding: 0px 3px;
+}
+
+div#footer {
+ margin: 15px 5px;
+}

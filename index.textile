@@ -1,0 +1,63 @@
+---
+layout: default
+title: "Documentation"
+lang: en
+---
+
+h1. Documentation
+
+h2. Introduction
+
+Madoka is an implementation of the Count-Min sketch, a data structure for summarizing data streams. Madoka uses a conservative update mechanism to improve the accurary of sketches. In addition, Madoka uses an authorized update mechanism and an approximate counting algorithm for ultimate sketching. For more information, see the following web sites.
+
+* Count-Min sketch
+** "Count-Min sketch - Wikipedia, the free encyclopedia":http://en.wikipedia.org/wiki/Count-Min_sketch
+** "Count-Min Sketch":https://sites.google.com/site/countminsketch/
+* Approximate counting algorithm
+** "Approximate counting algorithm - Wikipedia, the free encyclopedia":http://en.wikipedia.org/wiki/Approximate_counting_algorithm
+
+Madoka was developed as a part of the groonga project ("groonga - An open-source fulltext search engine and column store":http://groonga.org/), special thanks to Brazil Inc.
+
+h2. Installation
+
+To be written...
+
+h2. Example
+
+<div class="float">
+<pre class="code">
+#include <iostream>
+#include <madoka.h>
+
+int main() {
+  madoka::Sketch sketch;
+  sketch.create();
+
+  sketch.inc("Madoka", 6);
+  sketch.inc("Homura", 6);
+  sketch.inc("Homura", 6);
+
+  std::cout << "Madoka: " << sketch.get("Madoka", 6) << std::endl;
+  std::cout << "Homura: " << sketch.get("Homura", 6) << std::endl;
+  std::cout << "Mami: " << sketch.get("Mami", 4) << std::endl;
+}
+</pre>
+</div>
+
+This is an example of using Madoka through its C++ interface. This example creates a sketch with default parameters and then increments values associated with <var>"Madoka"</var> and <var>"Homura"</var>. The example will print <var>"Madoka: 1"</var>, <var>"Homura: 2"</var> and <var>"Mami: 0"</var>.
+
+Madoka supports more operations including file I/O. See "To be written":tbd.html for more details.
+
+h2. License
+
+Madoka is licensed under "the Simplified BSD License":http://www.opensource.org/licenses/bsd-license.php.
+
+Copyright (c) 2012, Susumu Yata
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
