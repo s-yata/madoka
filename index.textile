@@ -35,6 +35,8 @@ $ sudo ldconfig
 
 Download a package of Madoka and unpack it. Then, run <kbd>configure</kbd> and <kbd>make</kbd>. You may have to run <kbd>ldconfig</kbd> to use Madoka.
 
+If you get source files from "GitHub":http://github.com/s-yata/madoka, <kbd>autoreconf -i</kbd> is needed to generate a <kbd>configure</kbd> script.
+
 Madoka is tested on Ubuntu 11.10. If you have any problems in this process, please report an issue on "GitHub":http://github.com/s-yata/madoka/issues.
 
 h2. Example
@@ -65,8 +67,8 @@ h2. Interface
 
 A Count-Min sketch supports not only counting items, as shown in the above example, but also inner products, which enable a sketch to serve as a feature vector. In addition, Madoka supports merging and shrinking sketches so as to make sketching more useful. See the following for more information about the APIs.
 
-* "C API Reference (to be written)":tbw.html
-* "C++ API Reference (to be written)":tbw.html
+* "C API Reference (to be written)":doc/c-api.html
+* "C++ API Reference (to be written)":doc/cpp-api.html
 
 h2. Implementation
 
