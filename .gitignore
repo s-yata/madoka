@@ -3,6 +3,7 @@
 *.o
 .deps
 .libs
+/_site
 /aclocal.m4
 /autom4te.cache
 /config.guess
