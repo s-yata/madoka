@@ -280,9 +280,54 @@ void benchmark_sketch(const std::vector<std::string> &keys,
         sketch.inc(keys[ids[i]].c_str(), keys[ids[i]].length());
       }
       madoka::UInt64 diff = 0;
+      for (std::size_t j = 0; j < keys.size(); ++j) {
+        const madoka::UInt64 freq =
+            sketch.get(keys[j].c_str(), keys[j].length());
+        diff += std::llabs(freq - freqs[j]);
+      }
+      std::cout << ' ' << std::setw(6) << std::setprecision(3)
+                << (100.0 * diff / ids.size()) << '%' << std::flush;
+    }
+    std::cout << std::endl;
+  }
+}
+
+
+void benchmark_shrink(const std::vector<std::string> &keys,
+                      const std::vector<madoka::UInt64> &freqs,
+                      const std::vector<std::size_t> &ids) {
+  std::cout << "info: Zipf distribution: "
+            << "#keys = " << keys.size()
+            << ", #queries = " << ids.size() << std::endl;
+
+  std::cout.setf(std::ios::fixed);
+
+  std::cout << "info:      -:";
+  for (madoka::UInt64 width = keys.size() / 16;
+       width <= keys.size() * 8; width *= 2) {
+    std::cout << ' ' << std::setw(7) << width;
+  }
+  std::cout << std::endl;
+
+  for (madoka::UInt64 width = keys.size() / 16;
+       width <= keys.size() * 8; width *= 2) {
+    std::cout << "info: " << std::setw(6) << width << ':' << std::flush;
+
+    madoka::Sketch sketch;
+    sketch.create(width, 0, NULL, 0);
+    for (std::size_t i = 0; i < ids.size(); ++i) {
+      sketch.inc(keys[ids[i]].c_str(), keys[ids[i]].length());
+    }
+
+    for (madoka::UInt64 shrinked_width = keys.size() / 16;
+         shrinked_width <= width; shrinked_width *= 2) {
+      madoka::Sketch shrinked_sketch;
+      shrinked_sketch.shrink(sketch, shrinked_width);
+
+      madoka::UInt64 diff = 0;
       for (std::size_t i = 0; i < keys.size(); ++i) {
         const madoka::UInt64 freq =
-            sketch.get(keys[i].c_str(), keys[i].length());
+            shrinked_sketch.get(keys[i].c_str(), keys[i].length());
         diff += std::llabs(freq - freqs[i]);
       }
       std::cout << ' ' << std::setw(6) << std::setprecision(3)
@@ -332,6 +377,7 @@ int main() try {
 #undef EXTRA_TEST
 
   benchmark_sketch(keys, freqs, ids);
+  benchmark_shrink(keys, freqs, ids);
 
   return 0;
 } catch (const madoka::Exception &ex) {
