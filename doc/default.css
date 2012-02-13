@@ -130,13 +130,16 @@ h2 {
 
 h3 {
  border-bottom: 1px dashed darkgray;
+ clear: both;
  color: #666;
  font-family: "Lemon", cursive;
+ margin-left: 5px;
 }
 
 h4 {
  border-bottom: 1px dashed darkgray;
  color: #666;
+ margin-left: 10px;
 }
 
 div.float {

@@ -1,9 +1,9 @@
 ---
 layout: default
-title: "C API Reference"
+title: "C API Documentation"
 lang: en
 ---
 
-h1. C API Reference
+h1. C API Documentation
 
 To be written.
