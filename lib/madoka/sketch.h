@@ -208,9 +208,6 @@ class Sketch {
 
   void merge(const Sketch &rhs, Filter lhs_filter = NULL,
              Filter rhs_filter = NULL) throw(Exception);
-  void merge(const Sketch &lhs, const Sketch &rhs,
-             Filter lhs_filter = NULL, Filter rhs_filter = NULL,
-             const char *path = NULL, int flags = 0) throw(Exception);
 
   void swap(Sketch *sketch) throw();
 

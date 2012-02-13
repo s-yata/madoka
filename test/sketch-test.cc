@@ -237,8 +237,8 @@ void extra_test(madoka::UInt64 max_value,
                     (freqs[i] > 10));
   }
 
-  sketch_2.merge(sketch, sketch_1, [](madoka::UInt64 x) { return x / 2; },
-                 NULL, PATH_2, madoka::FILE_TRUNCATE);
+  sketch_2.copy(sketch, PATH_2, madoka::FILE_TRUNCATE);
+  sketch_2.merge(sketch_1, [](madoka::UInt64 x) { return x / 2; }, NULL);
   for (std::size_t i = 0; i < keys.size(); ++i) {
     MADOKA_THROW_IF(sketch_2.get(keys[i].c_str(), keys[i].length()) !=
                     ((freqs[i] / 2) * 2));

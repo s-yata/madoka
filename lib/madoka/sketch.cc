@@ -379,18 +379,6 @@ void Sketch::merge(const Sketch &rhs, Filter lhs_filter,
   }
 }
 
-void Sketch::merge(const Sketch &lhs, const Sketch &rhs,
-                   Filter lhs_filter, Filter rhs_filter,
-                   const char *path, int flags) throw(Exception) {
-  MADOKA_THROW_IF(lhs.width() != rhs.width());
-  MADOKA_THROW_IF(lhs.seed() != rhs.seed());
-
-  Sketch new_sketch;
-  new_sketch.copy(lhs, path, flags);
-  new_sketch.merge(rhs, lhs_filter, rhs_filter);
-  new_sketch.swap(this);
-}
-
 double Sketch::inner_product(const Sketch &rhs, double *lhs_square_length,
     double *rhs_square_length) const throw(Exception) {
   MADOKA_THROW_IF(width() != rhs.width());
