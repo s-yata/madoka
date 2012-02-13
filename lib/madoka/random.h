@@ -28,21 +28,6 @@
 #include "util.h"
 
 #ifdef __cplusplus
-extern "C" {
-#endif  // __cplusplus
-
-typedef struct {
-  madoka_uint32 x;
-  madoka_uint32 y;
-  madoka_uint32 z;
-  madoka_uint32 w;
-} madoka_random;
-
-#ifdef __cplusplus
-}  // extern "C"
-#endif  // __cplusplus
-
-#ifdef __cplusplus
 namespace madoka {
 
 class Random {

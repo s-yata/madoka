@@ -42,26 +42,17 @@ typedef enum {
   MADOKA_SKETCH_APPROX_MODE
 } madoka_sketch_mode;
 
-typedef struct {
-  madoka_file file;
-  madoka_random *random;
-  madoka_uint64 *table;
-} madoka_sketch;
+typedef struct madoka_sketch_ madoka_sketch;
 
-void madoka_init(madoka_sketch *sketch);
-void madoka_fin(madoka_sketch *sketch);
+madoka_sketch *madoka_create(madoka_uint64 width, madoka_uint64 max_value,
+                             const char *path, int flags, madoka_uint64 seed,
+                             const char **what);
 
-int madoka_create(madoka_sketch *sketch, madoka_uint64 width,
-                  madoka_uint64 max_value, const char *path, int flags,
-                  madoka_uint64 seed, const char **what);
-
-int madoka_open(madoka_sketch *sketch, const char *path, int flags,
-                const char **what);
+madoka_sketch *madoka_open(const char *path, int flags, const char **what);
 
 void madoka_close(madoka_sketch *sketch);
 
-int madoka_load(madoka_sketch *sketch, const char *path, int flags,
-                const char **what);
+madoka_sketch *madoka_load(const char *path, int flags, const char **what);
 
 int madoka_save(const madoka_sketch *sketch, const char *path, int flags,
                 const char **what);
@@ -89,15 +80,15 @@ madoka_uint64 madoka_add(madoka_sketch *sketch, const void *key_addr,
 
 void madoka_clear(madoka_sketch *sketch);
 
-int madoka_copy(madoka_sketch *dest, const madoka_sketch *src,
-                const char *path, int flags, const char **what);
+madoka_sketch *madoka_copy(const madoka_sketch *src, const char *path,
+                           int flags, const char **what);
 
 void madoka_filter(madoka_sketch *sketch, madoka_sketch_filter filter);
 
-int madoka_shrink(madoka_sketch *dest, const madoka_sketch *src,
-                  madoka_uint64 width, madoka_uint64 max_value,
-                  madoka_sketch_filter filter, const char *path, int flags,
-                  const char **what);
+madoka_sketch *madoka_shrink(const madoka_sketch *src,
+                             madoka_uint64 width, madoka_uint64 max_value,
+                             madoka_sketch_filter filter, const char *path,
+                             int flags, const char **what);
 
 int madoka_merge(madoka_sketch *lhs, const madoka_sketch *rhs,
                  madoka_sketch_filter lhs_filter,

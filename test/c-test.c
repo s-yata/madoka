@@ -37,94 +37,105 @@ int main(void) {
 
   remove(PATH_1);
 
-  madoka_sketch sketch;
-  madoka_init(&sketch);
+  madoka_sketch *sketch;
 
   const char *what = NULL;
-  assert(madoka_create(&sketch, 100, 3, PATH_1, 0, 0, &what) == 0);
+  sketch = madoka_create(100, 3, PATH_1, 0, 0, &what);
+  assert(sketch != NULL);
   assert(what == NULL);
 
-  assert(madoka_create(&sketch, 100, 3, PATH_1, 0, 0, &what) == -1);
+  assert(madoka_create(100, 3, PATH_1, 0, 0, &what) == NULL);
   assert(what != NULL);
   printf("log: %s:%d: %s\n", __FILE__, __LINE__, what);
 
-  assert(madoka_get_width(&sketch) == 100);
-  assert(madoka_get_depth(&sketch) == 3);
-  assert(madoka_get_max_value(&sketch) == 3);
+  assert(madoka_get_width(sketch) == 100);
+  assert(madoka_get_depth(sketch) == 3);
+  assert(madoka_get_max_value(sketch) == 3);
 
-  madoka_set(&sketch, "banana", 6, 2);
-  assert(madoka_get(&sketch, "banana", 6) == 2);
+  madoka_set(sketch, "banana", 6, 2);
+  assert(madoka_get(sketch, "banana", 6) == 2);
 
-  assert(madoka_inc(&sketch, "apple", 5) == 1);
-  assert(madoka_inc(&sketch, "apple", 5) == 2);
-  assert(madoka_inc(&sketch, "apple", 5) == 3);
-  assert(madoka_inc(&sketch, "apple", 5) == 3);
+  assert(madoka_inc(sketch, "apple", 5) == 1);
+  assert(madoka_inc(sketch, "apple", 5) == 2);
+  assert(madoka_inc(sketch, "apple", 5) == 3);
+  assert(madoka_inc(sketch, "apple", 5) == 3);
 
-  assert(madoka_add(&sketch, "orange", 6, 2) == 2);
-  assert(madoka_add(&sketch, "orange", 6, 100) == 3);
+  assert(madoka_add(sketch, "orange", 6, 2) == 2);
+  assert(madoka_add(sketch, "orange", 6, 100) == 3);
 
-  madoka_close(&sketch);
+  madoka_close(sketch);
 
-  assert(madoka_open(&sketch, PATH_2, 0, &what) == -1);
+  assert(madoka_open(PATH_2, 0, &what) == NULL);
   printf("log: %s:%d: %s\n", __FILE__, __LINE__, what);
 
-  assert(madoka_open(&sketch, PATH_1, 0, &what) == 0);
+  sketch = madoka_open(PATH_1, 0, &what);
+  assert(sketch != NULL);
 
-  assert(madoka_get(&sketch, "banana", 6) == 2);
-  assert(madoka_get(&sketch, "apple", 5) == 3);
-  assert(madoka_get(&sketch, "orange", 6) == 3);
+  assert(madoka_get(sketch, "banana", 6) == 2);
+  assert(madoka_get(sketch, "apple", 5) == 3);
+  assert(madoka_get(sketch, "orange", 6) == 3);
 
-  assert(madoka_save(&sketch, PATH_2, 0, &what) == 0);
+  assert(madoka_save(sketch, PATH_2, 0, &what) == 0);
+  madoka_close(sketch);
 
-  assert(madoka_load(&sketch, PATH_2, 0, &what) == 0);
+  sketch = madoka_load(PATH_2, 0, &what);
+  assert(sketch != NULL);
 
-  assert(madoka_get(&sketch, "banana", 6) == 2);
-  assert(madoka_get(&sketch, "apple", 5) == 3);
-  assert(madoka_get(&sketch, "orange", 6) == 3);
+  assert(madoka_get(sketch, "banana", 6) == 2);
+  assert(madoka_get(sketch, "apple", 5) == 3);
+  assert(madoka_get(sketch, "orange", 6) == 3);
 
-  madoka_filter(&sketch, divide_by_2);
+  madoka_filter(sketch, divide_by_2);
 
-  assert(madoka_get(&sketch, "banana", 6) == 1);
-  assert(madoka_get(&sketch, "apple", 5) == 1);
-  assert(madoka_get(&sketch, "orange", 6) == 1);
+  assert(madoka_get(sketch, "banana", 6) == 1);
+  assert(madoka_get(sketch, "apple", 5) == 1);
+  assert(madoka_get(sketch, "orange", 6) == 1);
 
-  madoka_clear(&sketch);
+  madoka_clear(sketch);
 
-  assert(madoka_get(&sketch, "banana", 6) == 0);
-  assert(madoka_get(&sketch, "apple", 5) == 0);
-  assert(madoka_get(&sketch, "orange", 6) == 0);
+  assert(madoka_get(sketch, "banana", 6) == 0);
+  assert(madoka_get(sketch, "apple", 5) == 0);
+  assert(madoka_get(sketch, "orange", 6) == 0);
 
-  assert(madoka_load(&sketch, PATH_2, 0, &what) == 0);
+  madoka_close(sketch);
 
-  assert(madoka_get(&sketch, "banana", 6) == 2);
-  assert(madoka_get(&sketch, "apple", 5) == 3);
-  assert(madoka_get(&sketch, "orange", 6) == 3);
+  sketch = madoka_load(PATH_2, 0, &what);
+  assert(sketch != NULL);
 
-  assert(madoka_shrink(&sketch, &sketch, 50, 15, divide_by_2, PATH_2,
-                       MADOKA_FILE_TRUNCATE, &what) == 0);
+  assert(madoka_get(sketch, "banana", 6) == 2);
+  assert(madoka_get(sketch, "apple", 5) == 3);
+  assert(madoka_get(sketch, "orange", 6) == 3);
 
-  assert(madoka_get_width(&sketch) == 50);
-  assert(madoka_get_depth(&sketch) == 3);
-  assert(madoka_get_max_value(&sketch) == 15);
+  madoka_sketch *new_sketch = madoka_shrink(sketch, 50, 15, divide_by_2,
+                                            PATH_2, MADOKA_FILE_TRUNCATE,
+                                            &what);
+  assert(new_sketch != NULL);
 
-  assert(madoka_get(&sketch, "banana", 6) == 1);
-  assert(madoka_get(&sketch, "apple", 5) == 1);
-  assert(madoka_get(&sketch, "orange", 6) == 1);
+  madoka_swap(sketch, new_sketch);
+  madoka_close(new_sketch);
 
-  madoka_set(&sketch, "banana", 6, 10);
-  assert(madoka_get(&sketch, "banana", 6) == 10);
+  assert(madoka_get_width(sketch) == 50);
+  assert(madoka_get_depth(sketch) == 3);
+  assert(madoka_get_max_value(sketch) == 15);
 
-  assert(madoka_inc(&sketch, "apple", 5) == 2);
-  assert(madoka_inc(&sketch, "apple", 5) == 3);
-  assert(madoka_inc(&sketch, "apple", 5) == 4);
+  assert(madoka_get(sketch, "banana", 6) == 1);
+  assert(madoka_get(sketch, "apple", 5) == 1);
+  assert(madoka_get(sketch, "orange", 6) == 1);
 
-  assert(madoka_add(&sketch, "orange", 6, 10) == 11);
-  assert(madoka_add(&sketch, "orange", 6, 100) == 15);
+  madoka_set(sketch, "banana", 6, 10);
+  assert(madoka_get(sketch, "banana", 6) == 10);
 
-  assert(madoka_shrink(&sketch, &sketch, 17, 1, NULL, NULL, 0, &what) == -1);
+  assert(madoka_inc(sketch, "apple", 5) == 2);
+  assert(madoka_inc(sketch, "apple", 5) == 3);
+  assert(madoka_inc(sketch, "apple", 5) == 4);
+
+  assert(madoka_add(sketch, "orange", 6, 10) == 11);
+  assert(madoka_add(sketch, "orange", 6, 100) == 15);
+
+  assert(madoka_shrink(sketch, 17, 1, NULL, NULL, 0, &what) == NULL);
   printf("log: %s:%d: %s\n", __FILE__, __LINE__, what);
 
-  madoka_fin(&sketch);
+  madoka_close(sketch);
 
   assert(remove(PATH_1) == 0);
   assert(remove(PATH_2) == 0);

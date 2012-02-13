@@ -28,69 +28,74 @@
 #include <limits>
 #include <new>
 
-namespace {
+extern "C" {
 
-const madoka::Sketch *madoka_cast(const madoka_sketch *sketch) {
-  return reinterpret_cast<const madoka::Sketch *>(sketch);
-}
+struct madoka_sketch_ {
+  madoka_sketch_() : impl() {}
+  ~madoka_sketch_() {}
 
-madoka::Sketch *madoka_cast(madoka_sketch *sketch) {
-  return reinterpret_cast<madoka::Sketch *>(sketch);
-}
+  madoka::Sketch impl;
+};
 
-}  // namespace
+}  // extern "C"
 
 extern "C" {
 
-void madoka_init(madoka_sketch *sketch) {
-  new (sketch) madoka::Sketch;
-}
-
-void madoka_fin(madoka_sketch *sketch) {
-  madoka_cast(sketch)->~Sketch();
-}
-
-int madoka_create(madoka_sketch *sketch, madoka_uint64 width,
-                  madoka_uint64 max_value, const char *path, int flags,
-                  madoka_uint64 seed, const char **what) try {
-  madoka_cast(sketch)->create(width, max_value, path, flags, seed);
-  return 0;
+madoka_sketch *madoka_create(madoka_uint64 width, madoka_uint64 max_value,
+                             const char *path, int flags, madoka_uint64 seed,
+                             const char **what) try {
+  madoka::Sketch impl;
+  impl.create(width, max_value, path, flags, seed);
+  madoka_sketch * const sketch = new (std::nothrow) madoka_sketch;
+  MADOKA_THROW_IF(sketch == NULL);
+  sketch->impl.swap(&impl);
+  return sketch;
 } catch (const madoka::Exception &ex) {
   if (what != NULL) {
     *what = ex.what();
   }
-  return -1;
+  return NULL;
 }
 
-int madoka_open(madoka_sketch *sketch, const char *path, int flags,
-                const char **what) try {
-  madoka_cast(sketch)->open(path, flags);
-  return 0;
+madoka_sketch *madoka_open(const char *path, int flags,
+                           const char **what) try {
+  madoka::Sketch impl;
+  impl.open(path, flags);
+  madoka_sketch * const sketch = new (std::nothrow) madoka_sketch;
+  MADOKA_THROW_IF(sketch == NULL);
+  sketch->impl.swap(&impl);
+  return sketch;
 } catch (const madoka::Exception &ex) {
   if (what != NULL) {
     *what = ex.what();
   }
-  return -1;
+  return NULL;
 }
 
 void madoka_close(madoka_sketch *sketch) {
-  madoka_cast(sketch)->close();
+  if (sketch != NULL) {
+    delete sketch;
+  }
 }
 
-int madoka_load(madoka_sketch *sketch, const char *path, int flags,
-                const char **what) try {
-  madoka_cast(sketch)->load(path, flags);
-  return 0;
+madoka_sketch *madoka_load(const char *path, int flags,
+                           const char **what) try {
+  madoka::Sketch impl;
+  impl.load(path, flags);
+  madoka_sketch * const sketch = new (std::nothrow) madoka_sketch;
+  MADOKA_THROW_IF(sketch == NULL);
+  sketch->impl.swap(&impl);
+  return sketch;
 } catch (const madoka::Exception &ex) {
   if (what != NULL) {
     *what = ex.what();
   }
-  return -1;
+  return NULL;
 }
 
 int madoka_save(const madoka_sketch *sketch, const char *path, int flags,
                 const char **what) try {
-  madoka_cast(sketch)->save(path, flags);
+  sketch->impl.save(path, flags);
   return 0;
 } catch (const madoka::Exception &ex) {
   if (what != NULL) {
@@ -100,47 +105,47 @@ int madoka_save(const madoka_sketch *sketch, const char *path, int flags,
 }
 
 madoka_uint64 madoka_get_width(const madoka_sketch *sketch) {
-  return madoka_cast(sketch)->width();
+  return sketch->impl.width();
 }
 
 madoka_uint64 madoka_get_width_mask(const madoka_sketch *sketch) {
-  return madoka_cast(sketch)->width_mask();
+  return sketch->impl.width_mask();
 }
 
 madoka_uint64 madoka_get_depth(const madoka_sketch *sketch) {
-  return madoka_cast(sketch)->depth();
+  return sketch->impl.depth();
 }
 
 madoka_uint64 madoka_get_max_value(const madoka_sketch *sketch) {
-  return madoka_cast(sketch)->max_value();
+  return sketch->impl.max_value();
 }
 
 madoka_uint64 madoka_get_value_mask(const madoka_sketch *sketch) {
-  return madoka_cast(sketch)->value_mask();
+  return sketch->impl.value_mask();
 }
 
 madoka_uint64 madoka_get_value_size(const madoka_sketch *sketch) {
-  return madoka_cast(sketch)->value_size();
+  return sketch->impl.value_size();
 }
 
 madoka_uint64 madoka_get_seed(const madoka_sketch *sketch) {
-  return madoka_cast(sketch)->seed();
+  return sketch->impl.seed();
 }
 
 madoka_uint64 madoka_get_table_size(const madoka_sketch *sketch) {
-  return madoka_cast(sketch)->table_size();
+  return sketch->impl.table_size();
 }
 
 madoka_uint64 madoka_get_file_size(const madoka_sketch *sketch) {
-  return madoka_cast(sketch)->file_size();
+  return sketch->impl.file_size();
 }
 
 int madoka_get_flags(const madoka_sketch *sketch) {
-  return madoka_cast(sketch)->flags();
+  return sketch->impl.flags();
 }
 
 madoka_sketch_mode madoka_get_mode(const madoka_sketch *sketch) {
-  switch (madoka_cast(sketch)->mode()) {
+  switch (sketch->impl.mode()) {
     case madoka::SKETCH_EXACT_MODE: {
       return MADOKA_SKETCH_EXACT_MODE;
     }
@@ -153,61 +158,68 @@ madoka_sketch_mode madoka_get_mode(const madoka_sketch *sketch) {
 
 madoka_uint64 madoka_get(const madoka_sketch *sketch, const void *key_addr,
                          size_t key_size) {
-  return madoka_cast(sketch)->get(key_addr, key_size);
+  return sketch->impl.get(key_addr, key_size);
 }
 
 void madoka_set(madoka_sketch *sketch, const void *key_addr,
                 size_t key_size, madoka_uint64 value) {
-  madoka_cast(sketch)->set(key_addr, key_size, value);
+  sketch->impl.set(key_addr, key_size, value);
 }
 
 madoka_uint64 madoka_inc(madoka_sketch *sketch, const void *key_addr,
                          size_t key_size) {
-  return madoka_cast(sketch)->inc(key_addr, key_size);
+  return sketch->impl.inc(key_addr, key_size);
 }
 
 madoka_uint64 madoka_add(madoka_sketch *sketch, const void *key_addr,
                          size_t key_size, madoka_uint64 value) {
-  return madoka_cast(sketch)->add(key_addr, key_size, value);
+  return sketch->impl.add(key_addr, key_size, value);
 }
 
 void madoka_clear(madoka_sketch *sketch) {
-  madoka_cast(sketch)->clear();
+  sketch->impl.clear();
 }
 
-int madoka_copy(madoka_sketch *dest, const madoka_sketch *src,
-                const char *path, int flags, const char **what) try {
-  madoka_cast(dest)->copy(*madoka_cast(src), path, flags);
-  return 0;
+madoka_sketch *madoka_copy(const madoka_sketch *src, const char *path,
+                           int flags, const char **what) try {
+  madoka::Sketch impl;
+  impl.copy(src->impl, path, flags);
+  madoka_sketch * const sketch = new (std::nothrow) madoka_sketch;
+  MADOKA_THROW_IF(sketch == NULL);
+  sketch->impl.swap(&impl);
+  return sketch;
 } catch (const madoka::Exception &ex) {
   if (what != NULL) {
     *what = ex.what();
   }
-  return -1;
+  return NULL;
 }
 
 void madoka_filter(madoka_sketch *sketch, madoka_sketch_filter filter) {
-  madoka_cast(sketch)->filter(filter);
+  sketch->impl.filter(filter);
 }
 
-int madoka_shrink(madoka_sketch *dest, const madoka_sketch *src,
-                  madoka_uint64 width, madoka_uint64 max_value,
-                  madoka_sketch_filter filter, const char *path, int flags,
-                  const char **what) try {
-  madoka_cast(dest)->shrink(*madoka_cast(src), width, max_value, filter,
-                           path, flags);
-  return 0;
+madoka_sketch *madoka_shrink(const madoka_sketch *src,
+                             madoka_uint64 width, madoka_uint64 max_value,
+                             madoka_sketch_filter filter, const char *path,
+                             int flags, const char **what) try {
+  madoka::Sketch impl;
+  impl.shrink(src->impl, width, max_value, filter, path, flags);
+  madoka_sketch * const sketch = new (std::nothrow) madoka_sketch;
+  MADOKA_THROW_IF(sketch == NULL);
+  sketch->impl.swap(&impl);
+  return sketch;
 } catch (const madoka::Exception &ex) {
   if (what != NULL) {
     *what = ex.what();
   }
-  return -1;
+  return NULL;
 }
 
 int madoka_merge(madoka_sketch *lhs, const madoka_sketch *rhs,
                  madoka_sketch_filter lhs_filter,
                  madoka_sketch_filter rhs_filter, const char **what) try {
-  madoka_cast(lhs)->merge(*madoka_cast(rhs), lhs_filter, rhs_filter);
+  lhs->impl.merge(rhs->impl, lhs_filter, rhs_filter);
   return 0;
 } catch (const madoka::Exception &ex) {
   if (what != NULL) {
@@ -217,14 +229,14 @@ int madoka_merge(madoka_sketch *lhs, const madoka_sketch *rhs,
 }
 
 void madoka_swap(madoka_sketch *lhs, madoka_sketch *rhs) {
-  madoka_cast(lhs)->swap(madoka_cast(rhs));
+  lhs->impl.swap(&rhs->impl);
 }
 
 int madoka_inner_product(const madoka_sketch *lhs, const madoka_sketch *rhs,
                          double *inner_product, double *lhs_square_length,
                          double *rhs_square_length, const char **what) try {
-  const double result = madoka_cast(lhs)->inner_product(
-      *madoka_cast(rhs), lhs_square_length, rhs_square_length);
+  const double result = lhs->impl.inner_product(rhs->impl, lhs_square_length,
+                                                rhs_square_length);
   if (inner_product != NULL) {
     *inner_product = result;
   }

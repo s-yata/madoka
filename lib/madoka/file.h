@@ -43,13 +43,6 @@ typedef enum {
   MADOKA_FILE_PRELOAD   = 1 << 8
 } madoka_file_flag;
 
-typedef struct {
-  int fd;
-  void *addr;
-  size_t size;
-  int flags;
-} madoka_file;
-
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus
