@@ -100,7 +100,8 @@ int madoka_shrink(madoka_sketch *dest, const madoka_sketch *src,
                   const char **what);
 
 int madoka_merge(madoka_sketch *lhs, const madoka_sketch *rhs,
-                 madoka_sketch_filter filter, const char **what);
+                 madoka_sketch_filter lhs_filter,
+                 madoka_sketch_filter rhs_filter, const char **what);
 
 void madoka_swap(madoka_sketch *lhs, madoka_sketch *rhs);
 

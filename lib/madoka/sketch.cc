@@ -205,8 +205,9 @@ int madoka_shrink(madoka_sketch *dest, const madoka_sketch *src,
 }
 
 int madoka_merge(madoka_sketch *lhs, const madoka_sketch *rhs,
-                 madoka_sketch_filter filter, const char **what) try {
-  madoka_cast(lhs)->merge(*madoka_cast(rhs), filter);
+                 madoka_sketch_filter lhs_filter,
+                 madoka_sketch_filter rhs_filter, const char **what) try {
+  madoka_cast(lhs)->merge(*madoka_cast(rhs), lhs_filter, rhs_filter);
   return 0;
 } catch (const madoka::Exception &ex) {
   if (what != NULL) {
