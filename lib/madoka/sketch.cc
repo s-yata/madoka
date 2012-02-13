@@ -369,25 +369,15 @@ void Sketch::merge(const Sketch &rhs, Filter lhs_filter,
   MADOKA_THROW_IF(width() != rhs.width());
   MADOKA_THROW_IF(seed() != rhs.seed());
 
-  for (UInt64 table_id = 0; table_id < SKETCH_DEPTH; ++table_id) {
-    for (UInt64 cell_id = 0; cell_id < width(); ++cell_id) {
-      UInt64 lhs_value = get_(table_id, cell_id);
-      UInt64 rhs_value = rhs.get_(table_id, cell_id);
-      if (lhs_filter != NULL) {
-        lhs_value = lhs_filter(lhs_value);
-      }
-      if (rhs_filter != NULL) {
-        rhs_value = rhs_filter(rhs_value);
-      }
-
-      if ((lhs_value >= max_value()) ||
-          (rhs_value >= (max_value() - lhs_value))) {
-        lhs_value = max_value();
-      } else {
-        lhs_value += rhs_value;
-      }
-      set_(table_id, cell_id, lhs_value);
+  if ((lhs_filter != NULL) || (rhs_filter != NULL) ||
+      (mode() == SKETCH_EXACT_MODE) || (rhs.mode() == SKETCH_EXACT_MODE)) {
+    if (mode() == SKETCH_EXACT_MODE) {
+      exact_merge_(rhs, lhs_filter, rhs_filter);
+    } else {
+      approx_merge_(rhs, lhs_filter, rhs_filter);
     }
+  } else {
+    approx_merge_(rhs);
   }
 }
 
@@ -772,8 +762,6 @@ void Sketch::approx_set(const UInt64 cell_ids[3], UInt64 value) throw() {
 }
 
 UInt64 Sketch::approx_inc(const UInt64 cell_ids[3]) throw() {
-  static const UInt64 MASK_OFFSET = APPROX_SIZE * 3;
-
   const UInt64 flag = 1ULL << ((cell_ids[0] ^ cell_ids[1] ^ cell_ids[2]) & 1);
 
   UInt64 approxes[3];
@@ -787,30 +775,30 @@ UInt64 Sketch::approx_inc(const UInt64 cell_ids[3]) throw() {
 
   UInt64 new_approx = min_approx;
   if (((approxes[0] != min_approx) ||
-       !((table_[cell_ids[0]] >> MASK_OFFSET) & flag)) &&
+       !((table_[cell_ids[0]] >> SKETCH_OWNER_OFFSET) & flag)) &&
       ((approxes[1] != min_approx) ||
-       !((table_[cell_ids[1]] >> (MASK_OFFSET + 2)) & flag)) &&
+       !((table_[cell_ids[1]] >> (SKETCH_OWNER_OFFSET + 2)) & flag)) &&
       ((approxes[2] != min_approx) ||
-       !((table_[cell_ids[2]] >> (MASK_OFFSET + 4)) & flag))) {
+       !((table_[cell_ids[2]] >> (SKETCH_OWNER_OFFSET + 4)) & flag))) {
     new_approx = Approx::inc(new_approx, random_);
   }
 
   if (approxes[0] < new_approx) {
-    approx_set_(0, cell_ids[0], new_approx, flag);
+    approx_set_(0, cell_ids[0], new_approx, 3 ^ flag);
   } else if (approxes[0] == new_approx) {
-    table_[cell_ids[0]] &= ~(flag << MASK_OFFSET);
+    table_[cell_ids[0]] &= ~(flag << SKETCH_OWNER_OFFSET);
   }
 
   if (approxes[1] < new_approx) {
-    approx_set_(1, cell_ids[1], new_approx, flag);
+    approx_set_(1, cell_ids[1], new_approx, 3 ^ flag);
   } else if (approxes[1] == new_approx) {
-    table_[cell_ids[1]] &= ~(flag << (MASK_OFFSET + 2));
+    table_[cell_ids[1]] &= ~(flag << (SKETCH_OWNER_OFFSET + 2));
   }
 
   if (approxes[2] < new_approx) {
-    approx_set_(2, cell_ids[2], new_approx, flag);
+    approx_set_(2, cell_ids[2], new_approx, 3 ^ flag);
   } else if (approxes[2] == new_approx) {
-    table_[cell_ids[2]] &= ~(flag << (MASK_OFFSET + 4));
+    table_[cell_ids[2]] &= ~(flag << (SKETCH_OWNER_OFFSET + 4));
   }
   return new_approx;
 }
@@ -865,11 +853,11 @@ void Sketch::approx_set_(UInt64 table_id, UInt64 cell_id,
 }
 
 void Sketch::approx_set_(UInt64 table_id, UInt64 cell_id,
-                         UInt64 approx, UInt64 flag) throw() {
+                         UInt64 approx, UInt64 mask) throw() {
   table_[cell_id] &= ~((APPROX_MASK << (APPROX_SIZE * table_id)) |
-      (3ULL << ((APPROX_SIZE * 3) + (2 * table_id))));
+      (3ULL << (SKETCH_OWNER_OFFSET + (2 * table_id))));
   table_[cell_id] |= (approx << (APPROX_SIZE * table_id)) |
-      ((flag ^ 3) << ((APPROX_SIZE * 3) + (2 * table_id)));
+      (mask << (SKETCH_OWNER_OFFSET + (2 * table_id)));
 }
 
 void Sketch::hash(const void *key_addr, std::size_t key_size,
@@ -898,6 +886,79 @@ void Sketch::copy_(const Sketch &src, const char *path,
   create_(src.width(), src.max_value(), path, flags, src.seed());
   std::memcpy(random_, src.random_, sizeof(Random));
   std::memcpy(table_, src.table_, table_size());
+}
+
+void Sketch::exact_merge_(const Sketch &rhs, Filter lhs_filter,
+                          Filter rhs_filter) throw() {
+  for (UInt64 table_id = 0; table_id < SKETCH_DEPTH; ++table_id) {
+    for (UInt64 cell_id = 0; cell_id < width(); ++cell_id) {
+      UInt64 lhs_value = get_(table_id, cell_id);
+      UInt64 rhs_value = rhs.get_(table_id, cell_id);
+      if (lhs_filter != NULL) {
+        lhs_value = lhs_filter(lhs_value);
+      }
+      if (rhs_filter != NULL) {
+        rhs_value = rhs_filter(rhs_value);
+      }
+
+      if ((lhs_value >= max_value()) ||
+          (rhs_value >= (max_value() - lhs_value))) {
+        lhs_value = max_value();
+      } else {
+        lhs_value += rhs_value;
+      }
+      set_(table_id, cell_id, lhs_value);
+    }
+  }
+}
+
+void Sketch::approx_merge_(const Sketch &rhs, Filter lhs_filter,
+                           Filter rhs_filter) throw() {
+  for (UInt64 cell_id = 0; cell_id < width(); ++cell_id) {
+    for (UInt64 table_id = 0; table_id < SKETCH_DEPTH; ++table_id) {
+      UInt64 lhs_value = get_(table_id, cell_id);
+      UInt64 rhs_value = rhs.get_(table_id, cell_id);
+      if (lhs_filter != NULL) {
+        lhs_value = lhs_filter(lhs_value);
+      }
+      if (rhs_filter != NULL) {
+        rhs_value = rhs_filter(rhs_value);
+      }
+
+      if ((lhs_value >= APPROX_MAX_VALUE) ||
+          (rhs_value >= (APPROX_MAX_VALUE - lhs_value))) {
+        lhs_value = max_value();
+      } else {
+        lhs_value += rhs_value;
+      }
+      approx_set_(table_id, cell_id, Approx::encode(lhs_value), 0);
+    }
+  }
+}
+
+void Sketch::approx_merge_(const Sketch &rhs) throw() {
+  static const UInt64 MASK_TABLE[4] = { 0, 1, 2, 0 };
+
+  for (UInt64 cell_id = 0; cell_id < width(); ++cell_id) {
+    table_[cell_id] |= rhs.table_[cell_id] & SKETCH_OWNER_MASK;
+    for (UInt64 table_id = 0; table_id < SKETCH_DEPTH; ++table_id) {
+      const UInt64 mask = ((table_[cell_id] | rhs.table_[cell_id]) >>
+          (SKETCH_OWNER_OFFSET + (2 * table_id))) & 3;
+
+      UInt64 lhs_value = get_(table_id, cell_id);
+      const UInt64 rhs_value = rhs.get_(table_id, cell_id);
+      if ((rhs_value > (APPROX_MAX_VALUE - lhs_value))) {
+        lhs_value = APPROX_MAX_VALUE;
+      } else {
+        lhs_value += rhs_value;
+        if ((mask == 3) && (lhs_value != 0)) {
+          --lhs_value;
+        }
+      }
+      approx_set_(table_id, cell_id, Approx::encode(lhs_value),
+                  MASK_TABLE[mask]);
+    }
+  }
 }
 
 void Sketch::shrink_(const Sketch &src, UInt64 width,

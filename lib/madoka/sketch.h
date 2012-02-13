@@ -129,6 +129,9 @@ const UInt64 SKETCH_DEPTH             = 3;
 
 const UInt64 SKETCH_APPROX_VALUE_SIZE = APPROX_VALUE_SIZE;
 
+const UInt64 SKETCH_OWNER_OFFSET      = APPROX_SIZE * 3;
+const UInt64 SKETCH_OWNER_MASK        = 0x3FULL << SKETCH_OWNER_OFFSET;
+
 class Sketch {
  public:
   typedef SketchFilter Filter;
@@ -246,13 +249,19 @@ class Sketch {
   inline void approx_set_(UInt64 table_id, UInt64 cell_id,
                           UInt64 approx) throw();
   inline void approx_set_(UInt64 table_id, UInt64 cell_id,
-                          UInt64 approx, UInt64 flag) throw();
+                          UInt64 approx, UInt64 mask) throw();
 
   inline void hash(const void *key_addr, std::size_t key_size,
                    UInt64 cell_ids[3]) const throw();
 
   void copy_(const Sketch &src, const char *path,
              int flags) throw(Exception);
+
+  void exact_merge_(const Sketch &rhs, Filter lhs_filter,
+                    Filter rhs_filter) throw();
+  void approx_merge_(const Sketch &rhs, Filter lhs_filter,
+                     Filter rhs_filter) throw();
+  void approx_merge_(const Sketch &rhs) throw();
 
   void shrink_(const Sketch &src, UInt64 width, UInt64 max_value,
                Filter filter, const char *path, int flags) throw(Exception);
