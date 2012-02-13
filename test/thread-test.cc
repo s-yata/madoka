@@ -156,7 +156,7 @@ void test_sketch() {
             sketch.get(keys[i].c_str(), keys[i].length());
         diff += std::llabs(freq - freqs[i]);
       }
-      std::cout << ' ' << std::setw(5) << std::setprecision(2)
+      std::cout << ' ' << std::setw(6) << std::setprecision(3)
                 << (100.0 * diff / ids.size()) << '%' << std::flush;
     }
     std::cout << std::endl;

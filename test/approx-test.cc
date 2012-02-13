@@ -69,7 +69,7 @@ int main() try {
         approx = madoka::Approx::inc(approx, &random);
       }
       const madoka::UInt64 value = madoka::Approx::decode(approx);
-      std::cout << ' ' << std::setprecision(4)
+      std::cout << ' ' << std::setw(7) << std::setprecision(5)
                 << (static_cast<double>(value) / count) << std::flush;
       MADOKA_THROW_IF(value < (count * 0.975));
       MADOKA_THROW_IF(value > (count * 1.025));
