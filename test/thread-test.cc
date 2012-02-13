@@ -146,7 +146,7 @@ void test_sketch() {
                                       &sketch));
       }
 
-      for (std::size_t i = 0; i < threads.size(); ++i) {
+      for (int i = 0; i < num_threads; ++i) {
         threads[i].join();
       }
 
@@ -163,11 +163,68 @@ void test_sketch() {
   }
 }
 
+void test_merge() {
+  std::vector<std::string> keys;
+  std::vector<madoka::UInt64> freqs;
+  std::vector<std::size_t> ids;
+  generate_keys(&keys, &freqs, &ids);
+
+  MADOKA_THROW_IF(keys.size() != NUM_KEYS);
+  MADOKA_THROW_IF(freqs.size() != NUM_KEYS);
+
+  std::cout << "info: Sketch (merge): Zipf distribution: "
+            << "#keys = " << keys.size()
+            << ", #queries = " << ids.size() << std::endl;
+
+  std::cout.setf(std::ios::fixed);
+
+  madoka::Random random;
+  for (madoka::UInt64 width = keys.size() / 4;
+       width <= keys.size() * 4; width *= 2) {
+    std::cout << "info: " << std::setw(6) << width << ':' << std::flush;
+    for (int num_threads = 1; num_threads <= 8; ++num_threads) {
+      madoka::Sketch * const sketches = new madoka::Sketch[num_threads];
+      for (int i = 0; i < num_threads; ++i) {
+        sketches[i].create(width);
+      }
+
+      std::vector<std::thread> threads;
+      for (int i = 0; i < num_threads; ++i) {
+        const auto begin = ids.begin() + (ids.size() / num_threads) * i;
+        const auto end = ids.begin() + (ids.size() / num_threads) * (i + 1);
+        threads.push_back(std::thread(do_sketch_count, keys, begin, end,
+                                      &sketches[i]));
+      }
+
+      for (int i = 0; i < num_threads; ++i) {
+        threads[i].join();
+      }
+
+      for (int i = 1; i < num_threads; ++i) {
+        sketches[0].merge(sketches[i]);
+      }
+
+      madoka::UInt64 diff = 0;
+      for (std::size_t i = 0; i < keys.size(); ++i) {
+        const madoka::UInt64 freq =
+            sketches[0].get(keys[i].c_str(), keys[i].length());
+        diff += std::llabs(freq - freqs[i]);
+      }
+      std::cout << ' ' << std::setw(6) << std::setprecision(3)
+                << (100.0 * diff / ids.size()) << '%' << std::flush;
+
+      delete [] sketches;
+    }
+    std::cout << std::endl;
+  }
+}
+
 }  // namespace
 
 int main() try {
   test_approx();
   test_sketch();
+  test_merge();
 
   return 0;
 } catch (const madoka::Exception &ex) {
