@@ -202,7 +202,7 @@ void File::load_(const char *path, int flags) throw(Exception) {
   MADOKA_THROW_IF(flags & ~VALID_FLAGS);
 
   File file;
-  file.open(path);
+  file.open(path, FILE_READONLY);
 
   create(NULL, file.size(), flags);
   std::memcpy(addr(), file.addr(), size());
