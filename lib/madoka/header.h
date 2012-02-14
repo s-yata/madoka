@@ -64,7 +64,7 @@ class Header {
 
   void set_width(UInt64 width) throw() {
     width_ = width;
-    width_mask_ = (::__builtin_popcountll(width) == 1) ? (width - 1) : 0;
+    width_mask_ = ((width & (width - 1)) == 0) ? (width - 1) : 0;
   }
   void set_depth(UInt64 depth) throw() {
     depth_ = depth;
