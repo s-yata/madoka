@@ -32,6 +32,8 @@ This is an example of using Madoka through its C++ interface. This example creat
    std::cout << "Madoka: " << sketch.get("Madoka", 6) << std::endl;
    std::cout << "Homura: " << sketch.get("Homura", 6) << std::endl;
    std::cout << "Mami: " << sketch.get("Mami", 4) << std::endl;
+
+   return 0;
  }
 
 == License ==
