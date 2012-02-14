@@ -977,6 +977,8 @@ void Sketch::shrink_(const Sketch &src, UInt64 width,
   MADOKA_THROW_IF((src.width() % width) != 0);
 
   create_(width, max_value, path, flags, src.seed());
+  std::memcpy(random_, src.random_, sizeof(Random));
+
   width = this->width();
   max_value = this->max_value();
 
