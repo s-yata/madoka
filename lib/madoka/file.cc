@@ -84,7 +84,7 @@ void File::swap(File *file) throw() {
 
 void File::create_(const char *path, std::size_t size,
                    int flags) throw(Exception) {
-  const int VALID_FLAGS = FILE_TRUNCATE | FILE_HUGETLB | FILE_PRELOAD;
+  const int VALID_FLAGS = FILE_TRUNCATE | FILE_HUGETLB;
   MADOKA_THROW_IF(flags & ~VALID_FLAGS);
 
   flags |= FILE_CREATE | FILE_WRITABLE | FILE_SHARED;
@@ -131,13 +131,6 @@ void File::create_(const char *path, std::size_t size,
   }
   size_ = size;
   flags_ = flags;
-
-  if (flags & FILE_PRELOAD) {
-    volatile madoka::UInt64 count = 0;
-    for (std::size_t offset = 0; offset < size_; offset += 1024) {
-      count += *static_cast<UInt8 *>(addr_) + offset;
-    }
-  }
 }
 
 void File::open_(const char *path, int flags) throw(Exception) {
