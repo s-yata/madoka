@@ -46,6 +46,7 @@ Let's try to draw a sketch. This example reads a keyset from standard input (<va
 ** <code>create()</code> is a function to make a sketch. You must not start sketching before making a sketch.
 * <code>madoka::Sketch::inc()</code>
 ** <code>inc()</code> is a function to increment a value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. Yeah, this is sketching.
+** Note that <code>inc()</code> does nothing if the current value is saturated.
 * <code>madoka::Sketch::save()</code>
 ** <code>save()</code> is a function to save a sketch. The 1st argument specifies the path of the file.
 
@@ -72,6 +73,13 @@ int main(int argc, char *argv[]) {
   }
   return 0;
 }
+</pre>
+</div>
+
+<div class="float">
+<pre>
+$ g++ look-at-a-sketch.cc -lmadoka
+$ ./a.out SKETCH < KEYSET
 </pre>
 </div>
 
@@ -120,9 +128,10 @@ QB: 15
 * <code>madoka::Sketch::set()</code>
 ** <code>set()</code> is a function to update a value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value.
 ** Note that <code>set()</code> does nothing when the specified value is not greater than the current associated value.
+** Also note that the new value is saturated when the specified value is greater than the upper limit.
 * <code>madoka::Sketch::add()</code>
-** <code>add()</code> is a function to perform an addition. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value to be added.
-** Note that <code>add()</code> returns the result of the addition.
+** <code>add()</code> is a function to perform an addition. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value to be added. Then, <code>add()</code> returns the result of the addition.
+** Note that the result is saturated when the sum is greater than the upper limit.
 
 In this example, the 1st <code>set()</code> changes the value associated with <var>"QB"</var> from <var>0</var> to <var>10</var>. Then, <code>add()</code> adds <var>5</var> to that value (from <var>10</var> to <var>15</var>). After that, the 2nd <code>set()</code> does nothing because the specified value (<var>7</var>) is less than the current value (<var>15</var>).
 
