@@ -29,7 +29,14 @@ int main(int argc, char *argv[]) {
 </pre>
 </div>
 
-Let's try to draw a sketch! This example reads a keyset from standard input (<var>std::cin</var>) and draws a sketch (<code>madoka::Sketch</code>). Then, this example saves the sketch to a file specified by the 1st command line argument (<var><notextile>argv[1]</notextile></var>). The following are the points of this example.
+<div class="float">
+<pre>
+$ g++ draw-a-sketch.cc -lmadoka
+$ ./a.out SKETCH < KEYSET
+</pre>
+</div>
+
+Let's try to draw a sketch. This example reads a keyset from standard input (<var>std::cin</var>) and draws a sketch (<code>madoka::Sketch</code>). Then, this example saves the sketch to a file specified by the 1st command line argument (<var><notextile>argv[1]</notextile></var>). The following are the points of this example.
 
 * <kbd>madoka.h</kbd>
 ** <code>#include <madoka.h></code> is needed to use Madoka. Data types, constants and classes are defined in <kbd>madoka.h</kbd>.
@@ -38,16 +45,9 @@ Let's try to draw a sketch! This example reads a keyset from standard input (<va
 * <code>madoka::Sketch::create()</code>
 ** <code>create()</code> is a function to make a sketch. You must not start sketching before making a sketch.
 * <code>madoka::Sketch::inc()</code>
-** <code>inc()</code> is a function to increment values associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. Yeah, this is sketching.
+** <code>inc()</code> is a function to increment a value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. Yeah, this is sketching.
 * <code>madoka::Sketch::save()</code>
 ** <code>save()</code> is a function to save a sketch. The 1st argument specifies the path of the file.
-
-<div class="float">
-<pre>
-$ g++ draw-a-sketch.cc -lmadoka
-$ ./a.out SKETCH < KEYSET
-</pre>
-</div>
 
 Note that an option <kbd>-lmadoka</kbd> is needed to build this example. If you have installed Madoka, <kbd>pkg-config madoka --libs</kbd> is available to get the required options.
 
@@ -62,7 +62,8 @@ h2. Look at a sketch
 
 int main(int argc, char *argv[]) {
   madoka::Sketch sketch;
-  sketch.load(argv[1]);  // or sketch.open(argv[1]);
+  sketch.load(argv[1]);
+  // sketch.open(argv[1]);
 
   std::string key;
   while (std::getline(std::cin, key)) {
@@ -74,7 +75,7 @@ int main(int argc, char *argv[]) {
 </pre>
 </div>
 
-Next, let's try to look at a sketch! This example loads a sketch from a file specified by the 1st command line argument (<var><notextile>argv[1]</notextile></var>). Then, this example looks up keys read from standard input (<var>std::cin</var>). The following are the points of this example.
+Next, let's try to look at a sketch. This example loads a sketch from a file specified by the 1st command line argument (<var><notextile>argv[1]</notextile></var>). Then, this example looks up keys read from standard input (<var>std::cin</var>). The following are the points of this example.
 
 * <code>madoka::Sketch::load()</code>
 ** <code>load()</code> is a function to load a sketch from a file. The 1st argument specifies the path of the file.
@@ -87,7 +88,6 @@ h3. Use other brushes
 <div class="float">
 <pre>
 #include <iostream>
-#include <string>
 
 #include <madoka.h>
 
@@ -106,15 +106,6 @@ int main(int argc, char *argv[]) {
 </pre>
 </div>
 
-<code>madoka::Sketch</code> provides other drawing functions named <code>set()</code> and <code>add()</code>. This example shows how these functions work.
-
-* <code>madoka::Sketch::set()</code>
-** <code>set()</code> is a function to update a value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value.
-** Note that <code>set()</code> does nothing when the specified value is not greater than the current associated value.
-* <code>madoka::Sketch::add()</code>
-** <code>add()</code> is a function to perform an addition. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value to be added.
-** Note that <code>add()</code> returns the result of the addition.
-
 <div class="float">
 <pre>
 $ g++ use-other-brushes.cc -lmadoka
@@ -124,6 +115,15 @@ QB: 15
 </pre>
 </div>
 
+<code>madoka::Sketch</code> provides other drawing functions named <code>set()</code> and <code>add()</code>. This example shows how these functions work.
+
+* <code>madoka::Sketch::set()</code>
+** <code>set()</code> is a function to update a value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value.
+** Note that <code>set()</code> does nothing when the specified value is not greater than the current associated value.
+* <code>madoka::Sketch::add()</code>
+** <code>add()</code> is a function to perform an addition. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value to be added.
+** Note that <code>add()</code> returns the result of the addition.
+
 In this example, the 1st <code>set()</code> changes the value associated with <var>"QB"</var> from <var>0</var> to <var>10</var>. Then, <code>add()</code> adds <var>5</var> to that value (from <var>10</var> to <var>15</var>). After that, the 2nd <code>set()</code> does nothing because the specified value (<var>7</var>) is less than the current value (<var>15</var>).
 
 h2. Customize a sketch
@@ -131,7 +131,6 @@ h2. Customize a sketch
 <div class="float">
 <pre>
 #include <iostream>
-#include <string>
 
 #include <madoka.h>
 
@@ -146,6 +145,14 @@ int main(int argc, char *argv[]) {
             << sketch.file_size() << std::endl;
   return 0;
 }
+</pre>
+</div>
+
+<div class="float">
+<pre>
+$ g++ customize-a-sketch.cc -lmadoka
+$ ./a.out
+size: 25165904
 </pre>
 </div>
 
@@ -164,17 +171,9 @@ To customize a sketch, specify <var>width</var> and <var>max_value</var> when cr
 ** <var>max_value</var> must not be greater than <var>madoka::SKETCH_MAX_MAX_VALUE</var> (<var>2<sup>45</sup> - 1</var>).
 ** <code>create()</code> rounds out a given <var>max_value</var> to <var>1</var>, <var>3</var>, <var>15</var>, <var>255</var>, <var>65535</var> or <var>2<sup>45</sup> - 1</var>.
 
-<div class="float">
-<pre>
-$ g++ customize-a-sketch.cc -lmadoka
-$ ./a.out
-size: 25165904
-</pre>
-</div>
-
 This example creates a customized sketch and prints the size. Note that the size in bytes of a sketch is approximately <var>width x depth x 8</var> if <var>max_value == 2<sup>45</sup> - 1</var>, or <var>width x depth x log<sub>2</sub>(max_value + 1) / 8</var> otherwise.
 
-h2. Get information of a sketch
+h2. Get information of a sketch (to be written)
 
 <div class="float">
 <pre>
@@ -201,34 +200,133 @@ h2. Clear a sketch
 
 <div class="float">
 <pre>
-void clear() throw();
+#include <iostream>
+
+#include <madoka.h>
+
+int main(int argc, char *argv[]) {
+  madoka::Sketch sketch;
+  sketch.create();
+
+  sketch.set("Sayaka", 6, 100);
+  sketch.clear();
+  std::cout << "Sayaka: "
+            << sketch.get("Sayaka", 6) << std::endl;
+  return 0;
+}
 </pre>
 </div>
+
+<div class="float">
+<pre>
+$ g++ clear-a-sketch.cc -lmadoka
+$ ./a.out
+Sayaka: 0
+</pre>
+</div>
+
+<code>madoka::Sketch</code> provides an interface to clear a sketch. This example creates a sketch and updates the value associated with <var>"Sayaka"</var> from <var>0</var> to <var>100</var>, but then <code>clear()</code> fills the sketch with <var>0</var>s. As a result, <code>get()</code> returns <var>0</var> for <var>"Sayaka"</var>.
+
+* <code>madoka::Sketch::clear()</code>
+** <code>clear()</code> is a function to clear a sketch, or more precisely, <code>clear()</code> fills a sketch with <var>0</var>s.
+** Note that <var>width</var> and <var>max_value</var> of the sketch remain unchanged.
 
 h2. Copy a sketch
 
 <div class="float">
 <pre>
-void copy(const Sketch &src, const char *path = NULL,
-          int flags = 0) throw(Exception);
+#include <iostream>
+
+#include <madoka.h>
+
+int main(int argc, char *argv[]) {
+  madoka::Sketch sketch;
+  sketch.create();
+
+  sketch.set("Kyoko", 5, 100);
+
+  madoka::Sketch snapshot;
+  snapshot.copy(sketch);
+
+  sketch.add("Kyoko", 5, 50);
+
+  std::cout << "Kyoko (original): "
+            << sketch.get("Kyoko", 5) << std::endl;
+  std::cout << "Kyoko (snapshot): "
+            << snapshot.get("Kyoko", 5) << std::endl;
+  return 0;
+}
 </pre>
 </div>
+
+<div class="float">
+<pre>
+$ g++ copy-a-sketch.cc -lmadoka
+$ ./a.out
+Kyoko (original): 150
+Kyoko (snapshot): 100
+</pre>
+</div>
+
+<code>madoka::Sketch</code> provides an interface to copy a sketch. This example draws a sketch and creates its copy as a snapshot. Then, this example updates the orignal sketch.
+
+* <code>madoka::Sketch::copy()</code>
+** <code>copy()</code> is a function to create a copy of a sketch. The 1st argument specifies the source sketch.
+
+As shown in this example, <code>copy()</code> is useful to create a snapshot in memory. If you want to save a snapshot as a file, <code>save()</code> is an easier choice.
 
 h2. Apply a filter
 
 <div class="float">
 <pre>
-typedef UInt64 (*SketchFilter)(UInt64);
+#include <iostream>
+
+#include <madoka.h>
+
+madoka::UInt64 divide_by_2(madoka::UInt64 value) {
+  return value / 2;
+}
+
+int main(int argc, char *argv[]) {
+  madoka::Sketch sketch;
+  sketch.create();
+
+  sketch.set("Kaname", 6, 8);
+  sketch.set("Madoka", 6, 15);
+
+  sketch.filter(divide_by_2);
+  // sketch.filter([](madoka::UInt64 value) { return value / 2; });
+
+  std::cout << "Kaname: "
+            << sketch.get("Kaname", 6) << std::endl;
+  std::cout << "Madoka: "
+            << sketch.get("Madoka", 6) << std::endl;
+  return 0;
+}
 </pre>
 </div>
 
 <div class="float">
 <pre>
-void filter(Filter filter) throw();
+$ g++ apply-a-filter.cc -lmadoka
+$ ./a.out
+Kaname: 4
+Madoka: 7
 </pre>
 </div>
 
-h2. Shrink a sketch
+Madoka provides a filter feature which can be used to reduce errors and to simulate decays. This example uses a filter for dividing all the values in a sketch by <var>2</var>.
+
+* <code>madoka::Sketch::filter()</code>
+** <code>filter()</code> applies a filter to a sketch, or more precisely, <code>filter()</code> applies a filter to all the values in a sketch. The 1st argument specifies the filter.
+** <code>filter()</code> accepts a pointer to a function that takes the current value (<code>madoka::UInt64</code>) and returns the filtered value (<code>madoka::UInt64</code>).
+** A function object is also acceptable but the type of its argument and return value must be <code>madoka::UInt64</code>.
+** Note that if the filter returns a value greater than <var>max_value</var>, that value is replaced with <var>max_value</var>.
+** <code>filter()</code> does nothing if the argument is <var>NULL</var>.
+
+For example, by using this feature, you can implement a variety of "lossy conservative updates (PDF)":http://www.umiacs.umd.edu/%7Eamit/Papers/goyalLCUSketchAAAI11.pdf. Also, you can divide all the values by 2 when one of the values reaches <var>max_value</var>. In addition, you can replace all the values with their binary logarithms for compression, etc.
+
+h2. Shrink a sketch (to be written)
 
 <div class="float">
 <pre>
@@ -238,7 +336,7 @@ void shrink(const Sketch &src, UInt64 width = 0,
 </pre>
 </div>
 
-h2. Merge sketches
+h2. Merge sketches (to be written)
 
 <div class="float">
 <pre>
@@ -252,11 +350,51 @@ double inner_product(const Sketch &rhs, double *lhs_square_length = NULL,
 </pre>
 </div>
 
-h2. Create a memory-mapped sketch
+h2. Create a memory-mapped sketch (to be written)
 
 <code>create()</code>, <code>copy()</code> and <code>shrink()</code>.
 
-h2. Specify a seed
+h2. Use huge pages (to be written)
+
+<div class="float">
+<pre>
+#include <iostream>
+
+#include <madoka.h>
+
+int main(int argc, char *argv[]) {
+  madoka::Sketch sketch;
+  sketch.create(0, 0, NULL, madoka::FILE_HUGETLB);
+
+  if (sketch.flags() & madoka::FILE_HUGETLB) {
+    std::cout << "HugeTLB: on" << std::endl;
+  } else {
+    std::cout << "HugeTLB: off" << std::endl;
+  }
+  return 0;
+}
+</pre>
+</div>
+
+<var>madoka::FILE_HUGETLB</var>.
+
+<div class="float">
+<pre>
+$ g++ use-huge-pages.cc -lmadoka
+$ grep HugePages_Free /proc/meminfo
+HugePages_Free:        0
+$ ./a.out
+HugeTLB: off
+$ sudo sysctl -w vm.nr_hugepages=512
+vm.nr_hugepages = 512
+$ grep HugePages_Free /proc/meminfo
+HugePages_Free:      512
+$ ./a.out
+HugeTLB: on
+</pre>
+</div>
+
+h2. Specify a seed (to be written)
 
 A seed parameter.
 The 5th argument of <code>create()</code>.
@@ -299,24 +437,6 @@ error: madoka/sketch.cc:453: width > SKETCH_MAX_WIDTH
 
 In this example, <code>create()</code> fails to create a sketch because the specifed <var>width</var> is too large. Remember that <code>madoka::Sketch</code> is guaranteed to be unchanged when an error has occurred.
 
-h2. Croquis
+h2. Croquis (to be written)
 
 <code>madoka::Croquis</code>.
-
-h2. Constants
-
-<div class="float">
-<pre>
-enum FileFlag {
-  FILE_CREATE,
-  FILE_TRUNCATE,
-  FILE_READONLY,
-  FILE_WRITABLE,
-  FILE_SHARED,
-  FILE_PRIVATE,
-  FILE_ANONYMOUS,
-  FILE_HUGETLB,
-  FILE_PRELOAD
-};
-</pre>
-</div>
