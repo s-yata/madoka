@@ -327,9 +327,9 @@ Madoka: 7
 Madoka provides a filter feature which can be used to reduce errors and to simulate decays. This example uses a filter for dividing all the values in a sketch by <var>2</var>.
 
 * <code>madoka::Sketch::filter()</code>
-** <code>filter()</code> applies a filter to a sketch, or more precisely, <code>filter()</code> applies a filter to all the values in a sketch. The 1st argument specifies the filter.
+** <code>filter()</code> is a function to apply a filter to a sketch, or more precisely, <code>filter()</code> applies a filter to all the values in a sketch. The 1st argument specifies the filter.
 ** <code>filter()</code> accepts a pointer to a function that takes the current value (<code>madoka::UInt64</code>) and returns the filtered value (<code>madoka::UInt64</code>).
-** A function object is also acceptable but the type of its argument and return value must be <code>madoka::UInt64</code>.
+** A function object is also acceptable if the type of its argument and return value is <code>madoka::UInt64</code>.
 ** Note that if the filter returns a value greater than <var>max_value</var>, that value is replaced with <var>max_value</var>.
 ** <code>filter()</code> does nothing if the argument is <var>NULL</var>.
 
@@ -351,6 +351,10 @@ h2. Merge sketches (to be written)
 <pre>
 void merge(const Sketch &rhs, Filter lhs_filter = NULL,
            Filter rhs_filter = NULL) throw(Exception);
+</pre>
+</div>
+
+h2. Calculate an inner product (to be written)
 
 <div class="float">
 <pre>
@@ -403,10 +407,9 @@ HugeTLB: on
 </pre>
 </div>
 
-h2. Specify a seed (to be written)
+h2. Specify a seed
 
-A seed parameter.
-The 5th argument of <code>create()</code>.
+<code>madoka::Sketch</code> provides an interface to specify a seed, which is used to calculate hash values and to initialize a random number generator. The 5th argument of <code>create()</code> specifies the seed. However, basically there is no need to specify a user-defined seed. Note that you cannot merge sketches having different seeds.
 
 h2. Catch an exception
 
