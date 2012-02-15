@@ -130,7 +130,7 @@ QB: 15
 ** Note that <code>set()</code> does nothing when the specified value is not greater than the current associated value.
 ** Also note that the new value is saturated when the specified value is greater than the upper limit.
 * <code>madoka::Sketch::add()</code>
-** <code>add()</code> is a function to perform an addition. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value to be added. Then, <code>add()</code> returns the result of the addition.
+** <code>add()</code> is a function to perform an addition. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value to be added. The return value of <code>add()</code> is the result of the addition.
 ** Note that the result is saturated when the sum is greater than the upper limit.
 
 In this example, the 1st <code>set()</code> changes the value associated with <var>"QB"</var> from <var>0</var> to <var>10</var>. Then, <code>add()</code> adds <var>5</var> to that value (from <var>10</var> to <var>15</var>). After that, the 2nd <code>set()</code> does nothing because the specified value (<var>7</var>) is less than the current value (<var>15</var>).
@@ -214,7 +214,7 @@ Sayaka: 0
 </pre>
 </div>
 
-<code>madoka::Sketch</code> provides an interface to clear a sketch. This example creates a sketch and updates the value associated with <var>"Sayaka"</var> from <var>0</var> to <var>100</var>, but then <code>clear()</code> fills the sketch with <var>0</var>s. As a result, <code>get()</code> returns <var>0</var> for <var>"Sayaka"</var>.
+<code>madoka::Sketch</code> provides an interface to clear a sketch. This example creates a sketch and updates the value associated with <var>"Sayaka"</var> from <var>0</var> to <var>100</var>, but <code>clear()</code> fills the sketch with <var>0</var>s. As a result, <code>get()</code> returns <var>0</var> for <var>"Sayaka"</var>.
 
 * <code>madoka::Sketch::clear()</code>
 ** <code>clear()</code> is a function to clear a sketch, or more precisely, <code>clear()</code> fills a sketch with <var>0</var>s.
@@ -313,7 +313,7 @@ Madoka: 7
 ** Note that if the filter returns a value greater than <var>max_value</var>, that value is replaced with <var>max_value</var>.
 ** <code>filter()</code> does nothing if the argument is <var>NULL</var>.
 
-For example, by using this feature, you can implement a variety of "lossy conservative updates (PDF)":http://www.umiacs.umd.edu/%7Eamit/Papers/goyalLCUSketchAAAI11.pdf. Also, you can divide all the values by 2 when one of the values reaches <var>max_value</var>. In addition, you can replace all the values with their binary logarithms for compression, etc.
+For example, by using this feature, you can implement a variety of "lossy conservative updates (PDF)":http://www.umiacs.umd.edu/%7Eamit/Papers/goyalLCUSketchAAAI11.pdf. Also, you can divide all the values by <var>2</var> when one of the values reaches <var>max_value</var>. In addition, you can replace all the values with their binary logarithms for compression, etc.
 
 h2. Shrink a sketch
 
@@ -354,7 +354,7 @@ int main(int argc, char *argv[]) {
 <div class="float">
 <pre>
 $ g++ shrink-a-sketch.cc -lmadoka
-$ ./a.out 
+$ ./a.out
 width: 10
 max_value: 15
 Akemi: 8
@@ -362,37 +362,122 @@ Homura: 15
 </pre>
 </div>
 
-Let's shrink a sketch for saving memory. This is a reasonable answer to the question "How can I determine the best values for <var>width</var> and <var>max_value</var>?". 
+Let's shrink a sketch for saving memory. This is a reasonable answer to the question "How can I determine the best values for <var>width</var> and <var>max_value</var>?".
 
-During or after sketching, you may find that the values are too large. In such a case, you can shrink the sketch, or more precisely, you can create a smaller sketch and copies the contents of the source sketch to the smaller sketch.
+During or after sketching, you may find that <var>width</var> and <var>max_value</var> are too large. In such a case, you can shrink the sketch, or more precisely, you can create a smaller sketch and copies the contents of the source sketch to the smaller sketch.
 
 * <code>madoka::Sketch::shrink()</code>
 ** <code>shrink()</code> is a function to shrink a sketch. The 1st argument specifies the source sketch. The 2nd argument specifies <var>width</var> and the 3rd argument specifies <var>max_value</var> of the new sketch. The 4th argument specifies a filter to be applied in shrinking.
 ** Note that the new <var>width</var> must be a factor of the source <var>width</var>. On the other hand, a <var>max_value</var> greater than the source <var>max_value</var> is acceptable.
 
-This example creates a sketch and then shrinks that sketch to a smaller sketch. The new <var>width</var> and the new <var>max_value</var> are <var>10</var> and <var>15</var> respectively. Note that the values are replaced with their logarithms by <var>logarimize()</var>. For example, <var>"Akemi: 256"</var> is replaced with <var>"Akemi: 8"</var>. Also note that <var>"Homura: 16777216"</var> is replaced with <var>"Homura: 24"</var> but the output is <var>"Homura: 15"</var> because of saturation.
+This example creates a sketch and shrinks the sketch to a smaller sketch. The new <var>width</var> and the new <var>max_value</var> are <var>10</var> and <var>15</var> respectively. Note that the values are replaced with their logarithms by <var>logarimize()</var>. For example, <var>"Akemi: 256"</var> is replaced with <var>"Akemi: 8"</var>. Also note that <var>"Homura: 16777216"</var> is replaced with <var>"Homura: 24"</var> but the output is <var>"Homura: 15"</var> because of saturation.
 
 Due to this feature, you can use large <var>width</var> and <var>max_value</var> during sketching, and after that, you can adjust <var>width</var> and <var>max_value</var> to your application. Also, you can compress a sketch as shown in this example, binalize a sketch based on a threshold, etc.
 
-h2. Merge sketches (to be written)
+h2. Merge sketches
 
 <div class="float">
 <pre>
-void merge(const Sketch &rhs, Filter lhs_filter = NULL,
-           Filter rhs_filter = NULL) throw(Exception);
+#include <iostream>
+
+#include <madoka.h>
+
+int main(int argc, char *argv[]) {
+  madoka::Sketch sketch_1, sketch_2;
+  sketch_1.create();
+  sketch_2.create();
+
+  sketch_1.inc("Tomoe", 5);
+  sketch_1.inc("Mami", 4);
+  sketch_2.inc("Mami", 4);
+
+  madoka::Sketch sketch;
+  sketch.copy(sketch_1);
+  sketch.merge(sketch_2);
+
+  std::cout << "Tomoe: "
+            << sketch.get("Tomoe", 5) << std::endl;
+  std::cout << "Mami: "
+            << sketch.get("Mami", 4) << std::endl;
+  return 0;
+}
 </pre>
 </div>
-
-h2. Calculate an inner product (to be written)
 
 <div class="float">
 <pre>
-double inner_product(const Sketch &rhs, double *lhs_square_length = NULL,
-    double *rhs_square_length = NULL) const throw(Exception);
+$ g++ merge-sketches.cc -lmadoka
+$ ./a.out
+Tomoe: 1
+Mami: 2
 </pre>
 </div>
 
-h2. Configure memory mapping (to be written)
+<code>madoka::Sketch</code> provides an interface to merge sketches. A sketch merging works like vector addition. It simply adds the values of the right-hand side sketch (rhs-sketch) to the values of the left-hand side sketch (lhs-sketch).
+
+* <code>madoka::Sketch::merge()</code>
+** <code>merge()</code> is a function to merge sketches. The 1st argument specifies the rhs-sketch. The 2nd argument specifies a filter that is applied to the lhs-sketch values. The 3rd argument specifies a filter that is applied to the rhs-sketch values.
+** Note that the sketches must have the same <var>width</var>.
+
+This example creates two sketches with <var>"Mami: 1"</var> and merges the sketches. So, the resultant sketch has <var>"Mami: 2"</var>. Note that this example uses <code>copy()</code> to keep the lhs-sketch. If you don't mind overwriting the lhs-sketch, you can call <code>merge()</code> directly.
+
+The merging feature allows you to draw a sketch in a distributed manner. For example, you can divide an input data stream into several streams and draw sketches for each stream in parallel. Then, you can merge the temporary sketches to get the final sketch.
+
+h2. Estimate the inner product (to be written)
+
+<div class="float">
+<pre>
+#include <cmath>
+#include <iostream>
+
+#include <madoka.h>
+
+int main(int argc, char *argv[]) {
+  madoka::Sketch sketch_1, sketch_2;
+  sketch_1.create();
+  sketch_2.create();
+
+  sketch_1.add("Charlotte", 9, 3);
+  sketch_1.add("Oktavia", 7, 2);
+  sketch_2.add("Gretchen", 8, 5);
+  sketch_2.add("Charlotte", 9, 4);
+
+  double length_1, length_2;
+  double inner_product =
+      sketch_1.inner_product(sketch_2, &length_1, &length_2);
+  length_1 = std::sqrt(length_1);
+  length_2 = std::sqrt(length_2);
+
+  std::cout << "inner_product: " << inner_product << std::endl;
+  std::cout << "length_1: " << length_1 << std::endl;
+  std::cout << "length_2: " << length_2 << std::endl;
+  std::cout << "cosine: "
+            << (inner_product / length_1 / length_2) << std::endl;
+  return 0;
+}
+</pre>
+</div>
+
+<div class="float">
+<pre>
+$ g++ estimate-the-inner-product.cc -lmadoka
+$ ./a.out
+inner_product: 12
+length_1: 3.60555
+length_2: 6.40312
+cosine: 0.519778
+</pre>
+</div>
+
+A Count-Min sketch supports inner product estimation. <code>madoka::Sketch</code> provides an interface to estimate the inner product with the length of sketches, actually length is not defined for sketches. This interface is useful to estimate the cosine similarity.
+
+* <code>madoka::Sketch::inner_product()</code>
+** <code>inner_product()</code> is a function to estimate inner product. The 1st argument specifies the rhs-sketch. The 2nd argument can be used to get the estimated squared length of the lhs-sketch. The 3nd argument can be used to get the estimated squared length of the rhs-sketch. The return value of <code>inner_product()</code> is the estimated inner product.
+** Note that the sketches must have the same <var>width</var>.
+
+This example creates two sketches and estimates the inner product between the sketches. This example also computes the cosine similarity from the obtained values.
+
+h2. Configure memory mapping
 
 <code>create()</code>, <code>copy()</code> and <code>shrink()</code>.
 
@@ -434,7 +519,7 @@ HugeTLB: on
 </pre>
 </div>
 
-Roughly speaking, a Count-Min sketch is composed of hash tables and the number of hash tables is equal to its <var>depth</var>. The <var>depth</var> of <code>madoka::Sketch</code> is fixed to <var>3</var> and thus basic operations, <code>set()</code>, <code>inc()</code> and <code>add()</code>, perform at least <var>3</var> random accesses. Note that <code>get()</code> is terminated if it finds <var>0</var>.
+Roughly speaking, a Count-Min sketch is composed of hash tables and the number of hash tables is equal to its <var>depth</var>. The <var>depth</var> of <code>madoka::Sketch</code> is fixed to <var>3</var> and thus basic operations, <code>set()</code>, <code>inc()</code> and <code>add()</code>, except <code>get()</code>, perform at least <var>3</var> random accesses.
 
 Because of the random access nature, if a sketch is larger than the CPU cache, cache misses occur in sketching and the memory access latency becomes the bottleneck. In addition, if a sketch is much, much, much larger than the CPU cache, "TLB":http://en.wikipedia.org/wiki/Translation_lookaside_buffer misses reduce the throughput of sketching.
 
