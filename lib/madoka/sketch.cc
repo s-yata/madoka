@@ -386,39 +386,33 @@ double Sketch::inner_product(const Sketch &rhs, double *lhs_square_length,
   MADOKA_THROW_IF(width() != rhs.width());
   MADOKA_THROW_IF(seed() != rhs.seed());
 
-  double result = std::numeric_limits<double>::max();
-  UInt64 best_table_id = 0;
+  double inner_product = std::numeric_limits<double>::max();
   for (UInt64 table_id = 0; table_id < SKETCH_DEPTH; ++table_id) {
-    double temp = 0.0;
+    double current_inner_product = 0.0;
+    double current_lhs_square_length = 0.0;
+    double current_rhs_square_length = 0.0;
     for (UInt64 cell_id = 0; cell_id < width(); ++cell_id) {
-      temp += static_cast<double>(get_(table_id, cell_id)) *
-           rhs.get_(table_id, cell_id);
+      const double lhs_value = get_(table_id, cell_id);
+      const double rhs_value = rhs.get_(table_id, cell_id);
+      current_inner_product += lhs_value * rhs_value;
+      if (lhs_square_length != NULL) {
+        current_lhs_square_length += lhs_value * lhs_value;
+      }
+      if (rhs_square_length != NULL) {
+        current_rhs_square_length += rhs_value * rhs_value;
+      }
     }
-    if (temp < result) {
-      result = temp;
-      best_table_id = table_id;
+    if (current_inner_product < inner_product) {
+      inner_product = current_inner_product;
+      if (lhs_square_length != NULL) {
+        *lhs_square_length = current_lhs_square_length;
+      }
+      if (rhs_square_length != NULL) {
+        *rhs_square_length = current_rhs_square_length;
+      }
     }
   }
-
-  if (lhs_square_length != NULL) {
-    double temp = 0.0;
-    for (UInt64 cell_id = 0; cell_id < width(); ++cell_id) {
-      const double value = get_(best_table_id, cell_id);
-      temp += value * value;
-    }
-    *lhs_square_length = temp;
-  }
-
-  if (rhs_square_length != NULL) {
-    double temp = 0.0;
-    for (UInt64 cell_id = 0; cell_id < rhs.width(); ++cell_id) {
-      const double value = rhs.get_(best_table_id, cell_id);
-      temp += value * value;
-    }
-    *rhs_square_length = temp;
-  }
-
-  return result;
+  return inner_product;
 }
 
 void Sketch::swap(Sketch *sketch) throw() {
@@ -513,7 +507,7 @@ UInt64 Sketch::get_(UInt64 table_id, UInt64 cell_id) const throw() {
   if (mode() == SKETCH_EXACT_MODE) {
     return exact_get_((width() * table_id) + cell_id);
   } else {
-    return Approx::decode(approx_get_(table_id, cell_id));
+    return Approx::decode(approx_get_(table_id, cell_id), random_);
   }
 }
 
@@ -738,7 +732,7 @@ UInt64 Sketch::approx_get(const UInt64 cell_ids[3]) const throw() {
   if (approx < min_approx) {
     min_approx = approx;
   }
-  return Approx::decode(min_approx);
+  return Approx::decode(min_approx, random_);
 }
 
 void Sketch::approx_set(const UInt64 cell_ids[3], UInt64 value) throw() {
@@ -800,7 +794,7 @@ UInt64 Sketch::approx_inc(const UInt64 cell_ids[3]) throw() {
   } else if (approxes[2] == new_approx) {
     table_[cell_ids[2]] &= ~(flag << (SKETCH_OWNER_OFFSET + 4));
   }
-  return new_approx;
+  return Approx::decode(new_approx, random_);
 }
 
 UInt64 Sketch::approx_add(const UInt64 cell_ids[3], UInt64 value) throw() {

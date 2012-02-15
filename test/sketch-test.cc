@@ -131,9 +131,10 @@ void basic_test(madoka::UInt64 max_value,
     if (sketch.mode() == madoka::SKETCH_EXACT_MODE) {
       MADOKA_THROW_IF(sketch.get(key.c_str(), key.length()) != freq);
     } else {
-      const madoka::UInt64 approx = madoka::Approx::encode(freq);
-      MADOKA_THROW_IF(sketch.get(key.c_str(), key.length()) !=
-                      madoka::Approx::decode(approx));
+      const madoka::UInt64 freq_approx = madoka::Approx::encode(freq);
+      const madoka::UInt64 sketch_approx =
+          madoka::Approx::encode(sketch.get(key.c_str(), key.length()));
+      MADOKA_THROW_IF(sketch_approx != freq_approx);
     }
   }
   for (std::size_t i = 0; i < keys.size(); ++i) {
@@ -187,20 +188,41 @@ void extra_test(madoka::UInt64 max_value,
   MADOKA_THROW_IF(sketch_1.width() != sketch.width());
   MADOKA_THROW_IF(sketch_1.max_value() != sketch.max_value());
   for (std::size_t i = 0; i < keys.size(); ++i) {
-    MADOKA_THROW_IF(sketch_1.get(keys[i].c_str(), keys[i].length()) !=
-                    freqs[i]);
+    if (sketch_1.mode() == madoka::SKETCH_EXACT_MODE) {
+      MADOKA_THROW_IF(sketch_1.get(keys[i].c_str(), keys[i].length()) !=
+                      freqs[i]);
+    } else {
+      const madoka::UInt64 freq_approx = madoka::Approx::encode(freqs[i]);
+      const madoka::UInt64 sketch_approx = madoka::Approx::encode(
+          sketch_1.get(keys[i].c_str(), keys[i].length()));
+      MADOKA_THROW_IF(sketch_approx != freq_approx);
+    }
   }
 
   sketch_1.filter(NULL);
   for (std::size_t i = 0; i < keys.size(); ++i) {
-    MADOKA_THROW_IF(sketch_1.get(keys[i].c_str(), keys[i].length()) !=
-                    freqs[i]);
+    if (sketch_1.mode() == madoka::SKETCH_EXACT_MODE) {
+      MADOKA_THROW_IF(sketch_1.get(keys[i].c_str(), keys[i].length()) !=
+                      freqs[i]);
+    } else {
+      const madoka::UInt64 freq_approx = madoka::Approx::encode(freqs[i]);
+      const madoka::UInt64 sketch_approx = madoka::Approx::encode(
+          sketch_1.get(keys[i].c_str(), keys[i].length()));
+      MADOKA_THROW_IF(sketch_approx != freq_approx);
+    }
   }
 
   sketch_1.filter([](madoka::UInt64 x) { return x / 2; });
   for (std::size_t i = 0; i < keys.size(); ++i) {
-    MADOKA_THROW_IF(sketch_1.get(keys[i].c_str(), keys[i].length()) !=
-                    (freqs[i] / 2));
+    if (sketch_1.mode() == madoka::SKETCH_EXACT_MODE) {
+      MADOKA_THROW_IF(sketch_1.get(keys[i].c_str(), keys[i].length()) !=
+                      (freqs[i] / 2));
+    } else {
+      const madoka::UInt64 freq_approx = madoka::Approx::encode(freqs[i] / 2);
+      const madoka::UInt64 sketch_approx = madoka::Approx::encode(
+          sketch_1.get(keys[i].c_str(), keys[i].length()));
+      MADOKA_THROW_IF(sketch_approx != freq_approx);
+    }
   }
 
   madoka::Sketch sketch_2;
@@ -208,16 +230,30 @@ void extra_test(madoka::UInt64 max_value,
   MADOKA_THROW_IF(sketch_2.width() != sketch.width());
   MADOKA_THROW_IF(sketch_2.max_value() != sketch.max_value());
   for (std::size_t i = 0; i < keys.size(); ++i) {
-    MADOKA_THROW_IF(sketch_2.get(keys[i].c_str(), keys[i].length()) !=
-                    freqs[i]);
+    if (sketch_2.mode() == madoka::SKETCH_EXACT_MODE) {
+      MADOKA_THROW_IF(sketch_2.get(keys[i].c_str(), keys[i].length()) !=
+                      freqs[i]);
+    } else {
+      const madoka::UInt64 freq_approx = madoka::Approx::encode(freqs[i]);
+      const madoka::UInt64 sketch_approx = madoka::Approx::encode(
+          sketch_2.get(keys[i].c_str(), keys[i].length()));
+      MADOKA_THROW_IF(sketch_approx != freq_approx);
+    }
   }
 
   sketch_2.shrink(sketch, sketch.width() / 2);
   MADOKA_THROW_IF(sketch_2.width() != (sketch.width() / 2));
   MADOKA_THROW_IF(sketch_2.max_value() != sketch.max_value());
   for (std::size_t i = 0; i < keys.size(); ++i) {
-    MADOKA_THROW_IF(sketch_2.get(keys[i].c_str(), keys[i].length()) <
-                    freqs[i]);
+    if (sketch_2.mode() == madoka::SKETCH_EXACT_MODE) {
+      MADOKA_THROW_IF(sketch_2.get(keys[i].c_str(), keys[i].length()) <
+                      freqs[i]);
+    } else {
+      const madoka::UInt64 freq_approx = madoka::Approx::encode(freqs[i]);
+      const madoka::UInt64 sketch_approx = madoka::Approx::encode(
+          sketch_2.get(keys[i].c_str(), keys[i].length()));
+      MADOKA_THROW_IF(sketch_approx < freq_approx);
+    }
   }
 
   sketch_2.shrink(sketch, 0, 15);
@@ -240,8 +276,16 @@ void extra_test(madoka::UInt64 max_value,
   sketch_2.copy(sketch, PATH_2, madoka::FILE_TRUNCATE);
   sketch_2.merge(sketch_1, [](madoka::UInt64 x) { return x / 2; }, NULL);
   for (std::size_t i = 0; i < keys.size(); ++i) {
-    MADOKA_THROW_IF(sketch_2.get(keys[i].c_str(), keys[i].length()) !=
-                    ((freqs[i] / 2) * 2));
+    if (sketch_2.mode() == madoka::SKETCH_EXACT_MODE) {
+      MADOKA_THROW_IF(sketch_2.get(keys[i].c_str(), keys[i].length()) !=
+                      ((freqs[i] / 2) * 2));
+    } else {
+      const madoka::UInt64 freq_approx =
+          madoka::Approx::encode((freqs[i] / 2) * 2);
+      const madoka::UInt64 sketch_approx = madoka::Approx::encode(
+          sketch_2.get(keys[i].c_str(), keys[i].length()));
+      MADOKA_THROW_IF(sketch_approx != freq_approx);
+    }
   }
 
   double lhs_square_length;
