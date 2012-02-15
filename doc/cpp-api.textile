@@ -165,7 +165,7 @@ size: 25165904
 </pre>
 </div>
 
-Let's customize a sketch for your application. A Count-Min sketch is a probabilistic data structure and the accuracy depends on its parameters, <var>width</var> and <var>depth</var>, and the target data stream.
+Let's customize a sketch for your application. A "Count-Min sketch":https://sites.google.com/site/countminsketch/ is a probabilistic data structure and the accuracy depends on its parameters, <var>width</var> and <var>depth</var>, and the target data stream.
 
 Basically, accurate sketching requires a large <var>width</var> and a longer stream requires a larger <var>width</var>, but a larger <width> requires a larger memory space and increases cache misses. The other parameter, <var>depth</var>, also has an effect on accuracy but Madoka uses a fixed <var>depth</var>, actually <var>madoka::SKETCH_DEPTH</var> (<var>3</var>), based on benchmarks. Instead, Madoka has another parameter, <var>max_value</var>, that specifies the upper limit of the values. By using a small <var>max_value</var>, you can save memory.
 
@@ -180,30 +180,7 @@ To customize a sketch, specify <var>width</var> and <var>max_value</var> when cr
 ** <var>max_value</var> must not be greater than <var>madoka::SKETCH_MAX_MAX_VALUE</var> (<var>2<sup>45</sup> - 1</var>).
 ** <code>create()</code> rounds out a given <var>max_value</var> to <var>1</var>, <var>3</var>, <var>15</var>, <var>255</var>, <var>65535</var> or <var>2<sup>45</sup> - 1</var>.
 
-This example creates a customized sketch and prints the size. Note that the size in bytes of a sketch is approximately <var>width x depth x 8</var> if <var>max_value == 2<sup>45</sup> - 1</var>, or <var>width x depth x log<sub>2</sub>(max_value + 1) / 8</var> otherwise.
-
-h2. Get information of a sketch (to be written)
-
-<div class="float">
-<pre>
-enum SketchMode {
-  SKETCH_EXACT_MODE,
-  SKETCH_APPROX_MODE
-};
-</pre>
-</div>
-
-* <code>madoka::Sketch::width()</code>
-* <code>madoka::Sketch::width_mask()</code>
-* <code>madoka::Sketch::depth()</code>
-* <code>madoka::Sketch::max_value()</code>
-* <code>madoka::Sketch::value_mask()</code>
-* <code>madoka::Sketch::value_size()</code>
-* <code>madoka::Sketch::seed()</code>
-* <code>madoka::Sketch::table_size()</code>
-* <code>madoka::Sketch::file_size()</code>
-* <code>madoka::Sketch::flags()</code>
-* <code>madoka::Sketch::mode()</code>
+This example creates a customized sketch and prints the size. Note that the size in bytes of a sketch is approximately <var>width x depth x 8</var> if <var>max_value == 2<sup>45</sup> - 1</var>, or otherwise <var>width x depth x log<sub>2</sub>(max_value + 1) / 8</var>.
 
 h2. Clear a sketch
 
@@ -367,7 +344,7 @@ h2. Create a memory-mapped sketch (to be written)
 
 <code>create()</code>, <code>copy()</code> and <code>shrink()</code>.
 
-h2. Use huge pages (to be written)
+h2. Use huge pages
 
 <div class="float">
 <pre>
@@ -389,8 +366,6 @@ int main(int argc, char *argv[]) {
 </pre>
 </div>
 
-<var>madoka::FILE_HUGETLB</var>.
-
 <div class="float">
 <pre>
 $ g++ use-huge-pages.cc -lmadoka
@@ -407,9 +382,44 @@ HugeTLB: on
 </pre>
 </div>
 
+Roughly speaking, a Count-Min sketch is composed of hash tables and the number of hash tables is equal to its <var>depth</var>. The <var>depth</var> of <code>madoka::Sketch</code> is fixed to <var>3</var> and thus basic operations, <code>set()</code>, <code>inc()</code> and <code>add()</code>, perform at least <var>3</var> random accesses. Note that <code>get()</code> is terminated if it finds <var>0</var>.
+
+Because of the random access nature, if a sketch is larger than the CPU cache, cache misses occur in sketching and the memory access latency becomes the bottleneck. In addition, if a sketch is much, much, much larger than the CPU cache, "TLB":http://en.wikipedia.org/wiki/Translation_lookaside_buffer misses reduce the throughput of sketching.
+
+<var>madoka::FILE_HUGETLB</var> is an optional flag to use "huge pages":http://en.wikipedia.org/wiki/Page_%28computer_memory%29#Huge_pages. The use of huge pages reduces TLB misses in sketching. If a sketch is created with <var>madoka::FILE_HUGETLB</var>, the sketch tries to use huge pages. If huge pages are not available, the sketch uses regular pages.
+
+This example shows how to use huge pages. You can check whether huge pages are available or not by reading <kbd>/proc/meminfo</kbd>. If disabled, you can enable huge pages by editing <kbd>/proc/sys/vm/nr_hugepages</kbd>. Note that only a user with root authority can enable huge pages. After that, <code>madoka::Sketch</code> can use huge pages. Remember that a sketch backed by a file does not support huge pages unless the file system supports huge pages. For more details, see "information about huge page support":http://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt.
+
+Other than <code>create()</code>, all the functions taking <var>path</var> and <var>flags</var> accept <var>madoka::FILE_HUGETLB</var>.
+
 h2. Specify a seed
 
 <code>madoka::Sketch</code> provides an interface to specify a seed, which is used to calculate hash values and to initialize a random number generator. The 5th argument of <code>create()</code> specifies the seed. However, basically there is no need to specify a user-defined seed. Note that you cannot merge sketches having different seeds.
+
+h2. Get information of a sketch
+
+* <code>madoka::Sketch::width()</code>
+** <code>width()</code> returns <var>width</var> of the sketch.
+* <code>madoka::Sketch::width_mask()</code>
+** <code>width_mask()</code> returns <var>width - 1</var> if <var>width</var> is a power of 2, otherwise returns <var>0</var>.
+* <code>madoka::Sketch::depth()</code>
+** <code>depth()</code> returns <var>madoka::SKETCH_DEPTH</var>.
+* <code>madoka::Sketch::max_value()</code>
+** <code>max_value()</code> returns <var>max_value</var> of the sketch.
+* <code>madoka::Sketch::value_mask()</code>
+** <code>value_mask()</code> returns <var>max_value</var>.
+* <code>madoka::Sketch::value_size()</code>
+** <code>value_size()</code> returns <var>log<sub>2</sub>(max_value + 1)</var>.
+* <code>madoka::Sketch::seed()</code>
+** <code>seed()</code> returns <var>seed</var> of the sketch.
+* <code>madoka::Sketch::table_size()</code>
+** <code>table_size()</code> returns the size in bytes of the sketch.
+* <code>madoka::Sketch::file_size()</code>
+** <code>file_size()</code> returns the file size in bytes of the sketch. The file size is equal to the sum of the header size and the sketch size.
+* <code>madoka::Sketch::flags()</code>
+** <code>flags()</code> returns memory mapping related flags.
+* <code>madoka::Sketch::mode()</code>
+** <code>mode()</code> returns <var>madoka::SKETCH_APPROX_MODE</var> if <var>value_size == madoka::SKETCH_APPROX_VALUE_SIZE</var>, otherwise returns <var>madoka::SKETCH_EXACT_MODE</var>.
 
 h2. Catch an exception
 
