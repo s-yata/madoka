@@ -150,8 +150,9 @@ int main(int argc, char *argv[]) {
   madoka::Sketch sketch;
   sketch.create(MY_WIDTH, MY_MAX_VALUE);
 
-  std::cout << "size: "
-            << sketch.file_size() << std::endl;
+  std::cout << "width: " << sketch.width() << std::endl;
+  std::cout << "max_value: " << sketch.max_value() << std::endl;
+  std::cout << "size: " << sketch.file_size() << std::endl;
   return 0;
 }
 </pre>
@@ -161,6 +162,8 @@ int main(int argc, char *argv[]) {
 <pre>
 $ g++ customize-a-sketch.cc -lmadoka
 $ ./a.out
+width: 16777216
+max_value: 15
 size: 25165904
 </pre>
 </div>
@@ -301,7 +304,7 @@ Madoka: 7
 </pre>
 </div>
 
-Madoka provides a filter feature which can be used to reduce errors and to simulate decays. This example uses a filter for dividing all the values in a sketch by <var>2</var>.
+<code>madoka::Sketch</code> provides a filter feature which can be used to reduce errors and to simulate decays. This example uses a filter for dividing all the values in a sketch by <var>2</var>.
 
 * <code>madoka::Sketch::filter()</code>
 ** <code>filter()</code> is a function to apply a filter to a sketch, or more precisely, <code>filter()</code> applies a filter to all the values in a sketch. The 1st argument specifies the filter.
@@ -312,15 +315,64 @@ Madoka provides a filter feature which can be used to reduce errors and to simul
 
 For example, by using this feature, you can implement a variety of "lossy conservative updates (PDF)":http://www.umiacs.umd.edu/%7Eamit/Papers/goyalLCUSketchAAAI11.pdf. Also, you can divide all the values by 2 when one of the values reaches <var>max_value</var>. In addition, you can replace all the values with their binary logarithms for compression, etc.
 
-h2. Shrink a sketch (to be written)
+h2. Shrink a sketch
 
 <div class="float">
 <pre>
-void shrink(const Sketch &src, UInt64 width = 0,
-            UInt64 max_value = 0, Filter filter = NULL,
-            const char *path = NULL, int flags = 0) throw(Exception);
+#include <iostream>
+
+#include <madoka.h>
+
+madoka::UInt64 logarithmize(madoka::UInt64 value) {
+  return 63 - ::__builtin_clzll(value | 1);
+}
+
+int main(int argc, char *argv[]) {
+  madoka::Sketch sketch;
+  sketch.create(100);
+
+  sketch.set("Akemi", 5, 256);
+  sketch.set("Homura", 6, 16777216);
+
+  madoka::Sketch new_sketch;
+  new_sketch.shrink(sketch, 10, 15, logarithmize);
+
+  std::cout << "width: "
+            << new_sketch.width() << std::endl;
+  std::cout << "max_value: "
+            << new_sketch.max_value() << std::endl;
+
+  std::cout << "Akemi: "
+            << new_sketch.get("Akemi", 5) << std::endl;
+  std::cout << "Homura: "
+            << new_sketch.get("Homura", 6) << std::endl;
+  return 0;
+}
 </pre>
 </div>
+
+<div class="float">
+<pre>
+$ g++ shrink-a-sketch.cc -lmadoka
+$ ./a.out 
+width: 10
+max_value: 15
+Akemi: 8
+Homura: 15
+</pre>
+</div>
+
+Let's shrink a sketch for saving memory. This is a reasonable answer to the question "How can I determine the best values for <var>width</var> and <var>max_value</var>?". 
+
+During or after sketching, you may find that the values are too large. In such a case, you can shrink the sketch, or more precisely, you can create a smaller sketch and copies the contents of the source sketch to the smaller sketch.
+
+* <code>madoka::Sketch::shrink()</code>
+** <code>shrink()</code> is a function to shrink a sketch. The 1st argument specifies the source sketch. The 2nd argument specifies <var>width</var> and the 3rd argument specifies <var>max_value</var> of the new sketch. The 4th argument specifies a filter to be applied in shrinking.
+** Note that the new <var>width</var> must be a factor of the source <var>width</var>. On the other hand, a <var>max_value</var> greater than the source <var>max_value</var> is acceptable.
+
+This example creates a sketch and then shrinks that sketch to a smaller sketch. The new <var>width</var> and the new <var>max_value</var> are <var>10</var> and <var>15</var> respectively. Note that the values are replaced with their logarithms by <var>logarimize()</var>. For example, <var>"Akemi: 256"</var> is replaced with <var>"Akemi: 8"</var>. Also note that <var>"Homura: 16777216"</var> is replaced with <var>"Homura: 24"</var> but the output is <var>"Homura: 15"</var> because of saturation.
+
+Due to this feature, you can use large <var>width</var> and <var>max_value</var> during sketching, and after that, you can adjust <var>width</var> and <var>max_value</var> to your application. Also, you can compress a sketch as shown in this example, binalize a sketch based on a threshold, etc.
 
 h2. Merge sketches (to be written)
 
@@ -340,7 +392,7 @@ double inner_product(const Sketch &rhs, double *lhs_square_length = NULL,
 </pre>
 </div>
 
-h2. Create a memory-mapped sketch (to be written)
+h2. Configure memory mapping (to be written)
 
 <code>create()</code>, <code>copy()</code> and <code>shrink()</code>.
 
