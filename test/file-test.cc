@@ -38,7 +38,11 @@ int main() try {
   madoka::File file;
 
   file.create(NULL, 1 << 16);
+  MADOKA_THROW_IF(file.addr() == NULL);
   MADOKA_THROW_IF(file.size() != (1 << 16));
+  MADOKA_THROW_IF(file.flags() !=
+      (madoka::FILE_CREATE | madoka::FILE_WRITABLE | madoka::FILE_PRIVATE |
+       madoka::FILE_ANONYMOUS));
   std::memset(file.addr(), 0x01, file.size());
   file.close();
 
@@ -53,6 +57,8 @@ int main() try {
 
   file.create(PATH_1, 1 << 17);
   MADOKA_THROW_IF(file.size() != (1 << 17));
+  MADOKA_THROW_IF(file.flags() !=
+      (madoka::FILE_CREATE | madoka::FILE_WRITABLE | madoka::FILE_SHARED));
   std::memset(file.addr(), 0x02, file.size());
   file.close();
 
@@ -67,30 +73,49 @@ int main() try {
   MADOKA_THROW_IF(ignored);
 
   file.open(PATH_1);
-  MADOKA_THROW_IF(file.size() != (1 << 17));
   MADOKA_THROW_IF(*static_cast<const madoka::UInt8 *>(file.addr()) != 0x02);
+  MADOKA_THROW_IF(file.size() != (1 << 17));
+  MADOKA_THROW_IF(file.flags() !=
+      (madoka::FILE_WRITABLE | madoka::FILE_SHARED));
   std::memset(file.addr(), 0x03, file.size());
   file.close();
 
-  file.open(PATH_1, madoka::FILE_PRIVATE);
-  MADOKA_THROW_IF(file.size() != (1 << 17));
+  file.open(PATH_1, madoka::FILE_READONLY);
   MADOKA_THROW_IF(*static_cast<const madoka::UInt8 *>(file.addr()) != 0x03);
+  MADOKA_THROW_IF(file.size() != (1 << 17));
+  MADOKA_THROW_IF(file.flags() !=
+      (madoka::FILE_READONLY | madoka::FILE_SHARED));
+  file.close();
+
+  file.open(PATH_1, madoka::FILE_PRIVATE);
+  MADOKA_THROW_IF(*static_cast<const madoka::UInt8 *>(file.addr()) != 0x03);
+  MADOKA_THROW_IF(file.size() != (1 << 17));
+  MADOKA_THROW_IF(file.flags() !=
+      (madoka::FILE_WRITABLE | madoka::FILE_PRIVATE));
   std::memset(file.addr(), 0x04, file.size());
   file.close();
 
   file.load(PATH_1);
-  MADOKA_THROW_IF(file.size() != (1 << 17));
   MADOKA_THROW_IF(*static_cast<const madoka::UInt8 *>(file.addr()) != 0x03);
+  MADOKA_THROW_IF(file.size() != (1 << 17));
+  MADOKA_THROW_IF(file.flags() !=
+      (madoka::FILE_CREATE | madoka::FILE_WRITABLE | madoka::FILE_PRIVATE |
+       madoka::FILE_ANONYMOUS));
   std::memset(file.addr(), 0x05, file.size());
   file.close();
 
   file.open(PATH_1);
-  MADOKA_THROW_IF(file.size() != (1 << 17));
   MADOKA_THROW_IF(*static_cast<const madoka::UInt8 *>(file.addr()) != 0x03);
+  MADOKA_THROW_IF(file.size() != (1 << 17));
+  MADOKA_THROW_IF(file.flags() !=
+      (madoka::FILE_WRITABLE | madoka::FILE_SHARED));
   file.close();
 
   file.create(PATH_1, 1 << 19, madoka::FILE_TRUNCATE);
   MADOKA_THROW_IF(file.size() != (1 << 19));
+  MADOKA_THROW_IF(file.flags() !=
+      (madoka::FILE_CREATE | madoka::FILE_TRUNCATE | madoka::FILE_WRITABLE |
+       madoka::FILE_SHARED));
   std::memset(file.addr(), 0x06, file.size());
 
   file.save(PATH_2);
@@ -105,16 +130,20 @@ int main() try {
   file.close();
 
   file.open(PATH_2);
-  MADOKA_THROW_IF(file.size() != (1 << 19));
   MADOKA_THROW_IF(*static_cast<const madoka::UInt8 *>(file.addr()) != 0x06);
+  MADOKA_THROW_IF(file.size() != (1 << 19));
+  MADOKA_THROW_IF(file.flags() !=
+      (madoka::FILE_WRITABLE | madoka::FILE_SHARED));
 
   std::memset(file.addr(), 0x07, file.size());
   file.save(PATH_1, madoka::FILE_TRUNCATE);
   file.close();
 
   file.open(PATH_1);
-  MADOKA_THROW_IF(file.size() != (1 << 19));
   MADOKA_THROW_IF(*static_cast<const madoka::UInt8 *>(file.addr()) != 0x07);
+  MADOKA_THROW_IF(file.size() != (1 << 19));
+  MADOKA_THROW_IF(file.flags() !=
+      (madoka::FILE_WRITABLE | madoka::FILE_SHARED));
   file.close();
 
   MADOKA_THROW_IF(std::remove(PATH_1) == -1);
