@@ -257,7 +257,7 @@ Kyoko (snapshot): 100
 </pre>
 </div>
 
-<code>madoka::Sketch</code> provides an interface to copy a sketch. This example draws a sketch and creates its copy as a snapshot. Then, this example updates the orignal sketch.
+<code>madoka::Sketch</code> provides an interface to copy a sketch. This example draws a sketch and creates its copy as a snapshot. Then, this example updates the original sketch.
 
 * <code>madoka::Sketch::copy()</code>
 ** <code>copy()</code> is a function to create a copy of a sketch. The 1st argument specifies the source sketch.
@@ -372,7 +372,7 @@ During or after sketching, you may find that <var>width</var> and <var>max_value
 
 This example creates a sketch and shrinks the sketch to a smaller sketch. The new <var>width</var> and the new <var>max_value</var> are <var>10</var> and <var>15</var> respectively. Note that the values are replaced with their logarithms by <var>logarimize()</var>. For example, <var>"Akemi: 256"</var> is replaced with <var>"Akemi: 8"</var>. Also note that <var>"Homura: 16777216"</var> is replaced with <var>"Homura: 24"</var> but the output is <var>"Homura: 15"</var> because of saturation.
 
-Due to this feature, you can use large <var>width</var> and <var>max_value</var> during sketching, and after that, you can adjust <var>width</var> and <var>max_value</var> to your application. Also, you can compress a sketch as shown in this example, binalize a sketch based on a threshold, etc.
+Due to this feature, you can use large <var>width</var> and <var>max_value</var> during sketching, and after that, you can adjust <var>width</var> and <var>max_value</var> to your application. Also, you can compress a sketch as shown in this example, binarize a sketch based on a threshold, etc.
 
 h2. Merge sketches
 
@@ -423,7 +423,7 @@ This example creates two sketches with <var>"Mami: 1"</var> and merges the sketc
 
 The merging feature allows you to draw a sketch in a distributed manner. For example, you can divide an input data stream into several streams and draw sketches for each stream in parallel. Then, you can merge the temporary sketches to get the final sketch.
 
-h2. Estimate the inner product (to be written)
+h2. Estimate the inner product
 
 <div class="float">
 <pre>
@@ -472,7 +472,7 @@ cosine: 0.519778
 A Count-Min sketch supports inner product estimation. <code>madoka::Sketch</code> provides an interface to estimate the inner product with the length of sketches, actually length is not defined for sketches. This interface is useful to estimate the cosine similarity.
 
 * <code>madoka::Sketch::inner_product()</code>
-** <code>inner_product()</code> is a function to estimate inner product. The 1st argument specifies the rhs-sketch. The 2nd argument can be used to get the estimated squared length of the lhs-sketch. The 3nd argument can be used to get the estimated squared length of the rhs-sketch. The return value of <code>inner_product()</code> is the estimated inner product.
+** <code>inner_product()</code> is a function to estimate inner product. The 1st argument specifies the rhs-sketch. The 2nd argument can be used to get the estimated squared length of the lhs-sketch. The 3rd argument can be used to get the estimated squared length of the rhs-sketch. The return value of <code>inner_product()</code> is the estimated inner product.
 ** Note that the sketches must have the same <var>width</var>.
 
 This example creates two sketches and estimates the inner product between the sketches. This example also computes the cosine similarity from the obtained values.
@@ -624,12 +624,6 @@ int main(int argc, char *argv[]) {
 </pre>
 </div>
 
-Madoka throws an exception when an error occurs. The exception class is <code>madoka::Exception</code>. This example shows how to catch an exception.
-
-* <code>madoka::Exception::what()</code>
-** <code>what()</code> is a function to get an error message. The format is <code>__FILE__</code> << <var>":"</var> << <code>__LINE__</code> << <var>": "</var> << <var>the-reason-of-the-error</var>.
-** Note that exception specifiers in <kbd>madoka/sketch.h</kbd> tell you which function is possible to throw an exception.
-
 <div class="float">
 <pre>
 $ g++ catch-and-exception.cc -lmadoka
@@ -637,6 +631,12 @@ $ ./a.out
 error: madoka/sketch.cc:453: width > SKETCH_MAX_WIDTH
 </pre>
 </div>
+
+Madoka throws an exception when an error occurs. The exception class is <code>madoka::Exception</code>. This example shows how to catch an exception.
+
+* <code>madoka::Exception::what()</code>
+** <code>what()</code> is a function to get an error message. The format is <code>__FILE__</code> << <var>":"</var> << <code>__LINE__</code> << <var>": "</var> << <var>the-reason-of-the-error</var>.
+** Note that exception specifiers in <kbd>madoka/sketch.h</kbd> tell you which function is possible to throw an exception.
 
 In this example, <code>create()</code> fails to create a sketch because the specifed <var>width</var> is too large. Remember that <code>madoka::Sketch</code> is guaranteed to be unchanged when an error has occurred.
 
