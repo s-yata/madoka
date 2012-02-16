@@ -86,6 +86,13 @@ int main() try {
       (madoka::FILE_READONLY | madoka::FILE_SHARED));
   file.close();
 
+  file.open(PATH_1, madoka::FILE_PRELOAD);
+  MADOKA_THROW_IF(*static_cast<const madoka::UInt8 *>(file.addr()) != 0x03);
+  MADOKA_THROW_IF(file.size() != (1 << 17));
+  MADOKA_THROW_IF(file.flags() !=
+      (madoka::FILE_WRITABLE | madoka::FILE_SHARED | madoka::FILE_PRELOAD));
+  file.close();
+
   file.open(PATH_1, madoka::FILE_PRIVATE);
   MADOKA_THROW_IF(*static_cast<const madoka::UInt8 *>(file.addr()) != 0x03);
   MADOKA_THROW_IF(file.size() != (1 << 17));
