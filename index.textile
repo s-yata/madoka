@@ -22,9 +22,9 @@ h2. Installation
 
 <div class="float">
 <pre>
-$ wget http://example.com/TO_BE_UPLOADED.tar.gz
-$ tar zxf TO_BE_UPLOADED.tar.gz
-$ cd TO_BE_UPLOADED.tar.gz
+$ wget https://github.com/downloads/s-yata/madoka/madoka-0.0.1.tar.gz
+$ tar zxf madoka-0.0.1.tar.gz
+$ cd madoka-0.0.1/
 $ ./configure
 $ make
 $ make check
@@ -33,7 +33,7 @@ $ sudo ldconfig
 </pre>
 </div>
 
-Download a package of Madoka and unpack it. Then, run <kbd>configure</kbd> and <kbd>make</kbd>. You may have to run <kbd>ldconfig</kbd> to use Madoka.
+Download a "package of Madoka":https://github.com/downloads/s-yata/madoka/madoka-0.0.1.tar.gz and unpack it. Then, run <kbd>configure</kbd> and <kbd>make</kbd>. You may have to run <kbd>ldconfig</kbd> to use Madoka.
 
 If you get source files from "GitHub":http://github.com/s-yata/madoka, <kbd>autoreconf -i</kbd> is needed to generate a <kbd>configure</kbd> script.
 
@@ -69,7 +69,7 @@ h2. Interface
 
 A Count-Min sketch supports not only counting items, as shown in the above example, but also inner products, which enable a sketch to serve as a feature vector. In addition, Madoka supports merging and shrinking sketches so as to make sketching more useful. See the following for more information about the APIs.
 
-* "C API Documentation":doc/c-api.html
+* "C API Documentation - to be written":doc/c-api.html
 * "C++ API Documentation":doc/cpp-api.html
 
 h2. Implementation
