@@ -504,7 +504,7 @@ enum FileFlag {
 * <var>madoka::FILE_CREATE</var>
 ** <var>FILE_CREATE</var> is used internally to create a file.
 * <var>madoka::FILE_TRUNCATE</var>
-** <code>create()</code>, <code>copy()</code> and <code>shrink()</code> accept <var>FILE_TRUNCATE</var>.
+** <code>create()</code>, <code>copy()</code> and <code>shrink()</code> accept <var>FILE_TRUNCATE</var> unless <var>path == NULL</var>.
 ** <var>FILE_TRUNCATE</var> is used to overwrite an existing file. Note that a creation without <var>FILE_TRUNCATE</var> to an existing file throws an exception.
 * <var>madoka::FILE_READONLY</var>
 ** <code>open()</code> accepts <var>FILE_READONLY</var>.
