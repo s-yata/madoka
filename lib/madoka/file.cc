@@ -87,12 +87,13 @@ void File::create_(const char *path, std::size_t size,
   const int VALID_FLAGS = FILE_TRUNCATE | FILE_HUGETLB;
   MADOKA_THROW_IF(flags & ~VALID_FLAGS);
 
-  flags |= FILE_CREATE | FILE_WRITABLE;
+  flags |= FILE_WRITABLE;
 
   if (path == NULL) {
+    MADOKA_THROW_IF(flags & FILE_TRUNCATE);
     flags |= FILE_PRIVATE | FILE_ANONYMOUS;
   } else {
-    flags |= FILE_SHARED;
+    flags |= FILE_CREATE | FILE_SHARED;
     if (~flags & FILE_TRUNCATE) {
       struct stat stat;
       if (::stat(path, &stat) == 0) {
