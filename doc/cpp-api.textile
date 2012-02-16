@@ -479,7 +479,51 @@ This example creates two sketches and estimates the inner product between the sk
 
 h2. Configure memory mapping
 
-<code>create()</code>, <code>copy()</code> and <code>shrink()</code>.
+<div class="float">
+<pre>
+namespace madoka {
+
+enum FileFlag {
+  FILE_CREATE    = 1 << 0,
+  FILE_TRUNCATE  = 1 << 1,
+  FILE_READONLY  = 1 << 2,
+  FILE_WRITABLE  = 1 << 3,
+  FILE_SHARED    = 1 << 4,
+  FILE_PRIVATE   = 1 << 5,
+  FILE_ANONYMOUS = 1 << 6,
+  FILE_HUGETLB   = 1 << 7,
+  FILE_PRELOAD   = 1 << 8
+};
+
+}  // namespace madoka
+</pre>
+</div>
+
+<code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code> and <code>shrink()</code> have arguments named <var>path</var> and <var>flags</var>. The <var>path</var> argument specifies the target file. Note that <var>NULL</var> specifies to create an anonymous memory mapping. The <var>flags</var> argument specifies the behavior as follows.
+
+* <var>madoka::FILE_CREATE</var>
+** <var>FILE_CREATE</var> is used internally to create a file.
+* <var>madoka::FILE_TRUNCATE</var>
+** <code>create()</code>, <code>copy()</code> and <code>shrink()</code> accept <var>FILE_TRUNCATE</var>.
+** <var>FILE_TRUNCATE</var> is used to overwrite an existing file. Note that a creation without <var>FILE_TRUNCATE</var> to an existing file throws an exception.
+* <var>madoka::FILE_READONLY</var>
+** <code>open()</code> accepts <var>FILE_READONLY</var>.
+** <var>FILE_READONLY</var> is used to disable modifications. Note that a modification to a read-only sketch will cause a segmentation fault.
+* <var>madoka::FILE_WRITABLE</var>
+** <var>FILE_WRITABLE</var> is used internally to enable modifications.
+* <var>madoka::FILE_SHARED</var>
+** <var>FILE_SHARED</var> is used internally to make modifications visible to other processes.
+* <var>madoka::FILE_PRIVATE</var>
+** <code>open()</code> accepts <var>FILE_PRIVATE</var>.
+** <var>FILE_PRIVATE</var> is used to make modifications invisible to other processes.
+* <var>madoka::FILE_ANONYMOUS</var>
+** <var>FILE_ANONYMOUS</var> is used internally to map memory not backed by a file.
+* <var>madoka::FILE_HUGETLB</var>
+** <code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code> and <code>shrink()</code> accept <var>FILE_HUGETLB</var>.
+** <var>FILE_HUGETLB</var> is used to enable huge pages. See the next section for details.
+* <var>madoka::FILE_PRELOAD</var>
+** <code>open()</code> accepts <var>FILE_PRELOAD</var>.
+** <var>FILE_PRELOAD</var> is used to preload the entire file after mapping a file. Preloading is useful to avoid random disk access.
 
 h2. Use huge pages
 
