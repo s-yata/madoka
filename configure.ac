@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.67])
-AC_INIT([madoka], [0.0.1], [syata@acm.org])
+AC_INIT([madoka], [0.0.2], [susumu.yata@gmail.com])
 AC_CONFIG_SRCDIR([lib/madoka.h])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
