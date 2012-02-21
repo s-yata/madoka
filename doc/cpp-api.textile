@@ -640,6 +640,40 @@ Madoka throws an exception when an error occurs. The exception class is <code>ma
 
 In this example, <code>create()</code> fails to create a sketch because the specifed <var>width</var> is too large. Remember that <code>madoka::Sketch</code> is guaranteed to be unchanged when an error has occurred.
 
-h2. Croquis (to be written)
+h2. Draw a croquis
 
-<code>madoka::Croquis</code>.
+<div class="float">
+<pre>
+#include <iostream>
+
+#include <madoka.h>
+
+int main(int argc, char *argv[]) {
+  madoka::Croquis<float> croquis;
+  croquis.create();
+
+  croquis.set("Madoka", 6, 1.25);
+  croquis.set("Hiroshi", 7, 2.5);
+  croquis.add("Madoka", 6, 0.5);
+
+  std::cout << "Madoka: "
+            << croquis.get("Madoka", 6) << std::endl;
+  std::cout << "Hiroshi: "
+            << croquis.get("Hiroshi", 7) << std::endl;
+  return 0;
+}
+</pre>
+</div>
+
+<div class="float">
+<pre>
+$ g++ draw-a-croquis.cc -lmadoka
+$ ./a.out
+Madoka: 1.75
+Hiroshi: 2.5
+</pre>
+</div>
+
+<code>madoka::Croquis</code> is a simplified version of <code>madoka::Sketch</code>. It does not provide <code>inc()</code>, <code>copy()</code>, <code>filter()</code>, <code>shrink()</code>, <code>merge()</code> and <code>inner_product()</code>. Instead, <code>madoka::Croquis</code> has a template parameter that specifies the type of cells. 
+
+This example uses "floating point numbers":http://en.wikipedia.org/wiki/Floating_point with <code>madoka::Croquis<float></code>. The usage is same as that of <code>madoka::Sketch</code>, but remember that a tiny value may be truncated in <code>add()</code> because of the rounding.
