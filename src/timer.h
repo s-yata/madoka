@@ -38,11 +38,11 @@ class Timer {
  #ifdef _MSC_VER
     struct _timeb tb;
     ::_ftime_s(&tb);
-    return tb.time + (tb.millitm * 0.000001);
+    return tb.time + (tb.millitm * 0.001);
  #else  // _MSC_VER
     struct _timeb tb;
     ::_ftime(&tb);
-    return tb.time + (tb.millitm * 0.000001);
+    return tb.time + (tb.millitm * 0.001);
  #endif  // _MSC_VER
 #else  // WIN32
  #ifdef _POSIX_TIMERS
