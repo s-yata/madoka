@@ -24,173 +24,149 @@
 
 #include "file.h"
 
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
+#ifdef WIN32
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <windows.h>
+#else  // WIN32
+ #include <fcntl.h>
+ #include <sys/mman.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+#endif  // WIN32
 
 #include <cstring>
 #include <limits>
+#include <new>
 
 namespace madoka {
 
-File::File() throw() : fd_(-1), addr_(NULL), size_(0), flags_(0) {}
+class FileImpl {
+ public:
+  FileImpl() throw();
+  ~FileImpl() throw();
 
-File::~File() throw() {
-  if ((addr_ != NULL) && (size_ != 0)) {
-    ::munmap(addr_, size_);
+  void create(const char *path, std::size_t size, int flags) throw(Exception);
+  void open(const char *path, int flags) throw(Exception);
+  void close() throw();
+
+  void load(const char *path, int flags) throw(Exception);
+  void save(const char *path, int flags) const throw(Exception);
+
+  void *addr() const throw() {
+    return addr_;
+  }
+  std::size_t size() const throw() {
+    return size_;
+  }
+  int flags() const throw() {
+    return flags_;
+  }
+
+  void swap(FileImpl *file) throw();
+
+ private:
+  void *addr_;
+  std::size_t size_;
+  int flags_;
+#ifdef WIN32
+  HANDLE file_handle_;
+  HANDLE map_handle_;
+  LPVOID view_addr_;
+#else  // WIN32
+  int fd_;
+  void *map_addr_;
+#endif  // WIN32
+
+  void create_(const char *path, std::size_t size, int flags) throw(Exception);
+  void open_(const char *path, int flags) throw(Exception);
+
+  void load_(const char *path, int flags) throw(Exception);
+
+  // Disallows copy and assignment.
+  FileImpl(const FileImpl &);
+  FileImpl &operator=(const FileImpl &);
+};
+
+#ifdef WIN32
+
+FileImpl::FileImpl() throw()
+  : addr_(NULL), size_(0), flags_(0), file_handle_(INVALID_HANDLE_VALUE),
+    map_handle_(INVALID_HANDLE_VALUE), view_addr_(NULL) {}
+
+FileImpl::~FileImpl() throw() {
+  if (view_addr_ != NULL) {
+    ::UnmapViewOfFile(view_addr_);
+  }
+  if (map_handle_ != INVALID_HANDLE_VALUE) {
+    ::CloseHandle(map_handle_);
+  }
+  if (file_handle_ != INVALID_HANDLE_VALUE) {
+    ::CloseHandle(file_handle_);
+  }
+}
+
+#else  // WIN32
+
+FileImpl::FileImpl() throw()
+  : addr_(NULL), size_(0), flags_(0), fd_(-1), map_addr_(MAP_FAILED) {}
+
+FileImpl::~FileImpl() throw() {
+  if (map_addr_ != MAP_FAILED) {
+    ::munmap(map_addr_, size_);
   }
   if (fd_ != -1) {
     ::close(fd_);
   }
 }
 
-void File::create(const char *path, std::size_t size,
-                  int flags) throw(Exception) {
-  File new_file;
+#endif  // WIN32
+
+void FileImpl::create(const char *path, std::size_t size,
+                      int flags) throw(Exception) {
+  FileImpl new_file;
   new_file.create_(path, size, flags);
   new_file.swap(this);
 }
 
-void File::open(const char *path, int flags) throw(Exception) {
-  File new_file;
+void FileImpl::open(const char *path, int flags) throw(Exception) {
+  FileImpl new_file;
   new_file.open_(path, flags);
   new_file.swap(this);
 }
 
-void File::close() throw() {
-  File().swap(this);
+void FileImpl::close() throw() {
+  FileImpl().swap(this);
 }
 
-void File::load(const char *path, int flags) throw(Exception) {
-  File new_file;
+void FileImpl::load(const char *path, int flags) throw(Exception) {
+  FileImpl new_file;
   new_file.load_(path, flags);
   new_file.swap(this);
 }
 
-void File::save(const char *path, int flags) const throw(Exception) {
-  File file;
+void FileImpl::save(const char *path, int flags) const throw(Exception) {
+  FileImpl file;
   file.create(path, size(), flags);
   std::memcpy(file.addr(), addr(), size());
 }
 
-void File::swap(File *file) throw() {
-  util::swap(fd_, file->fd_);
+void FileImpl::swap(FileImpl *file) throw() {
   util::swap(addr_, file->addr_);
   util::swap(size_, file->size_);
   util::swap(flags_, file->flags_);
+#ifdef WIN32
+  util::swap(file_handle_, file->file_handle_);
+  util::swap(map_handle_, file->map_handle_);
+  util::swap(view_addr_, file->view_addr_);
+#else  // WIN32
+  util::swap(fd_, file->fd_);
+  util::swap(map_addr_, file->map_addr_);
+#endif  // WIN32
 }
 
-void File::create_(const char *path, std::size_t size,
-                   int flags) throw(Exception) {
-  const int VALID_FLAGS = FILE_TRUNCATE | FILE_HUGETLB;
-  MADOKA_THROW_IF(flags & ~VALID_FLAGS);
-
-  flags |= FILE_WRITABLE;
-
-  if (path == NULL) {
-    MADOKA_THROW_IF(flags & FILE_TRUNCATE);
-    flags |= FILE_PRIVATE | FILE_ANONYMOUS;
-  } else {
-    flags |= FILE_CREATE | FILE_SHARED;
-    if (~flags & FILE_TRUNCATE) {
-      struct stat stat;
-      if (::stat(path, &stat) == 0) {
-        MADOKA_THROW("file already exists");
-      }
-    }
-
-    fd_ = ::open(path, get_open_flags(flags), 0666);
-    if (fd_ == -1) {
-      MADOKA_THROW("::open() failed");
-    }
-
-    if (size != 0) {
-      if (::ftruncate(fd_, size) == -1) {
-        MADOKA_THROW("::ftruncate() failed");
-      }
-    }
-  }
-
-  if (size == 0) {
-    static char DUMMY_BUF[1];
-    addr_ = DUMMY_BUF;
-  } else {
-    void *map_addr = ::mmap(NULL, size, get_prot_flags(flags),
-                            get_map_flags(flags), fd_, 0);
-#ifdef MAP_HUGETLB
-    if ((map_addr == MAP_FAILED) && (flags & FILE_HUGETLB)) {
-      flags &= ~FILE_HUGETLB;
-      map_addr = ::mmap(NULL, size, get_prot_flags(flags),
-                        get_map_flags(flags), fd_, 0);
-    }
-#endif  // MAP_HUGETLB
-    if (map_addr == MAP_FAILED) {
-      MADOKA_THROW("::mmap() failed");
-    }
-    addr_ = map_addr;
-  }
-  size_ = size;
-  flags_ = flags;
-}
-
-void File::open_(const char *path, int flags) throw(Exception) {
-  MADOKA_THROW_IF(path == NULL);
-
-  const int VALID_FLAGS = FILE_READONLY | FILE_PRIVATE |
-                          FILE_HUGETLB | FILE_PRELOAD;
-  MADOKA_THROW_IF(flags & ~VALID_FLAGS);
-
-  if (~flags & FILE_READONLY) {
-    flags |= FILE_WRITABLE;
-  }
-  if (~flags & FILE_PRIVATE) {
-    flags |= FILE_SHARED;
-  }
-
-  struct stat stat;
-  if (::stat(path, &stat) == -1) {
-    MADOKA_THROW("::stat() failed");
-  }
-  const std::size_t size = stat.st_size;
-  MADOKA_THROW_IF(size > std::numeric_limits<std::size_t>::max());
-
-  fd_ = ::open(path, get_open_flags(flags));
-  if (fd_ == -1) {
-    MADOKA_THROW("::open() failed");
-  }
-
-  if (size == 0) {
-    static char DUMMY_BUF[1];
-    addr_ = DUMMY_BUF;
-  } else {
-    void *map_addr = ::mmap(NULL, size, get_prot_flags(flags),
-                            get_map_flags(flags), fd_, 0);
-#ifdef MAP_HUGETLB
-    if ((map_addr == MAP_FAILED) && (flags & FILE_HUGETLB)) {
-      flags &= ~FILE_HUGETLB;
-      map_addr = ::mmap(NULL, size, get_prot_flags(flags),
-                        get_map_flags(flags), fd_, 0);
-    }
-#endif  // MAP_HUGETLB
-    if (map_addr == MAP_FAILED) {
-      MADOKA_THROW("::mmap() failed");
-    }
-    addr_ = map_addr;
-  }
-  size_ = size;
-  flags_ = flags;
-
-  if (flags & FILE_PRELOAD) {
-    volatile madoka::UInt64 count = 0;
-    for (std::size_t offset = 0; offset < size_; offset += 1024) {
-      count += *static_cast<UInt8 *>(addr_) + offset;
-    }
-  }
-}
-
-void File::load_(const char *path, int flags) throw(Exception) {
+void FileImpl::load_(const char *path, int flags) throw(Exception) {
   MADOKA_THROW_IF(path == NULL);
 
   const int VALID_FLAGS = FILE_HUGETLB;
@@ -203,7 +179,185 @@ void File::load_(const char *path, int flags) throw(Exception) {
   std::memcpy(addr(), file.addr(), size());
 }
 
-int File::get_open_flags(int flags) throw() {
+#ifdef WIN32
+
+DWORD get_access_flags(int flags) {
+  DWORD access_flags = 0;
+  if (flags & FILE_READONLY) {
+    access_flags |= GENERIC_READ;
+  }
+  if (flags & FILE_WRITABLE) {
+    access_flags |= GENERIC_READ | GENERIC_WRITE;
+  }
+  return access_flags;
+}
+
+DWORD get_mode_flags(int flags) {
+  DWORD mode_flags = 0;
+  if (flags & FILE_READONLY) {
+    mode_flags |= FILE_SHARE_READ;
+  }
+  if (flags & FILE_WRITABLE) {
+    mode_flags |= FILE_SHARE_READ | FILE_SHARE_WRITE;
+  }
+  return mode_flags;
+}
+
+DWORD get_disposition_flags(int flags) {
+  DWORD disposition_flags = 0;
+  if (flags & FILE_CREATE) {
+    if (flags & FILE_TRUNCATE) {
+      disposition_flags |= CREATE_ALWAYS;
+    } else {
+      disposition_flags |= CREATE_NEW;
+    }
+  } else {
+    disposition_flags |= OPEN_EXISTING;
+  }
+  return disposition_flags;
+}
+
+DWORD get_map_type(int flags) {
+  DWORD map_type = 0;
+  if (flags & FILE_READONLY) {
+    map_type = PAGE_READONLY;
+  }
+  if (flags & FILE_WRITABLE) {
+    if (flags & FILE_PRIVATE) {
+      map_type = PAGE_WRITECOPY;
+    } else {
+      map_type = PAGE_READWRITE;
+    }
+  }
+  return map_type;
+}
+
+DWORD get_view_type(int flags) {
+  DWORD view_type = 0;
+  if (flags & FILE_READONLY) {
+    view_type = FILE_MAP_READ;
+  }
+  if (flags & FILE_WRITABLE) {
+    if (flags & FILE_PRIVATE) {
+      view_type = FILE_MAP_COPY;
+    } else {
+      view_type = FILE_MAP_WRITE;
+    }
+  }
+  return view_type;
+}
+
+void FileImpl::create_(const char *path, std::size_t size,
+                       int flags) throw(Exception) {
+  const int VALID_FLAGS = FILE_TRUNCATE | FILE_HUGETLB;
+  MADOKA_THROW_IF(flags & ~VALID_FLAGS);
+
+  flags |= FILE_WRITABLE;
+  flags &= FILE_HUGETLB;
+
+  if (path == NULL) {
+    MADOKA_THROW_IF(flags & FILE_TRUNCATE);
+    flags |= FILE_PRIVATE | FILE_ANONYMOUS;
+  } else {
+    flags |= FILE_CREATE | FILE_SHARED;
+    if (~flags & FILE_TRUNCATE) {
+      struct __stat64 stat;
+      MADOKA_THROW_IF(::stat64(path, &stat) == 0);
+    }
+
+    file_handle_ = ::CreateFileA(path, get_access_flags(flags),
+                                 get_mode_flags(flags), NULL,
+                                 get_disposition_flags(flags),
+                                 FILE_ATTRIBUTE_NORMAL, NULL);
+    MADOKA_THROW_IF(file_handle_ == INVALID_HANDLE_VALUE);
+
+    if (size != 0) {
+      const LONG size_low = static_cast<LONG>(size & 0xFFFFFFFFU);
+      LONG size_high = static_cast<LONG>(size >> 32);
+      const DWORD file_pos = ::SetFilePointer(file_handle_, size_low,
+                                              &size_high, FILE_BEGIN);
+      MADOKA_THROW_IF((file_pos == INVALID_SET_FILE_POINTER) &&
+                      (::GetLastError() != 0));
+      MADOKA_THROW_IF(::SetEndOfFile(file_handle_) == 0);
+    }
+  }
+
+  if (size == 0) {
+    static char DUMMY_BUF[1];
+    addr_ = DUMMY_BUF;
+  } else {
+    const DWORD size_low = static_cast<DWORD>(size & 0xFFFFFFFFU);
+    const DWORD size_high = static_cast<DWORD>(size >> 32);
+    map_handle_ = ::CreateFileMapping(file_handle_, NULL, get_map_type(flags),
+                                      size_high, size_low, NULL);
+    MADOKA_THROW_IF(map_handle_ == INVALID_HANDLE_VALUE);
+
+    view_addr_ = ::MapViewOfFile(map_handle_, get_view_type(flags), 0, 0, 0);
+    MADOKA_THROW_IF(view_addr_ == NULL);
+
+    addr_ = view_addr_;
+  }
+  size_ = size;
+  flags_ = flags;
+}
+
+void FileImpl::open_(const char *path, int flags) throw(Exception) {
+  MADOKA_THROW_IF(path == NULL);
+
+  const int VALID_FLAGS = FILE_READONLY | FILE_PRIVATE |
+                          FILE_HUGETLB | FILE_PRELOAD;
+  MADOKA_THROW_IF(flags & ~VALID_FLAGS);
+
+  if (~flags & FILE_READONLY) {
+    flags |= FILE_WRITABLE;
+  }
+  if (~flags & FILE_PRIVATE) {
+    flags |= FILE_SHARED;
+  }
+  flags &= FILE_HUGETLB;
+
+  struct __stat64 stat;
+  MADOKA_THROW_IF(::_stat64(path, &stat) == -1);
+  MADOKA_THROW_IF(stat.st_size < 0);
+  MADOKA_THROW_IF(static_cast<UInt64>(stat.st_size) >
+                  std::numeric_limits<std::size_t>::max());
+  const std::size_t size = static_cast<std::size_t>(stat.st_size);
+
+  file_handle_ = ::CreateFileA(path, get_access_flags(flags),
+                               get_mode_flags(flags), NULL,
+                               get_disposition_flags(flags),
+                               FILE_ATTRIBUTE_NORMAL, NULL);
+  MADOKA_THROW_IF(file_handle_ == NULL);
+
+  if (size == 0) {
+    static char DUMMY_BUF[1];
+    addr_ = DUMMY_BUF;
+  } else {
+    map_handle_ = ::CreateFileMapping(file_handle_, NULL, get_map_type(flags),
+                                      0, 0, NULL);
+    MADOKA_THROW_IF(map_handle_ == NULL);
+
+    view_addr_ = ::MapViewOfFile(map_handle_, get_view_type(flags), 0, 0, 0);
+    MADOKA_THROW_IF(view_addr_ == NULL);
+
+    addr_ = view_addr_;
+  }
+  size_ = size;
+  flags_ = flags;
+
+  if (flags & FILE_PRELOAD) {
+    volatile UInt64 count = 0;
+    for (std::size_t offset = 0; offset < size_; offset += 1024) {
+      count += *static_cast<UInt8 *>(addr_) + offset;
+    }
+  }
+}
+
+#else  // WIN32
+
+namespace {
+
+int get_open_flags(int flags) throw() {
   int open_flags = 0;
   if (flags & FILE_CREATE) {
     open_flags |= O_CREAT;
@@ -220,7 +374,7 @@ int File::get_open_flags(int flags) throw() {
   return open_flags;
 }
 
-int File::get_prot_flags(int flags) throw() {
+int get_prot_flags(int flags) throw() {
   int prot_flags = PROT_READ;
   if (flags & FILE_WRITABLE) {
     prot_flags |= PROT_WRITE;
@@ -228,7 +382,7 @@ int File::get_prot_flags(int flags) throw() {
   return prot_flags;
 }
 
-int File::get_map_flags(int flags) throw() {
+int get_map_flags(int flags) throw() {
   int map_flags = 0;
   if (flags & FILE_SHARED) {
     map_flags |= MAP_SHARED;
@@ -245,6 +399,163 @@ int File::get_map_flags(int flags) throw() {
   }
 #endif  // MAP_HUGETLB
   return map_flags;
+}
+
+}  // namespace
+
+void FileImpl::create_(const char *path, std::size_t size,
+                       int flags) throw(Exception) {
+  const int VALID_FLAGS = FILE_TRUNCATE | FILE_HUGETLB;
+  MADOKA_THROW_IF(flags & ~VALID_FLAGS);
+
+  flags |= FILE_WRITABLE;
+
+  if (path == NULL) {
+    MADOKA_THROW_IF(flags & FILE_TRUNCATE);
+    flags |= FILE_PRIVATE | FILE_ANONYMOUS;
+  } else {
+    flags |= FILE_CREATE | FILE_SHARED;
+    if (~flags & FILE_TRUNCATE) {
+      struct stat stat;
+      MADOKA_THROW_IF(::stat(path, &stat) == 0);
+    }
+
+    fd_ = ::open(path, get_open_flags(flags), 0666);
+    MADOKA_THROW_IF(fd_ == -1);
+
+    if (size != 0) {
+      MADOKA_THROW_IF(::ftruncate(fd_, size) == -1);
+    }
+  }
+
+  if (size == 0) {
+    static char DUMMY_BUF[1];
+    addr_ = DUMMY_BUF;
+  } else {
+     map_addr_ = ::mmap(NULL, size, get_prot_flags(flags),
+                        get_map_flags(flags), fd_, 0);
+#ifdef MAP_HUGETLB
+    if ((map_addr_ == MAP_FAILED) && (flags & FILE_HUGETLB)) {
+      flags &= ~FILE_HUGETLB;
+      map_addr_ = ::mmap(NULL, size, get_prot_flags(flags),
+                         get_map_flags(flags), fd_, 0);
+    }
+#endif  // MAP_HUGETLB
+    MADOKA_THROW_IF(map_addr_ == MAP_FAILED);
+    addr_ = map_addr_;
+  }
+  size_ = size;
+  flags_ = flags;
+}
+
+void FileImpl::open_(const char *path, int flags) throw(Exception) {
+  MADOKA_THROW_IF(path == NULL);
+
+  const int VALID_FLAGS = FILE_READONLY | FILE_PRIVATE |
+                          FILE_HUGETLB | FILE_PRELOAD;
+  MADOKA_THROW_IF(flags & ~VALID_FLAGS);
+
+  if (~flags & FILE_READONLY) {
+    flags |= FILE_WRITABLE;
+  }
+  if (~flags & FILE_PRIVATE) {
+    flags |= FILE_SHARED;
+  }
+
+  struct stat stat;
+  MADOKA_THROW_IF(::stat(path, &stat) == -1);
+  MADOKA_THROW_IF(stat.st_size < 0);
+  MADOKA_THROW_IF(static_cast<UInt64>(stat.st_size) >
+                  std::numeric_limits<std::size_t>::max());
+  const std::size_t size = static_cast<std::size_t>(stat.st_size);
+
+  fd_ = ::open(path, get_open_flags(flags));
+  MADOKA_THROW_IF(fd_ == -1);
+
+  if (size == 0) {
+    static char DUMMY_BUF[1];
+    addr_ = DUMMY_BUF;
+  } else {
+    map_addr_ = ::mmap(NULL, size, get_prot_flags(flags),
+                       get_map_flags(flags), fd_, 0);
+#ifdef MAP_HUGETLB
+    if ((map_addr_ == MAP_FAILED) && (flags & FILE_HUGETLB)) {
+      flags &= ~FILE_HUGETLB;
+      map_addr_ = ::mmap(NULL, size, get_prot_flags(flags),
+                         get_map_flags(flags), fd_, 0);
+    }
+#endif  // MAP_HUGETLB
+    MADOKA_THROW_IF(map_addr_ == MAP_FAILED);
+    addr_ = map_addr_;
+  }
+  size_ = size;
+  flags_ = flags;
+
+  if (flags & FILE_PRELOAD) {
+    volatile UInt64 count = 0;
+    for (std::size_t offset = 0; offset < size_; offset += 1024) {
+      count += *static_cast<UInt8 *>(addr_) + offset;
+    }
+  }
+}
+
+#endif  // WIN32
+
+File::File() throw() : impl_(NULL) {}
+
+File::~File() throw() {
+  delete impl_;
+}
+
+void File::create(const char *path, std::size_t size,
+                  int flags) throw(Exception) {
+  if (impl_ == NULL) {
+    impl_ = new (std::nothrow) FileImpl;
+    MADOKA_THROW_IF(impl_ == NULL);
+  }
+  impl_->create(path, size, flags);
+}
+
+void File::open(const char *path, int flags) throw(Exception) {
+  if (impl_ == NULL) {
+    impl_ = new (std::nothrow) FileImpl;
+    MADOKA_THROW_IF(impl_ == NULL);
+  }
+  impl_->open(path, flags);
+}
+
+void File::close() throw() {
+  File().swap(this);
+}
+
+void File::load(const char *path, int flags) throw(Exception) {
+  if (impl_ == NULL) {
+    impl_ = new (std::nothrow) FileImpl;
+    MADOKA_THROW_IF(impl_ == NULL);
+  }
+  impl_->load(path, flags);
+}
+
+void File::save(const char *path, int flags) const throw(Exception) {
+  if (impl_ != NULL) {
+    impl_->save(path, flags);
+  }
+}
+
+void *File::addr() const throw() {
+  return (impl_ != NULL) ? impl_->addr() : NULL;
+}
+
+std::size_t File::size() const throw() {
+  return (impl_ != NULL) ? impl_->size() : 0;
+}
+
+int File::flags() const throw() {
+  return (impl_ != NULL) ? impl_->flags() : 0;
+}
+
+void File::swap(File *file) throw() {
+  util::swap(impl_, file->impl_);
 }
 
 }  // namespace madoka

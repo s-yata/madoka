@@ -64,6 +64,8 @@ enum FileFlag {
   FILE_PRELOAD   = MADOKA_FILE_PRELOAD
 };
 
+class FileImpl;
+
 class File {
  public:
   File() throw();
@@ -77,32 +79,14 @@ class File {
   void load(const char *path, int flags = 0) throw(Exception);
   void save(const char *path, int flags = 0) const throw(Exception);
 
-  void *addr() const throw() {
-    return addr_;
-  }
-  std::size_t size() const throw() {
-    return size_;
-  }
-  int flags() const throw() {
-    return flags_;
-  }
+  void *addr() const throw();
+  std::size_t size() const throw();
+  int flags() const throw();
 
   void swap(File *file) throw();
 
  private:
-  int fd_;
-  void *addr_;
-  std::size_t size_;
-  int flags_;
-
-  void create_(const char *path, std::size_t size, int flags) throw(Exception);
-  void open_(const char *path, int flags) throw(Exception);
-
-  void load_(const char *path, int flags) throw(Exception);
-
-  static int get_open_flags(int flags) throw();
-  static int get_prot_flags(int flags) throw();
-  static int get_map_flags(int flags) throw();
+  FileImpl *impl_;
 
   // Disallows copy and assignment.
   File(const File &);
