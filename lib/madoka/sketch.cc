@@ -252,7 +252,8 @@ int madoka_inner_product(const madoka_sketch *lhs, const madoka_sketch *rhs,
 
 namespace madoka {
 
-Sketch::Sketch() throw() : file_(), random_(NULL), table_(NULL) {}
+Sketch::Sketch() throw()
+  : file_(), header_(NULL), random_(NULL), table_(NULL) {}
 
 Sketch::~Sketch() throw() {}
 
@@ -417,6 +418,7 @@ double Sketch::inner_product(const Sketch &rhs, double *lhs_square_length,
 
 void Sketch::swap(Sketch *sketch) throw() {
   file_.swap(&sketch->file_);
+  util::swap(header_, sketch->header_);
   util::swap(random_, sketch->random_);
   util::swap(table_, sketch->table_);
 }
@@ -457,7 +459,8 @@ void Sketch::create_(UInt64 width, UInt64 max_value, const char *path,
   MADOKA_THROW_IF(file_size > std::numeric_limits<std::size_t>::max());
 
   file_.create(path, file_size, flags);
-  random_ = reinterpret_cast<Random *>(&header() + 1);
+  header_ = static_cast<Header *>(file_.addr());
+  random_ = reinterpret_cast<Random *>(header_ + 1);
   table_ = reinterpret_cast<UInt64 *>(random_ + 1);
 
   header().set_width(width);
@@ -474,14 +477,16 @@ void Sketch::create_(UInt64 width, UInt64 max_value, const char *path,
 
 void Sketch::open_(const char *path, int flags) throw(Exception) {
   file_.open(path, flags);
-  random_ = reinterpret_cast<Random *>(&header() + 1);
+  header_ = static_cast<Header *>(file_.addr());
+  random_ = reinterpret_cast<Random *>(header_ + 1);
   table_ = reinterpret_cast<UInt64 *>(random_ + 1);
   check_header();
 }
 
 void Sketch::load_(const char *path, int flags) throw(Exception) {
   file_.load(path, flags);
-  random_ = reinterpret_cast<Random *>(&header() + 1);
+  header_ = static_cast<Header *>(file_.addr());
+  random_ = reinterpret_cast<Random *>(header_ + 1);
   table_ = reinterpret_cast<UInt64 *>(random_ + 1);
   check_header();
 }

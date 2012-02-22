@@ -210,14 +210,15 @@ class Sketch {
 
  private:
   File file_;
+  Header *header_;
   Random *random_;
   UInt64 *table_;
 
   const Header &header() const throw() {
-    return *static_cast<const Header *>(file_.addr());
+    return *header_;
   }
   Header &header() throw() {
-    return *static_cast<Header *>(file_.addr());
+    return *header_;
   }
 
   void create_(UInt64 width, UInt64 max_value, const char *path,
