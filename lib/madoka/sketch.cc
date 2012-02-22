@@ -447,7 +447,7 @@ void Sketch::create_(UInt64 width, UInt64 max_value, const char *path,
   MADOKA_THROW_IF(width > SKETCH_MAX_WIDTH);
   MADOKA_THROW_IF(max_value > SKETCH_MAX_MAX_VALUE);
 
-  const UInt64 value_size = 64 - ::__builtin_clzll(max_value);
+  const UInt64 value_size = 64 - util::bit_scan_reverse(max_value);
   UInt64 table_size = sizeof(UInt64) * width;
   if (value_size != SKETCH_APPROX_VALUE_SIZE) {
     table_size = (((value_size * width * SKETCH_DEPTH) + 63) / 64) * 8;
@@ -492,7 +492,7 @@ void Sketch::check_header() const throw(Exception) {
   MADOKA_THROW_IF((width_mask() != 0) && (width_mask() != (width() - 1)));
   MADOKA_THROW_IF(depth() != SKETCH_DEPTH);
   MADOKA_THROW_IF(max_value() == 0);
-  MADOKA_THROW_IF(value_size() != (64 - ::__builtin_clzll(max_value())));
+  MADOKA_THROW_IF(value_size() != (64 - util::bit_scan_reverse(max_value())));
   if (mode() == SKETCH_APPROX_MODE) {
     MADOKA_THROW_IF(table_size() != (sizeof(UInt64)) * width());
   } else {

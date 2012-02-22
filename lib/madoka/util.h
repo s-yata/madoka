@@ -36,6 +36,12 @@
 #endif  // _MSC_VER
 
 #ifdef __cplusplus
+ #ifdef _MSC_VER
+  #include <intrin.h>
+ #endif  // _MSC_VER
+#endif  // __cplusplus
+
+#ifdef __cplusplus
 extern "C" {
 #endif  // __cplusplus
 
@@ -66,10 +72,22 @@ typedef ::madoka_uint64 UInt64;
 namespace util {
 
 template <typename T>
-void swap(T &lhs, T &rhs) throw() {
+inline void swap(T &lhs, T &rhs) throw() {
   const T temp = lhs;
   lhs = rhs;
   rhs = temp;
+}
+
+// bit_scan_reverse() returns the index of the most significant 1 bit of
+// `value'. Note that bit_scan_reverse() returns 0 or 64 if `value' == 0.
+inline UInt64 bit_scan_reverse(UInt64 value) throw() {
+#ifdef _MSC_VER
+  unsigned long index;
+  ::_BitScanReverse64(&index, value);
+  return index;
+#else  // _MSC_VER
+  return ::__builtin_clzll(value);
+#endif  // _MSC_VER
 }
 
 }  // namespace util
