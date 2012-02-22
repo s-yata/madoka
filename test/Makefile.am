@@ -8,7 +8,6 @@ TESTS = \
   file-test \
   croquis-test \
   sketch-test \
-  thread-test \
   c-test
 
 check_PROGRAMS = $(TESTS)
@@ -31,9 +30,13 @@ croquis_test_LDADD = ../lib/libmadoka.la
 sketch_test_SOURCES = sketch-test.cc
 sketch_test_LDADD = ../lib/libmadoka.la
 
+c_test_SOURCES = c-test.c
+c_test_LDADD = ../lib/libmadoka.la
+
+if HAVE_PTHREAD
+TESTS += thread-test
+
 thread_test_SOURCES = thread-test.cc
 thread_test_LDADD = ../lib/libmadoka.la
 thread_test_LDFLAGS = -pthread
-
-c_test_SOURCES = c-test.c
-c_test_LDADD = ../lib/libmadoka.la
+endif
