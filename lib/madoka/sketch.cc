@@ -768,7 +768,8 @@ UInt64 Sketch::approx_inc(const UInt64 cell_ids[3]) throw() {
       ((approxes[1] < approxes[2]) ? approxes[1] : approxes[2]);
 
   UInt64 new_approx = min_approx;
-  if (((approxes[0] != min_approx) ||
+  if ((new_approx != APPROX_MASK) &&
+      ((approxes[0] != min_approx) ||
        !((table_[cell_ids[0]] >> SKETCH_OWNER_OFFSET) & flag)) &&
       ((approxes[1] != min_approx) ||
        !((table_[cell_ids[1]] >> (SKETCH_OWNER_OFFSET + 2)) & flag)) &&

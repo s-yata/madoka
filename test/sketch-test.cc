@@ -104,6 +104,21 @@ void basic_test(madoka::UInt64 max_value,
   for (std::size_t i = 0; i < keys.size(); ++i) {
     MADOKA_THROW_IF(sketch.get(keys[i].c_str(), keys[i].length()) < freqs[i]);
   }
+
+  sketch.set("query", 5, sketch.max_value());
+  if (sketch.mode() == madoka::SKETCH_EXACT_MODE) {
+    MADOKA_THROW_IF(sketch.get("query", 5) != sketch.max_value());
+    MADOKA_THROW_IF(sketch.inc("query", 5) != sketch.max_value());
+    MADOKA_THROW_IF(sketch.get("query", 5) != sketch.max_value());
+  } else {
+    MADOKA_THROW_IF(madoka::Approx::encode(sketch.get("query", 5)) !=
+                    madoka::Approx::encode(sketch.max_value()));
+    MADOKA_THROW_IF(madoka::Approx::encode(sketch.inc("query", 5)) !=
+                    madoka::Approx::encode(sketch.max_value()));
+    MADOKA_THROW_IF(madoka::Approx::encode(sketch.get("query", 5)) !=
+                    madoka::Approx::encode(sketch.max_value()));
+  }
+
   sketch.clear();
   sketch.close();
 
@@ -335,7 +350,6 @@ void benchmark_sketch(const std::vector<std::string> &keys,
     std::cout << std::endl;
   }
 }
-
 
 void benchmark_shrink(const std::vector<std::string> &keys,
                       const std::vector<madoka::UInt64> &freqs,
