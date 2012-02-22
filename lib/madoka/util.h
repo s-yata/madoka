@@ -31,15 +31,13 @@
  #include <stddef.h>
 #endif  // __cplusplus
 
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+ #ifdef __cplusplus
+  #include <intrin.h>
+ #endif  // __cplusplus
+#else  // _MSC_VER
  #include <stdint.h>
 #endif  // _MSC_VER
-
-#ifdef __cplusplus
- #ifdef _MSC_VER
-  #include <intrin.h>
- #endif  // _MSC_VER
-#endif  // __cplusplus
 
 #ifdef __cplusplus
 extern "C" {
