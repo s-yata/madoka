@@ -23,8 +23,6 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <getopt.h>
-#include <sys/time.h>
-#include <unistd.h>
 
 #include <algorithm>
 #include <cmath>
@@ -44,6 +42,7 @@
 #include <madoka.h>
 
 #include "../config.h"
+#include "timer.h"
 
 namespace {
 
@@ -66,32 +65,6 @@ double FREQ_FACTOR = 1.0;
 double WIDTH_FACTOR = 1.4142135623730951;
 
 int FILE_FLAGS = 0;
-
-class Timer {
- public:
-  Timer() : base_(get_time()) {}
-
-  double elapsed() const {
-    return get_time() - base_;
-  }
-
-  void reset() {
-    base_ = get_time();
-  }
-
- private:
-  double base_;
-
-  static double get_time() {
-    struct timeval tv;
-    ::gettimeofday(&tv, NULL);
-    return tv.tv_sec + (tv.tv_usec * 0.000001);
-  }
-
-  // Disallows copy and assignment.
-  Timer(const Timer &);
-  Timer &operator=(const Timer &);
-};
 
 void print_version() {
   std::cout << "Version: " << PACKAGE_STRING << "\n"
@@ -354,7 +327,7 @@ void benchmark_filter(const std::vector<std::string> &keys,
     std::vector<double> times;
     for (madoka::UInt64 trial_id = 0; trial_id < NUM_TRIALS; ++trial_id) {
       sketch.create(width, THRESHOLD, SKETCH_PATH, FILE_FLAGS);
-      Timer timer;
+      madoka::Timer timer;
       for (std::size_t j = 0; j < ids.size(); ++j) {
         sketch.inc(keys[ids[j]].c_str(), keys[ids[j]].length());
       }
@@ -372,7 +345,7 @@ void benchmark_filter(const std::vector<std::string> &keys,
 
     times.clear();
     for (madoka::UInt64 trial_id = 0; trial_id < NUM_TRIALS; ++trial_id) {
-      Timer timer;
+      madoka::Timer timer;
       for (std::size_t j = 0; j < ids.size(); ++j) {
         filter.get(keys[ids[j]].c_str(), keys[ids[j]].length());
       }
@@ -439,7 +412,7 @@ void benchmark_counter(const std::vector<std::string> &keys,
     std::vector<double> times;
     for (madoka::UInt64 trial_id = 0; trial_id < NUM_TRIALS; ++trial_id) {
       sketch.create(width, 0, SKETCH_PATH, FILE_FLAGS);
-      Timer timer;
+      madoka::Timer timer;
       for (std::size_t j = 0; j < ids.size(); ++j) {
         sketch.inc(keys[ids[j]].c_str(), keys[ids[j]].length());
       }
