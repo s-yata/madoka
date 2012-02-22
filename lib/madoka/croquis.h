@@ -54,7 +54,7 @@ const UInt64 CROQUIS_DEFAULT_DEPTH = CROQUIS_HASH_SIZE;
 template <typename T>
 class Croquis {
  public:
-  Croquis() throw() : file_(), table_(NULL) {}
+  Croquis() throw() : file_(), header_(NULL), table_(NULL) {}
   ~Croquis() throw() {}
 
   void create(UInt64 width = 0, UInt64 depth = 0, const char *path = NULL,
@@ -181,18 +181,20 @@ class Croquis {
 
   void swap(Croquis *sketch) throw() {
     file_.swap(&sketch->file_);
+    util::swap(header_, sketch->header_);
     util::swap(table_, sketch->table_);
   }
 
  private:
   File file_;
+  Header *header_;
   T *table_;
 
   const Header &header() const throw() {
-    return *static_cast<const Header *>(file_.addr());
+    return *header_;
   }
   Header &header() throw() {
-    return *static_cast<Header *>(file_.addr());
+    return *header_;
   }
 
   void create_(UInt64 width, UInt64 depth, const char *path,
@@ -215,7 +217,8 @@ class Croquis {
     MADOKA_THROW_IF(file_size > std::numeric_limits<std::size_t>::max());
 
     file_.create(path, static_cast<std::size_t>(file_size), flags);
-    table_ = reinterpret_cast<T *>(&header() + 1);
+    header_ = static_cast<Header *>(file_.addr());
+    table_ = reinterpret_cast<T *>(header_ + 1);
 
     header().set_width(width);
     header().set_depth(depth);
@@ -231,13 +234,15 @@ class Croquis {
 
   void open_(const char *path, int flags) throw(Exception) {
     file_.open(path, flags);
-    table_ = reinterpret_cast<T *>(&header() + 1);
+    header_ = static_cast<Header *>(file_.addr());
+    table_ = reinterpret_cast<T *>(header_ + 1);
     check_header();
   }
 
   void load_(const char *path, int flags) throw(Exception) {
     file_.load(path, flags);
-    table_ = reinterpret_cast<T *>(&header() + 1);
+    header_ = static_cast<Header *>(file_.addr());
+    table_ = reinterpret_cast<T *>(header_ + 1);
     check_header();
   }
 
