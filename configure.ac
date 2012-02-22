@@ -17,6 +17,9 @@ AC_PROG_INSTALL
 AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for libraries.
+have_pthread="false"
+AC_CHECK_LIB([pthread], [pthread_create], [have_pthread="true"])
+AM_CONDITIONAL([HAVE_PTHREAD], ["${have_pthread}"])
 
 # Checks for header files.
 
