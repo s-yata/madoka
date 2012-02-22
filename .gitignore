@@ -1,11 +1,14 @@
+*.exe
 *.la
 *.lo
 *.o
+*~
 .deps
 .libs
 /_site
 /aclocal.m4
 /autom4te.cache
+/autoscan.log
 /config.guess
 /config.h
 /config.h.in
@@ -13,6 +16,7 @@
 /config.status
 /config.sub
 /configure
+/configure.scan
 /depcomp
 /install-sh
 /libtool*
@@ -21,6 +25,7 @@
 /madoka.pc
 /missing
 /src/madoka
+/src/madoka-benchmark
 /stamp-h1
 /test/*-test
 Makefile
