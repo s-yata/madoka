@@ -369,7 +369,9 @@ void benchmark_filter(const std::vector<std::string> &keys,
     }
 
     std::printf("%9lu %7lu %7lu %8.2lf %8.2lf %9.2lf %10.2lf\n",
-                width, sketch.file_size() >> 10, filter.file_size() >> 10,
+                static_cast<unsigned long>(width),
+                static_cast<unsigned long>(sketch.file_size() >> 10),
+                static_cast<unsigned long>(filter.file_size() >> 10),
                 average_inc_time, average_get_time,
                 100.0 * num_corrects / keys.size(),
                 100.0 * num_matches / keys.size());
@@ -430,7 +432,9 @@ void benchmark_counter(const std::vector<std::string> &keys,
     }
 
     std::printf("%9lu %7lu %8.2lf %7.3lf %7.3lf %7.3lf %7.3lf\n",
-                width, sketch.file_size() >> 10, average_inc_time,
+                static_cast<unsigned long>(width),
+                static_cast<unsigned long>(sketch.file_size() >> 10),
+                average_inc_time,
                 1.0 * total_set_error / keys.size(),
                 1.0 * total_inc_error / keys.size(),
                 1.0 * total_set_error / ids.size(),
