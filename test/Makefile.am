@@ -31,7 +31,7 @@ sketch_test_SOURCES = sketch-test.cc
 sketch_test_LDADD = ../lib/libmadoka.la
 
 c_test_SOURCES = c-test.c
-c_test_LDADD = ../lib/libmadoka.la
+c_test_LDADD = ../lib/libmadoka.la -lstdc++
 
 if HAVE_PTHREAD
 TESTS += thread-test
