@@ -463,7 +463,7 @@ void benchmark() {
 
   if (MIN_WIDTH == 0) {
     if (THRESHOLD == 0) {
-      MIN_WIDTH = std::max(keys.size() >> 3, madoka::UInt64(1));
+      MIN_WIDTH = std::max(keys.size() >> 3, std::size_t(1));
     } else {
       MIN_WIDTH = std::max(keys.size() / THRESHOLD, madoka::UInt64(1));
     }

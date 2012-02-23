@@ -273,7 +273,8 @@ void FileImpl::create_(const char *path, std::size_t size,
 
     if (size != 0) {
       const LONG size_low = static_cast<LONG>(size & 0xFFFFFFFFU);
-      LONG size_high = static_cast<LONG>(size >> 32);
+      LONG size_high = static_cast<LONG>(
+          static_cast<UInt64>(size) >> 32);
       const DWORD file_pos = ::SetFilePointer(file_handle_, size_low,
                                               &size_high, FILE_BEGIN);
       MADOKA_THROW_IF((file_pos == INVALID_SET_FILE_POINTER) &&
@@ -287,7 +288,8 @@ void FileImpl::create_(const char *path, std::size_t size,
     addr_ = DUMMY_BUF;
   } else {
     const DWORD size_low = static_cast<DWORD>(size & 0xFFFFFFFFU);
-    const DWORD size_high = static_cast<DWORD>(size >> 32);
+    const DWORD size_high = static_cast<DWORD>(
+        static_cast<UInt64>(size) >> 32);
     map_handle_ = ::CreateFileMapping(file_handle_, NULL, get_map_type(flags),
                                       size_high, size_low, NULL);
     MADOKA_THROW_IF(map_handle_ == INVALID_HANDLE_VALUE);
