@@ -312,9 +312,9 @@ Madoka: 7
 
 * <code>madoka::Sketch::filter()</code>
 ** <code>filter()</code> はスケッチにフィルタを適用する関数です．具体的には，フィルタとして渡された関数をスケッチに含まれるすべての値に適用します．第一引数にはフィルタを指定するようになっています．
-** フィルタとして指定できるのは，現在の値（<code>madoka::UInt64</code>）を受け取り，適用後の値（<code>madoka::UInt64</code>）を戻す関数へのポインタです．
+** フィルタとして指定できるのは，現在の値（<code>madoka::UInt64</code>）を受け取り，適用後の値（<code>madoka::UInt64</code>）を返す関数へのポインタです．
 ** 関数オブジェクトを渡すことも可能ですが，引数と戻り値の型を <code>madoka::UInt64</code> にする必要があります．
-** フィルタが <var>max_value</var> を超える値を戻したときは自動的に <var>max_value</var> へと補正するため，<code>UINT64_MAX</code> を超えなければ問題にはなりません．
+** フィルタが <var>max_value</var> を超える値を返したときは自動的に <var>max_value</var> へと補正するため，<code>UINT64_MAX</code> を超えなければ問題にはなりません．
 ** <var>NULL</var> を引数にしたときは何もしません．
 
 フィルタ機能を用いれば， "Lossy Conservative Updates (PDF)":http://www.umiacs.umd.edu/%7Eamit/Papers/goyalLCUSketchAAAI11.pdf を実装することができます．また，カウンタが飽和したときに全体を <var>1/2</var> にすることでスケッチの延命を図るという使い方があります．さらに，すべての値を対数に変換することで圧縮するなどの使い方もあります．
@@ -579,32 +579,32 @@ Other than <code>create()</code>, all the functions taking <var>path</var> and <
 
 h2. Specify a seed
 
-<code>madoka::Sketch</code> provides an interface to specify a seed, which is used to calculate hash values and to initialize a random number generator. The 5th argument of <code>create()</code> specifies the seed. However, basically there is no need to specify a user-defined seed. Note that you cannot merge sketches having different seeds.
+<code>madoka::Sketch</code> では，ハッシュ関数および疑似乱数生成器の種を指定することができます．指定方法は <code>create()</code> の第五引数です．既に存在するスケッチの種を変更することはできません．種の異なるスケッチ同士では合成できないという制約があるため，デフォルトの種に統一しておいた方が使いやすくなります．基本的に使わない機能です．
 
 h2. Get information of a sketch
 
 * <code>madoka::Sketch::width()</code>
-** <code>width()</code> returns <var>width</var> of the sketch.
+** <code>width()</code> は <var>width</var> を返します．
 * <code>madoka::Sketch::width_mask()</code>
-** <code>width_mask()</code> returns <var>width - 1</var> if <var>width</var> is a power of 2, otherwise returns <var>0</var>.
+** <code>width_mask()</code> は，<var>width</var> が 2 のべき乗であれば <var>width - 1</var> を返し，そうでなければ <var>0</var> を返します．
 * <code>madoka::Sketch::depth()</code>
-** <code>depth()</code> returns <var>madoka::SKETCH_DEPTH</var>.
+** <code>depth()</code> は <var>madoka::SKETCH_DEPTH</var> を返します．
 * <code>madoka::Sketch::max_value()</code>
-** <code>max_value()</code> returns <var>max_value</var> of the sketch.
+** <code>max_value()</code> は <var>max_value</var> を返します．
 * <code>madoka::Sketch::value_mask()</code>
-** <code>value_mask()</code> returns <var>max_value</var>.
+** <code>value_mask()</code> は <var>max_value</var> を返します．
 * <code>madoka::Sketch::value_size()</code>
-** <code>value_size()</code> returns <var>log<sub>2</sub>(max_value + 1)</var>.
+** <code>value_size()</code> は <var>log<sub>2</sub>(max_value + 1)</var> を返します．
 * <code>madoka::Sketch::seed()</code>
-** <code>seed()</code> returns <var>seed</var> of the sketch.
+** <code>seed()</code> は <var>seed</var> を返します．
 * <code>madoka::Sketch::table_size()</code>
-** <code>table_size()</code> returns the size in bytes of the sketch.
+** <code>table_size()</code> はスケッチのサイズをバイト単位で返します．
 * <code>madoka::Sketch::file_size()</code>
-** <code>file_size()</code> returns the file size in bytes of the sketch. The file size is equal to the sum of the header size and the sketch size.
+** <code>file_size()</code> はスケッチのファイルサイズをバイト単位で返します．ファイルサイズはヘッダのサイズとスケッチのサイズを加算することによって求められます．
 * <code>madoka::Sketch::flags()</code>
-** <code>flags()</code> returns memory mapping related flags.
+** <code>flags()</code> はメモリマップド I/O に関するフラグの論理和を返します．
 * <code>madoka::Sketch::mode()</code>
-** <code>mode()</code> returns <var>madoka::SKETCH_APPROX_MODE</var> if <var>value_size == madoka::SKETCH_APPROX_VALUE_SIZE</var>, otherwise returns <var>madoka::SKETCH_EXACT_MODE</var>.
+** <code>mode()</code> は， <var>value_size</var> が <var>madoka::SKETCH_APPROX_VALUE_SIZE</var> であれば <var>madoka::SKETCH_APPROX_MODE</var> を返し，そうでなければ <var>madoka::SKETCH_EXACT_MODE</var> を返します．
 
 h2. Catch an exception
 
@@ -636,13 +636,13 @@ error: madoka/sketch.cc:453: width > SKETCH_MAX_WIDTH
 </pre>
 </div>
 
-Madoka throws an exception when an error occurs. The exception class is <code>madoka::Exception</code>. This example shows how to catch an exception.
+Madoka はエラーが起きると例外を投げます．例外のクラスは <code>madoka::Exception</code> です．例外を捕まえ方については，サンプルが参考になります．
 
 * <code>madoka::Exception::what()</code>
-** <code>what()</code> is a function to get an error message. The format is <code>__FILE__</code> << <var>":"</var> << <code>__LINE__</code> << <var>": "</var> << <var>the-reason-of-the-error</var>.
-** Note that exception specifiers in <kbd>madoka/sketch.h</kbd> tell you which function is possible to throw an exception.
+** <code>what()</code> はエラーメッセージを返す関数です．エラーメッセージの書式は，<code>__FILE__</code> << <var>":"</var> << <code>__LINE__</code> << <var>": "</var> << <var>the-reason-of-the-error</var> となっています．
+** <kbd>madoka/sketch.h</kbd> の例外指定子を確認することにより，どの関数が例外を投げるのか分かるようになっています．
 
-In this example, <code>create()</code> fails to create a sketch because the specifed <var>width</var> is too large. Remember that <code>madoka::Sketch</code> is guaranteed to be unchanged when an error has occurred.
+サンプルでは，指定した <var>width</var> が大きすぎるため，<code>create()</code> が例外を投げます．エラーが起きたときは <code>madoka::Sketch</code> が変更されないようになっています．
 
 h2. Draw a croquis
 
@@ -678,6 +678,6 @@ Hiroshi: 2.5
 </pre>
 </div>
 
-<code>madoka::Croquis</code> is a simplified version of <code>madoka::Sketch</code>. It does not provide <code>inc()</code>, <code>copy()</code>, <code>filter()</code>, <code>shrink()</code>, <code>merge()</code> and <code>inner_product()</code>. Instead, <code>madoka::Croquis</code> has a template parameter that specifies the type of cells. 
+<code>madoka::Croquis</code> は <code>madoka::Sketch</code> を単純化したクラスです．<code>inc()</code>, <code>copy()</code>, <code>filter()</code>, <code>shrink()</code>, <code>merge()</code>, <code>inner_product()</code> は使えません．その代わり，テンプレート引数によって値の型を指定することができます．
 
-This example uses "floating point numbers":http://en.wikipedia.org/wiki/Floating_point with <code>madoka::Croquis<float></code>. The usage is same as that of <code>madoka::Sketch</code>, but remember that a tiny value may be truncated in <code>add()</code> because of the rounding.
+サンプルでは，<code>madoka::Croquis<float></code> とすることにより， "浮動小数点数":http://ja.wikipedia.org/wiki/%E6%B5%AE%E5%8B%95%E5%B0%8F%E6%95%B0%E7%82%B9%E6%95%B0 を値の型として使っています．使い方は <code>madoka::Sketch</code> とほぼ同じですが，丸めによる誤差があるため，小さい値を <code>madoka::Sketch</code> に渡すと切り捨てられる可能性があることに注意してください．
