@@ -42,7 +42,7 @@ Madoka is tested on Ubuntu 11.10. If you have any problems in this process, plea
 h2. Example
 
 <div class="float">
-<pre class>
+<pre>
 #include <iostream>
 #include <madoka.h>
 
@@ -69,8 +69,12 @@ h2. Interface
 
 A Count-Min sketch supports not only counting items, as shown in the above example, but also inner products, which enable a sketch to serve as a feature vector. In addition, Madoka supports merging and shrinking sketches so as to make sketching more useful. See the following for more information about the APIs.
 
-* "C API Documentation - to be written":doc/c-api.html
-* "C++ API Documentation":doc/cpp-api.html
+* English
+** "C API Documentation - to be written":doc/c-api.html
+** "C++ API Documentation":doc/cpp-api.html
+* Japanese
+** "C API Documentation - to be written":doc/c-api.ja.html
+** "C++ API Documentation":doc/cpp-api.ja.html
 
 h2. Implementation
 
@@ -80,8 +84,7 @@ h2. License
 
 Madoka is licensed under "the Simplified BSD License":http://www.opensource.org/licenses/bsd-license.php.
 
-Copyright (c) 2012, Susumu Yata
-All rights reserved.
+Copyright (c) 2012, Susumu Yata. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 

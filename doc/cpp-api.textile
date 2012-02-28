@@ -170,7 +170,7 @@ size: 25165904
 
 Let's customize a sketch for your application. A "Count-Min sketch":https://sites.google.com/site/countminsketch/ is a probabilistic data structure and the accuracy depends on its parameters, <var>width</var> and <var>depth</var>, and the target data stream.
 
-Basically, accurate sketching requires a large <var>width</var> and a longer stream requires a larger <var>width</var>, but a larger <width> requires a larger memory space and increases cache misses. The other parameter, <var>depth</var>, also has an effect on accuracy but Madoka uses a fixed <var>depth</var>, actually <var>madoka::SKETCH_DEPTH</var> (<var>3</var>), based on benchmarks. Instead, Madoka has another parameter, <var>max_value</var>, that specifies the upper limit of the values. By using a small <var>max_value</var>, you can save memory.
+Basically, accurate sketching requires a large <var>width</var> and a longer stream requires a larger <var>width</var>, but a larger <var>width</var> requires a larger memory space and increases cache misses. The other parameter, <var>depth</var>, also has an effect on accuracy but Madoka uses a fixed <var>depth</var>, actually <var>madoka::SKETCH_DEPTH</var> (<var>3</var>), based on benchmarks. Instead, Madoka has another parameter, <var>max_value</var>, that specifies the upper limit of the values. By using a small <var>max_value</var>, you can save memory.
 
 To customize a sketch, specify <var>width</var> and <var>max_value</var> when creating a sketch. See the following for more details.
 
