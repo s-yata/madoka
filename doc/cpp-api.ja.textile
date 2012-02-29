@@ -374,7 +374,7 @@ Homura: 15
 ** <code>shrink()</code> はスケッチを縮小する関数です．第一引数には元のスケッチを指定するようになっています．第二引数には新しいスケッチの <var>width</var>，第三引数には新しいスケッチの <var>max_value</var> を指定するようになっています．第四引数には，値の再設定に際して適用するフィルタを指定することができます．
 ** 新しいスケッチの <var>width</var> は，元になるスケッチの <var>width</var> を割りきれる値（因数）にする必要があります．一方の <var>max_value</var> には制約がありません．元になるスケッチの <var>max_value</var> より大きな値でも指定することができます．
 
-サンプルでは，<var>"Akemi: 256"</var> と <var>"Homura: 16777216"</var> を描き込んだスケッチを縮小しています．新しいスケッチの <var>width</var> と <var>max_value</var> はそれぞれ <var>10</var> と <var>15</var> です．<code>logarimize()</code> をフィルタとして適用しているため，新しいスケッチから値を読み取ることができる値は対数になります．たとえば，<var>"Akemi: 256"</var> は <var>"Akemi: 8"</var> となります．ただし，新しいスケッチの <var>max_value</var> は <var>15</var> であることから，<var>"Homura: 16777216"</var> は <var>"Homura: 15"</var> となります．
+サンプルでは，<var>"Akemi: 256"</var> と <var>"Homura: 16777216"</var> を描き込んだスケッチを縮小しています．新しいスケッチの <var>width</var> と <var>max_value</var> はそれぞれ <var>10</var> と <var>15</var> です．<code>logarimize()</code> をフィルタとして適用しているため，新しいスケッチから読み取ることができる値は対数になります．たとえば，<var>"Akemi: 256"</var> は <var>"Akemi: 8"</var> となります．ただし，新しいスケッチの <var>max_value</var> は <var>15</var> であることから，<var>"Homura: 16777216"</var> は <var>"Homura: 15"</var> となります．
 
 スケッチを縮小できるという特徴により，描画の時点では大きめの <var>width</var> と <var>max_value</var> を採用し，描画の後で用途に応じた <var>width</var> と <var>max_value</var> を選ぶという使い方ができます．また，対数への圧縮や閾値による二値化など，さまざまな使い方が考えられます．
 
@@ -417,15 +417,15 @@ Mami: 2
 </pre>
 </div>
 
-<code>madoka::Sketch</code> provides an interface to merge sketches. A sketch merging works like vector addition. It simply adds the values of the right-hand side sketch (rhs-sketch) to the values of the left-hand side sketch (lhs-sketch).
+<code>madoka::Sketch</code> はスケッチの合成をサポートしています．スケッチの合成はベクトルの加算と同様の操作であり，一方のスケッチ（左）を構成する値を他方のスケッチ（右）を構成する値に足し合わせます．
 
 * <code>madoka::Sketch::merge()</code>
-** <code>merge()</code> is a function to merge sketches. The 1st argument specifies the rhs-sketch. The 2nd argument specifies a filter that is applied to the lhs-sketch values. The 3rd argument specifies a filter that is applied to the rhs-sketch values.
-** Note that the sketches must have the same <var>width</var>.
+** <code>merge()</code> はスケッチを合成する関数です．第一引数には右スケッチを指定するようになっています．第二引数には左スケッチから値を読み取るときに適用するフィルタ，第三引数には右スケッチから値を読み取るときに適用するフィルタを指定することができます．
+** <var>width</var> が等しいスケッチの組に対してのみ有効です．
 
-This example creates two sketches with <var>"Mami: 1"</var> and merges the sketches. So, the resultant sketch has <var>"Mami: 2"</var>. Note that this example uses <code>copy()</code> to keep the lhs-sketch. If you don't mind overwriting the lhs-sketch, you can call <code>merge()</code> directly.
+サンプルでは，<var>"Mami: 1"</var> を描き込んだスケッチを合成しています．そのため，合成により得られたスケッチからは <var>"Mami: 2"</var> を読み取ることができます．このサンプルでは <code>copy()</code> を使うことで元のスケッチを残していますが，上書きが問題にならない状況であれば，直接 <code>merge()</code> を呼び出しても問題ありません．
 
-The merging feature allows you to draw a sketch in a distributed manner. For example, you can divide an input data stream into several streams and draw sketches for each stream in parallel. Then, you can merge the temporary sketches to get the final sketch.
+スケッチを合成する機能により，分散してスケッチを描画することができます．たとえば，入力を分割することができれば，それぞれに対するスケッチを描画してから合成することにより，最終的には一つのスケッチを得ることができます．
 
 h2. Estimate the inner product
 
@@ -473,13 +473,13 @@ cosine: 0.519778
 </pre>
 </div>
 
-A Count-Min sketch supports inner product estimation. <code>madoka::Sketch</code> provides an interface to estimate the inner product with the length of sketches, actually length is not defined for sketches. This interface is useful to estimate the cosine similarity.
+Count-Min sketch は内積の推定をサポートしています．<code>madoka::Sketch</code> には，内積の推定とともにスケッチの長さ（仮）を推定できるインタフェースがあります．実際にスケッチの長さという概念が存在するわけではありませんが，コサイン類似度の推定に用いることができます．
 
 * <code>madoka::Sketch::inner_product()</code>
-** <code>inner_product()</code> is a function to estimate inner product. The 1st argument specifies the rhs-sketch. The 2nd argument can be used to get the estimated squared length of the lhs-sketch. The 3rd argument can be used to get the estimated squared length of the rhs-sketch. The return value of <code>inner_product()</code> is the estimated inner product.
-** Note that the sketches must have the same <var>width</var>.
+** <code>inner_product()</code> は内積を推定する関数です．第一引数には右スケッチを指定するようになっています．第二引数には左スケッチの長さを受け取る変数，第三引数には右スケッチの長さを受け取る変数を指定することができます．内積の推定値が戻り値になります．
+** <var>width</var> が等しいスケッチの組に対してのみ有効です．
 
-This example creates two sketches and estimates the inner product between the sketches. This example also computes the cosine similarity from the obtained values.
+サンプルでは，描画したスケッチの内積を求めています．また，<code>inner_product()</code> の結果を用いてコサイン類似度を推定しています．
 
 h2. Configure memory mapping
 
@@ -567,15 +567,13 @@ HugeTLB: on
 </pre>
 </div>
 
-Roughly speaking, a Count-Min sketch is composed of hash tables and the number of hash tables is equal to its <var>depth</var>. The <var>depth</var> of <code>madoka::Sketch</code> is fixed to <var>3</var> and thus basic operations, <code>set()</code>, <code>inc()</code> and <code>add()</code>, except <code>get()</code>, perform at least <var>3</var> random accesses.
+概略を述べると，Count-Min sketch とは <var>depth</var> 個のハッシュ表を組み合わせたデータ構造です．そして，<code>madoka::Sketch</code> では <var>depth</var> を <var>3</var> に固定しているため，<code>get()</code> 以外の基本操作 <code>set()</code>, <code>inc()</code>, <code>add()</code> は <var>3</var> 回の "ランダムアクセス":http://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%B3%E3%83%80%E3%83%A0%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9 をおこないます．
 
-Because of the random access nature, if a sketch is larger than the CPU cache, cache misses occur in sketching and the memory access latency becomes the bottleneck. In addition, if a sketch is much, much, much larger than the CPU cache, "TLB":http://en.wikipedia.org/wiki/Translation_lookaside_buffer misses reduce the throughput of sketching.
+Count-Min sketch の基本操作はランダムアクセスを必要とするため，スケッチが "CPU キャッシュ":http://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%A3%E3%83%83%E3%82%B7%E3%83%A5%E3%83%A1%E3%83%A2%E3%83%AA に収まらなければ，キャッシュミスが発生するようになり， "メモリのレイテンシ":http://ja.wikipedia.org/wiki/%E3%83%AC%E3%82%A4%E3%83%86%E3%83%B3%E3%82%B7 がボトルネックになります．さらにスケッチを大きくすると， "TLB":http://ja.wikipedia.org/wiki/%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B9%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%BB%E3%83%AB%E3%83%83%E3%82%AF%E3%82%A2%E3%82%B5%E3%82%A4%E3%83%89%E3%83%BB%E3%83%90%E3%83%83%E3%83%95%E3%82%A1 ミスが発生するようになり，描画のスループットを低下させてしまいます．
 
-<var>madoka::FILE_HUGETLB</var> is an optional flag to use "huge pages":http://en.wikipedia.org/wiki/Page_%28computer_memory%29#Huge_pages. The use of huge pages reduces TLB misses in sketching. If a sketch is created with <var>madoka::FILE_HUGETLB</var>, the sketch tries to use huge pages. If huge pages are not available, the sketch uses regular pages.
+<var>madoka::FILE_HUGETLB</var> は "HugePage":http://en.wikipedia.org/wiki/Page_%28computer_memory%29#Huge_pages の使用を許可するフラグです．HugePage を使えば，スケッチの描画における TLB ミスを減らすことができます．スケッチの作成に際して <var>madoka::FILE_HUGETLB</var> を指定すると，HugePage の使用を試みます．このとき，HugePage が使えない状況であれば，通常のページを使います．
 
-This example shows how to use huge pages. You can check whether huge pages are available or not by reading <kbd>/proc/meminfo</kbd>. If disabled, you can enable huge pages by editing <kbd>/proc/sys/vm/nr_hugepages</kbd>. Note that only a user with root authority can enable huge pages. After that, <code>madoka::Sketch</code> can use huge pages. Remember that a sketch backed by a file does not support huge pages unless the file system supports huge pages. For more details, see "information about huge page support":http://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt.
-
-Other than <code>create()</code>, all the functions taking <var>path</var> and <var>flags</var> accept <var>madoka::FILE_HUGETLB</var>.
+サンプルは HugePage の使い方を示しています．まず，<kbd>/proc/meminfo</kbd> を見ることにより，HugePage が有効になっているかどうかを確認できます．無効になっているときは，<kbd>/proc/sys/vm/nr_hugepages</kbd> を編集することで有効にすることができます．HugePage を有功にするには root 権限が必要なことに注意してください．HugePage の有効な環境を用意できれば，<code>madoka::Sketch</code> で HugePage を使うことができます．ただし，ファイルと関連付けたスケッチについては，ファイルシステムが HugePage をサポートしていない限りは HugePage を使うことができません．詳細については， "HugePage のサポートに関する情報":http://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt を参照してください．
 
 h2. Specify a seed
 
