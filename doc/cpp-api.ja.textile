@@ -36,7 +36,7 @@ $ ./a.out SKETCH < KEYSET
 </pre>
 </div>
 
-手始めにスケッチを描いてみます．サンプルは，標準入力（<var>std::cin</var>）からキーを一つずつ読み込み，スケッチ（<code>madoka::Sketch</code>）を描きます．そして，完成したスケッチをコマンドの第一引数（<var><notextile>argv[1]</notextile></var>）で指定されたファイルに保存します．注目すべき箇所は以下の通りです．
+手始めにスケッチを描いてみます．サンプルは，標準入力（<var>std::cin</var>）からキーを一つずつ読み込み，スケッチ（<code>madoka::Sketch</code>）を描いた後，完成したスケッチをコマンドの第一引数（<var><notextile>argv[1]</notextile></var>）で指定されたファイルに保存しています．注目すべき箇所は以下の通りです．
 
 * <kbd>madoka.h</kbd>
 ** Madoka を構成するクラスや定数は <kbd>madoka.h</kbd> の中で定義されています．そのため，<code>#include <madoka.h></code> が必要となります．
@@ -46,11 +46,11 @@ $ ./a.out SKETCH < KEYSET
 ** <code>create()</code> は白紙のスケッチを作成する関数です．スケッチを作成せずに描画しようとするとマミるので注意してください．
 * <code>madoka::Sketch::inc()</code>
 ** <code>inc()</code> はスケッチを描画するための関数です．正確には，指定されたキーに対応する値をインクリメントします．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．
-** インクリメントの対象が既に飽和しているときは何もしないので，オーバーフローを気にせず <code>inc()</code> することができます．
+** インクリメントの対象が既に飽和しているときは何もしないので，オーバーフローを気にせずスケッチを描くことができます．
 * <code>madoka::Sketch::save()</code>
 ** <code>save()</code> はスケッチをファイルに保存する関数です．第一引数にはファイルのパスを指定するようになっています．
 
-サンプルのビルドには <kbd>-lmadoka</kbd> というオプションが必要なことに注意してください．Madoka がインストールされている状態であれば，<kbd>pkg-config madoka --libs</kbd> によってオプションを得ることができます．
+サンプルのビルドには <kbd>-lmadoka</kbd> というオプションが必要なことに注意してください．Madoka がインストールされている環境であれば，<kbd>pkg-config madoka --libs</kbd> によってオプションを得ることができます．
 
 h2. Look at a sketch
 
@@ -128,7 +128,7 @@ QB: 15
 * <code>madoka::Sketch::set()</code>
 ** <code>set()</code> はキーと対応する値を更新する関数です．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．第三引数には新しい値を指定します．
 ** 新しい値が現在の値以下のときは何もしないことに注意してください．
-** 指定した新しい値が最大値を超えているときは，キーと対応する値を最大値に更新します．オーバーフローの心配はありません．
+** 指定した新しい値が最大値を超えているときは，キーと対応する値を最大値へと更新します．オーバーフローの心配はありません．
 * <code>madoka::Sketch::add()</code>
 ** <code>add()</code> は加算の関数です．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．第三引数には加える値を指定します．加算の結果が戻り値になります．
 ** オーバーフローしそうなときは，加算の結果を最大値へと補正します．
@@ -187,7 +187,7 @@ size: 25165904
 ** <var>max_value</var> には <var>madoka::SKETCH_MAX_MAX_VALUE</var> （<var>2<sup>45</sup> - 1</var>）以下の値を指定する必要があります．
 ** <code>create()</code> は <var>max_value</var> を <var>1</var>, <var>3</var>, <var>15</var>, <var>255</var>, <var>65535</var>, <var>2<sup>45</sup> - 1</var> のいずれかに切り上げます．
 
-サンプルでは，特製のスケッチを作成した後，そのサイズを出力しています．スケッチのサイズについては，<var>max_value</var> が <var>madoka::SKETCH_MAX_MAX_VALUE</var> でなければ <var>width x depth x 8</var> によって，<var>max_value</var> が <var>madoka::SKETCH_MAX_MAX_VALUE</var> であれば <var>width x depth x 45 / 8</var> によって計算できます．
+サンプルでは，特製のスケッチを作成した後，そのサイズを出力しています．スケッチのサイズについては，<var>max_value</var> が <var>madoka::SKETCH_MAX_MAX_VALUE</var> であれば <var>width x depth x 8</var> によって，<var>max_value</var> が <var>madoka::SKETCH_MAX_MAX_VALUE</var> でなければ <var>width x depth x log<sub>2</sub>(max_value + 1) / 8</var> によって計算できます．
 
 h2. Clear a sketch
 
@@ -317,7 +317,7 @@ Madoka: 7
 ** フィルタが <var>max_value</var> を超える値を返したときは自動的に <var>max_value</var> へと補正するため，<code>UINT64_MAX</code> を超えなければ問題にはなりません．
 ** <var>NULL</var> を引数にしたときは何もしません．
 
-フィルタ機能を用いれば， "Lossy Conservative Updates (PDF)":http://www.umiacs.umd.edu/%7Eamit/Papers/goyalLCUSketchAAAI11.pdf を実装することができます．また，カウンタが飽和したときに全体を <var>1/2</var> にすることでスケッチの延命を図るという使い方があります．さらに，すべての値を対数に変換することで圧縮するなどの使い方もあります．
+フィルタ機能を用いれば， "Lossy Conservative Update (PDF)":http://www.umiacs.umd.edu/%7Eamit/Papers/goyalLCUSketchAAAI11.pdf を実装することができます．また，カウンタが飽和したときに全体を <var>1/2</var> にすることでスケッチの延命を図るという使い方があります．さらに，すべての値を対数に変換することで圧縮するなどの使い方もあります．
 
 h2. Shrink a sketch
 
@@ -372,7 +372,7 @@ Homura: 15
 
 * <code>madoka::Sketch::shrink()</code>
 ** <code>shrink()</code> はスケッチを縮小する関数です．第一引数には元のスケッチを指定するようになっています．第二引数には新しいスケッチの <var>width</var>，第三引数には新しいスケッチの <var>max_value</var> を指定するようになっています．第四引数には，値の再設定に際して適用するフィルタを指定することができます．
-** 新しいスケッチの <var>width</var> は，元になるスケッチの <var>width</var> を割りきれる値（因数）にする必要があります．一方の <var>max_value</var> には制約がありません．元になるスケッチの <var>max_value</var> より大きな値でも指定することができます．
+** 新しいスケッチの <var>width</var> は，元になるスケッチの <var>width</var> を割り切れる値にする必要があります．一方の <var>max_value</var> には制約がありません．元になるスケッチの <var>max_value</var> より大きな値でも指定することができます．
 
 サンプルでは，<var>"Akemi: 256"</var> と <var>"Homura: 16777216"</var> を描き込んだスケッチを縮小しています．新しいスケッチの <var>width</var> と <var>max_value</var> はそれぞれ <var>10</var> と <var>15</var> です．<code>logarimize()</code> をフィルタとして適用しているため，新しいスケッチから読み取ることができる値は対数になります．たとえば，<var>"Akemi: 256"</var> は <var>"Akemi: 8"</var> となります．ただし，新しいスケッチの <var>max_value</var> は <var>15</var> であることから，<var>"Homura: 16777216"</var> は <var>"Homura: 15"</var> となります．
 
@@ -417,13 +417,13 @@ Mami: 2
 </pre>
 </div>
 
-<code>madoka::Sketch</code> はスケッチの合成をサポートしています．スケッチの合成はベクトルの加算と同様の操作であり，一方のスケッチ（左）を構成する値を他方のスケッチ（右）を構成する値に足し合わせます．
+<code>madoka::Sketch</code> はスケッチの合成をサポートしています．スケッチの合成はベクトルの加算と同様の操作であり，一方のスケッチ（右）を構成する値を他方のスケッチ（左）を構成する値に足し合わせます．
 
 * <code>madoka::Sketch::merge()</code>
 ** <code>merge()</code> はスケッチを合成する関数です．第一引数には右スケッチを指定するようになっています．第二引数には左スケッチから値を読み取るときに適用するフィルタ，第三引数には右スケッチから値を読み取るときに適用するフィルタを指定することができます．
 ** <var>width</var> が等しいスケッチの組に対してのみ有効です．
 
-サンプルでは，<var>"Mami: 1"</var> を描き込んだスケッチを合成しています．そのため，合成により得られたスケッチからは <var>"Mami: 2"</var> を読み取ることができます．このサンプルでは <code>copy()</code> を使うことで元のスケッチを残していますが，上書きが問題にならない状況であれば，直接 <code>merge()</code> を呼び出しても問題ありません．
+サンプルでは，<var>"Mami: 1"</var> を描き込んだスケッチ同士を合成しています．そのため，合成により得られたスケッチからは <var>"Mami: 2"</var> を読み取ることができます．このサンプルでは <code>copy()</code> を使うことで元のスケッチを残していますが，上書きが問題にならない状況であれば，直接 <code>merge()</code> を呼び出しても問題ありません．
 
 スケッチを合成する機能により，分散してスケッチを描画することができます．たとえば，入力を分割することができれば，それぞれに対するスケッチを描画してから合成することにより，最終的には一つのスケッチを得ることができます．
 
@@ -569,7 +569,7 @@ HugeTLB: on
 
 概略を述べると，Count-Min sketch とは <var>depth</var> 個のハッシュ表を組み合わせたデータ構造です．そして，<code>madoka::Sketch</code> では <var>depth</var> を <var>3</var> に固定しているため，<code>get()</code> 以外の基本操作 <code>set()</code>, <code>inc()</code>, <code>add()</code> は <var>3</var> 回の "ランダムアクセス":http://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%B3%E3%83%80%E3%83%A0%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9 をおこないます．
 
-Count-Min sketch の基本操作はランダムアクセスを必要とするため，スケッチが "CPU キャッシュ":http://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%A3%E3%83%83%E3%82%B7%E3%83%A5%E3%83%A1%E3%83%A2%E3%83%AA に収まらなければ，キャッシュミスが発生するようになり， "メモリのレイテンシ":http://ja.wikipedia.org/wiki/%E3%83%AC%E3%82%A4%E3%83%86%E3%83%B3%E3%82%B7 がボトルネックになります．さらにスケッチを大きくすると， "TLB":http://ja.wikipedia.org/wiki/%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B9%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%BB%E3%83%AB%E3%83%83%E3%82%AF%E3%82%A2%E3%82%B5%E3%82%A4%E3%83%89%E3%83%BB%E3%83%90%E3%83%83%E3%83%95%E3%82%A1 ミスが発生するようになり，描画のスループットを低下させてしまいます．
+スケッチの描画はランダムアクセスを必要とするため，スケッチが "CPU キャッシュ":http://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%A3%E3%83%83%E3%82%B7%E3%83%A5%E3%83%A1%E3%83%A2%E3%83%AA に収まらなければ，キャッシュミスが発生するようになり， "メモリのレイテンシ":http://ja.wikipedia.org/wiki/%E3%83%AC%E3%82%A4%E3%83%86%E3%83%B3%E3%82%B7 がボトルネックになります．さらにスケッチを大きくすると， "TLB":http://ja.wikipedia.org/wiki/%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B9%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%BB%E3%83%AB%E3%83%83%E3%82%AF%E3%82%A2%E3%82%B5%E3%82%A4%E3%83%89%E3%83%BB%E3%83%90%E3%83%83%E3%83%95%E3%82%A1 ミスが発生するようになり，描画のスループットを低下させてしまいます．
 
 <var>madoka::FILE_HUGETLB</var> は "HugePage":http://en.wikipedia.org/wiki/Page_%28computer_memory%29#Huge_pages の使用を許可するフラグです．HugePage を使えば，スケッチの描画における TLB ミスを減らすことができます．スケッチの作成に際して <var>madoka::FILE_HUGETLB</var> を指定すると，HugePage の使用を試みます．このとき，HugePage が使えない状況であれば，通常のページを使います．
 
@@ -577,7 +577,7 @@ Count-Min sketch の基本操作はランダムアクセスを必要とするた
 
 h2. Specify a seed
 
-<code>madoka::Sketch</code> では，ハッシュ関数および疑似乱数生成器の種を指定することができます．指定方法は <code>create()</code> の第五引数です．既に存在するスケッチの種を変更することはできません．種の異なるスケッチ同士では合成できないという制約があるため，デフォルトの種に統一しておいた方が使いやすくなります．基本的に使わない機能です．
+<code>madoka::Sketch</code> では，ハッシュ関数および疑似乱数生成器の種を指定することができます．指定方法は <code>create()</code> の第五引数です．既に存在するスケッチの種を変更することはできません．種の異なるスケッチ同士を合成することはできないという制約があるため，デフォルトの種に統一しておいた方が使いやすくなります．基本的に使わない機能です．
 
 h2. Get information of a sketch
 
@@ -634,13 +634,13 @@ error: madoka/sketch.cc:453: width > SKETCH_MAX_WIDTH
 </pre>
 </div>
 
-Madoka はエラーが起きると例外を投げます．例外のクラスは <code>madoka::Exception</code> です．例外を捕まえ方については，サンプルが参考になります．
+Madoka はエラーが起きると例外を投げます．例外のクラスは <code>madoka::Exception</code> です．サンプルは例外の捕まえ方を示しています．
 
 * <code>madoka::Exception::what()</code>
 ** <code>what()</code> はエラーメッセージを返す関数です．エラーメッセージの書式は，<code>__FILE__</code> << <var>":"</var> << <code>__LINE__</code> << <var>": "</var> << <var>the-reason-of-the-error</var> となっています．
-** <kbd>madoka/sketch.h</kbd> の例外指定子を確認することにより，どの関数が例外を投げるのか分かるようになっています．
+** <kbd>madoka/sketch.h</kbd> の例外指定子を確認することにより，どの関数が例外を投げるのかを確認できます．
 
-サンプルでは，指定した <var>width</var> が大きすぎるため，<code>create()</code> が例外を投げます．エラーが起きたときは <code>madoka::Sketch</code> が変更されないようになっています．
+サンプルでは，指定した <var>width</var> が大きすぎるため，<code>create()</code> が例外を投げます．エラーが起きたときは <code>madoka::Sketch</code> の内容が更新されないようになっています．
 
 h2. Draw a croquis
 
@@ -678,4 +678,4 @@ Hiroshi: 2.5
 
 <code>madoka::Croquis</code> は <code>madoka::Sketch</code> を単純化したクラスです．<code>inc()</code>, <code>copy()</code>, <code>filter()</code>, <code>shrink()</code>, <code>merge()</code>, <code>inner_product()</code> は使えません．その代わり，テンプレート引数によって値の型を指定することができます．
 
-サンプルでは，<code>madoka::Croquis<float></code> とすることにより， "浮動小数点数":http://ja.wikipedia.org/wiki/%E6%B5%AE%E5%8B%95%E5%B0%8F%E6%95%B0%E7%82%B9%E6%95%B0 を値の型として使っています．使い方は <code>madoka::Sketch</code> とほぼ同じですが，丸めによる誤差があるため，小さい値を <code>madoka::Sketch</code> に渡すと切り捨てられる可能性があることに注意してください．
+サンプルでは，<code>madoka::Croquis<float></code> とすることにより， "浮動小数点数":http://ja.wikipedia.org/wiki/%E6%B5%AE%E5%8B%95%E5%B0%8F%E6%95%B0%E7%82%B9%E6%95%B0 を値の型として使っています．使い方は <code>madoka::Sketch</code> とほぼ同じですが，丸めによる誤差があるため，小さい値を <code>add()</code> に渡すと切り捨てられる可能性があることに注意してください．
