@@ -366,17 +366,17 @@ Homura: 15
 </pre>
 </div>
 
-Let's shrink a sketch for saving memory. This is a reasonable answer to the question "How can I determine the best values for <var>width</var> and <var>max_value</var>?".
+<code>madoka::Sketch</code> にはスケッチを縮小するためのインタフェースがあります．スケッチの縮小は <var>width</var> と <var>max_value</var> の設定にも関わる機能です．
 
-During or after sketching, you may find that <var>width</var> and <var>max_value</var> are too large. In such a case, you can shrink the sketch, or more precisely, you can create a smaller sketch and copies the contents of the source sketch to the smaller sketch.
+たとえば，スケッチに割り当てた <var>width</var> もしくは <var>max_value</var> が大きすぎると分かったときは，スケッチを縮小することができます．正確には，新たに小さなスケッチを作成して，既存のスケッチを構成する値を新しいスケッチに対して設定しなおすという手順になります．
 
 * <code>madoka::Sketch::shrink()</code>
-** <code>shrink()</code> is a function to shrink a sketch. The 1st argument specifies the source sketch. The 2nd argument specifies <var>width</var> and the 3rd argument specifies <var>max_value</var> of the new sketch. The 4th argument specifies a filter to be applied in shrinking.
-** Note that the new <var>width</var> must be a factor of the source <var>width</var>. On the other hand, a <var>max_value</var> greater than the source <var>max_value</var> is acceptable.
+** <code>shrink()</code> はスケッチを縮小する関数です．第一引数には元のスケッチを指定するようになっています．第二引数には新しいスケッチの <var>width</var>，第三引数には新しいスケッチの <var>max_value</var> を指定するようになっています．第四引数には，値の再設定に際して適用するフィルタを指定することができます．
+** 新しいスケッチの <var>width</var> は，元になるスケッチの <var>width</var> を割りきれる値（因数）にする必要があります．一方の <var>max_value</var> には制約がありません．元になるスケッチの <var>max_value</var> より大きな値でも指定することができます．
 
-This example creates a sketch and shrinks the sketch to a smaller sketch. The new <var>width</var> and the new <var>max_value</var> are <var>10</var> and <var>15</var> respectively. Note that the values are replaced with their logarithms by <code>logarimize()</code>. For example, <var>"Akemi: 256"</var> is replaced with <var>"Akemi: 8"</var>. Also note that <var>"Homura: 16777216"</var> is replaced with <var>"Homura: 24"</var> but the output is <var>"Homura: 15"</var> because of saturation.
+サンプルでは，<var>"Akemi: 256"</var> と <var>"Homura: 16777216"</var> を描き込んだスケッチを縮小しています．新しいスケッチの <var>width</var> と <var>max_value</var> はそれぞれ <var>10</var> と <var>15</var> です．<code>logarimize()</code> をフィルタとして適用しているため，新しいスケッチから値を読み取ることができる値は対数になります．たとえば，<var>"Akemi: 256"</var> は <var>"Akemi: 8"</var> となります．ただし，新しいスケッチの <var>max_value</var> は <var>15</var> であることから，<var>"Homura: 16777216"</var> は <var>"Homura: 15"</var> となります．
 
-Due to this feature, you can use large <var>width</var> and <var>max_value</var> during sketching, and after that, you can adjust <var>width</var> and <var>max_value</var> to your application. Also, you can compress a sketch as shown in this example, binarize a sketch based on a threshold, etc.
+スケッチを縮小できるという特徴により，描画の時点では大きめの <var>width</var> と <var>max_value</var> を採用し，描画の後で用途に応じた <var>width</var> と <var>max_value</var> を選ぶという使い方ができます．また，対数への圧縮や閾値による二値化など，さまざまな使い方が考えられます．
 
 h2. Merge sketches
 
@@ -503,31 +503,31 @@ enum FileFlag {
 </pre>
 </div>
 
-<code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code> and <code>shrink()</code> have arguments named <var>path</var> and <var>flags</var>. The <var>path</var> argument specifies the target file. Note that <var>NULL</var> specifies to create an anonymous memory mapping. The <var>flags</var> argument specifies the behavior as follows.
+<code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code>, <code>shrink()</code> は <var>path</var> と <var>flags</var> を引数として指定できるようになっています．<var>path</var> に対して <var>NULL</var> を指定したときは，ファイルとの関連付けをせずにメモリを確保します．<var>flags</var> にはファイルの操作やマッピングの作成に関する振る舞いを指定することができます．
 
 * <var>madoka::FILE_CREATE</var>
-** <var>FILE_CREATE</var> is used internally to create a file.
+** <var>FILE_CREATE</var> はファイルを作成するときに暗黙的に指定されるフラグです．
 * <var>madoka::FILE_TRUNCATE</var>
-** <code>create()</code>, <code>copy()</code> and <code>shrink()</code> accept <var>FILE_TRUNCATE</var> unless <var>path == NULL</var>.
-** <var>FILE_TRUNCATE</var> is used to overwrite an existing file. Note that a creation without <var>FILE_TRUNCATE</var> to an existing file throws an exception.
+** <var>FILE_TRUNCATE</var> は <code>create()</code>, <code>copy()</code>, <code>shrink()</code> において <var>path</var> が <var>NULL</var> でないときに指定できるフラグです．
+** <var>FILE_TRUNCATE</var> はファイルの上書きを許可するフラグです．<var>FILE_TRUNCATE</var> が指定されていないときにファイルが存在していれば，例外が投げられます．
 * <var>madoka::FILE_READONLY</var>
-** <code>open()</code> accepts <var>FILE_READONLY</var>.
-** <var>FILE_READONLY</var> is used to disable modifications. Note that a modification to a read-only sketch will cause a segmentation fault.
+** <var>FILE_READONLY</var> は <code>open()</code> において指定できるフラグです．
+** <var>FILE_READONLY</var> は更新を禁止するフラグです．読み込み専用のスケッチを更新しようとするとマミるので注意してください．
 * <var>madoka::FILE_WRITABLE</var>
-** <var>FILE_WRITABLE</var> is used internally to enable modifications.
+** <var>FILE_WRITABLE</var> は書き込み可能なマッピングを作成するときに暗黙的に指定されるフラグです．
 * <var>madoka::FILE_SHARED</var>
-** <var>FILE_SHARED</var> is used internally to make modifications visible to other processes.
+** <var>FILE_SHARED</var> は更新内容を他のプロセスに反映させるために暗黙的に指定されるフラグです．
 * <var>madoka::FILE_PRIVATE</var>
-** <code>open()</code> accepts <var>FILE_PRIVATE</var>.
-** <var>FILE_PRIVATE</var> is used to make modifications invisible to other processes.
+** <var>FILE_PRIVATE</var> は <code>open()</code> において指定できるフラグです．
+** <var>FILE_PRIVATE</var> は更新内容を他のプロセスに反映させないためのフラグです．
 * <var>madoka::FILE_ANONYMOUS</var>
-** <var>FILE_ANONYMOUS</var> is used internally to map memory not backed by a file.
+** <var>FILE_ANONYMOUS</var> はファイルとの関連付けをおこなわないときに暗黙的に指定されるフラグです．
 * <var>madoka::FILE_HUGETLB</var>
-** <code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code> and <code>shrink()</code> accept <var>FILE_HUGETLB</var>.
-** <var>FILE_HUGETLB</var> is used to enable huge pages. See the next section for details.
+** <var>FILE_HUGETLB</var> は <code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code>, <code>shrink()</code> において指定できるフラグです．
+** <var>FILE_HUGETLB</var> は HugePage の使用を許可するフラグです．詳細については次のセクションを参照してください．
 * <var>madoka::FILE_PRELOAD</var>
-** <code>open()</code> accepts <var>FILE_PRELOAD</var>.
-** <var>FILE_PRELOAD</var> is used to preload the entire file after mapping a file. Preloading is useful to avoid random disk access.
+** <var>FILE_PRELOAD</var> は <code>open()</code> において指定できるフラグです．
+** <var>FILE_PRELOAD</var> はファイル全体の読み込みを指示するフラグです．ディスクに対するランダムアクセスを回避したいときに有用です．
 
 h2. Use huge pages
 
