@@ -78,7 +78,8 @@ A Count-Min sketch supports not only counting items, as shown in the above examp
 
 h2. Implementation
 
-To be written.
+* Japanese
+** Presentation slides ("PowerPoint":https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pptx, "PDF":https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pdf)
 
 h2. License
 
