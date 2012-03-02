@@ -34,6 +34,11 @@
 #ifdef _MSC_VER
  #ifdef __cplusplus
   #include <intrin.h>
+  #ifdef WIN64
+   #pragma intrinsic(_BitScanReverse64)
+  #else  // WIN64
+   #pragma intrinsic(_BitScanReverse)
+  #endif  // WIN64
  #endif  // __cplusplus
 #else  // _MSC_VER
  #include <stdint.h>
@@ -81,8 +86,16 @@ inline void swap(T &lhs, T &rhs) throw() {
 inline UInt64 bit_scan_reverse(UInt64 value) throw() {
 #ifdef _MSC_VER
   unsigned long index;
+ #ifdef WIN64
   ::_BitScanReverse64(&index, value);
   return index;
+ #else
+  if (::_BitScanReverse(&index, static_cast<unsigned long>(value)) != 0) {
+    return index;
+  }
+  ::_BitScanReverse(&index, static_cast<unsigned long>(value >> 32));
+  return index + 32;
+ #endif  // WIN64
 #else  // _MSC_VER
   return ::__builtin_clzll(value);
 #endif  // _MSC_VER

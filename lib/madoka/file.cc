@@ -28,6 +28,9 @@
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <windows.h>
+ #ifdef max
+  #undef max
+ #endif  // max
 #else  // WIN32
  #include <fcntl.h>
  #include <sys/mman.h>
@@ -203,18 +206,18 @@ DWORD get_mode_flags(int flags) {
   return mode_flags;
 }
 
-DWORD get_disposition_flags(int flags) {
-  DWORD disposition_flags = 0;
+DWORD get_disposition_type(int flags) {
+  DWORD disposition_type = 0;
   if (flags & FILE_CREATE) {
     if (flags & FILE_TRUNCATE) {
-      disposition_flags |= CREATE_ALWAYS;
+      disposition_type = CREATE_ALWAYS;
     } else {
-      disposition_flags |= CREATE_NEW;
+      disposition_type = CREATE_NEW;
     }
   } else {
-    disposition_flags |= OPEN_EXISTING;
+    disposition_type = OPEN_EXISTING;
   }
-  return disposition_flags;
+  return disposition_type;
 }
 
 DWORD get_map_type(int flags) {
@@ -253,7 +256,7 @@ void FileImpl::create_(const char *path, std::size_t size,
   MADOKA_THROW_IF(flags & ~VALID_FLAGS);
 
   flags |= FILE_WRITABLE;
-  flags &= FILE_HUGETLB;
+  flags &= ~FILE_HUGETLB;
 
   if (path == NULL) {
     MADOKA_THROW_IF(flags & FILE_TRUNCATE);
@@ -262,12 +265,12 @@ void FileImpl::create_(const char *path, std::size_t size,
     flags |= FILE_CREATE | FILE_SHARED;
     if (~flags & FILE_TRUNCATE) {
       struct __stat64 stat;
-      MADOKA_THROW_IF(::stat64(path, &stat) == 0);
+      MADOKA_THROW_IF(::_stat64(path, &stat) == 0);
     }
 
     file_handle_ = ::CreateFileA(path, get_access_flags(flags),
                                  get_mode_flags(flags), NULL,
-                                 get_disposition_flags(flags),
+                                 get_disposition_type(flags),
                                  FILE_ATTRIBUTE_NORMAL, NULL);
     MADOKA_THROW_IF(file_handle_ == INVALID_HANDLE_VALUE);
 
@@ -316,7 +319,7 @@ void FileImpl::open_(const char *path, int flags) throw(Exception) {
   if (~flags & FILE_PRIVATE) {
     flags |= FILE_SHARED;
   }
-  flags &= FILE_HUGETLB;
+  flags &= ~FILE_HUGETLB;
 
   struct __stat64 stat;
   MADOKA_THROW_IF(::_stat64(path, &stat) == -1);
@@ -327,7 +330,7 @@ void FileImpl::open_(const char *path, int flags) throw(Exception) {
 
   file_handle_ = ::CreateFileA(path, get_access_flags(flags),
                                get_mode_flags(flags), NULL,
-                               get_disposition_flags(flags),
+                               get_disposition_type(flags),
                                FILE_ATTRIBUTE_NORMAL, NULL);
   MADOKA_THROW_IF(file_handle_ == NULL);
 

@@ -336,7 +336,7 @@ UInt64 Sketch::add(const void *key_addr, std::size_t key_size,
 }
 
 void Sketch::clear() throw() {
-  std::memset(table_, 0, table_size());
+  std::memset(table_, 0, static_cast<std::size_t>(table_size()));
 }
 
 void Sketch::copy(const Sketch &src, const char *path,
@@ -393,8 +393,10 @@ double Sketch::inner_product(const Sketch &rhs, double *lhs_square_length,
     double current_lhs_square_length = 0.0;
     double current_rhs_square_length = 0.0;
     for (UInt64 cell_id = 0; cell_id < width(); ++cell_id) {
-      const double lhs_value = get_(table_id, cell_id);
-      const double rhs_value = rhs.get_(table_id, cell_id);
+      const double lhs_value =
+          static_cast<double>(get_(table_id, cell_id));
+      const double rhs_value =
+          static_cast<double>(rhs.get_(table_id, cell_id));
       current_inner_product += lhs_value * rhs_value;
       if (lhs_square_length != NULL) {
         current_lhs_square_length += lhs_value * lhs_value;
@@ -458,7 +460,7 @@ void Sketch::create_(UInt64 width, UInt64 max_value, const char *path,
   const UInt64 file_size = sizeof(Header) + sizeof(Random) + table_size;
   MADOKA_THROW_IF(file_size > std::numeric_limits<std::size_t>::max());
 
-  file_.create(path, file_size, flags);
+  file_.create(path, static_cast<std::size_t>(file_size), flags);
   header_ = static_cast<Header *>(file_.addr());
   random_ = reinterpret_cast<Random *>(header_ + 1);
   table_ = reinterpret_cast<UInt64 *>(random_ + 1);
@@ -686,8 +688,8 @@ void Sketch::exact_set_floor_(UInt64 cell_id, UInt64 value) throw() {
       break;
     }
     case 2: {
-      const std::size_t unit_id = cell_id / 32;
-      const std::size_t unit_offset = (cell_id % 32) * 2;
+      const std::size_t unit_id = static_cast<std::size_t>(cell_id / 32);
+      const std::size_t unit_offset = static_cast<std::size_t>((cell_id % 32) * 2);
       if (((table_[unit_id] >> unit_offset) & value_mask()) < value) {
         table_[unit_id] &= ~(value_mask() << unit_offset);
         table_[unit_id] |= value << unit_offset;
@@ -695,8 +697,8 @@ void Sketch::exact_set_floor_(UInt64 cell_id, UInt64 value) throw() {
       break;
     }
     case 4: {
-      const std::size_t unit_id = cell_id / 16;
-      const std::size_t unit_offset = (cell_id % 16) * 4;
+      const std::size_t unit_id = static_cast<std::size_t>(cell_id / 16);
+      const std::size_t unit_offset = static_cast<std::size_t>((cell_id % 16) * 4);
       if (((table_[unit_id] >> unit_offset) & value_mask()) < value) {
         table_[unit_id] &= ~(value_mask() << unit_offset);
         table_[unit_id] |= value << unit_offset;
@@ -885,7 +887,7 @@ void Sketch::copy_(const Sketch &src, const char *path,
                    int flags) throw(Exception) {
   create_(src.width(), src.max_value(), path, flags, src.seed());
   std::memcpy(random_, src.random_, sizeof(Random));
-  std::memcpy(table_, src.table_, table_size());
+  std::memcpy(table_, src.table_, static_cast<std::size_t>(table_size()));
 }
 
 void Sketch::exact_merge_(const Sketch &rhs, Filter lhs_filter,

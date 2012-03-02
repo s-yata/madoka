@@ -315,6 +315,9 @@ void extra_test(madoka::UInt64 max_value,
     MADOKA_THROW_IF(cosine > (1.0 + 1e-9));
   }
 
+  sketch_1.close();
+  sketch_2.close();
+
   MADOKA_THROW_IF(std::remove(PATH_1) == -1);
   MADOKA_THROW_IF(std::remove(PATH_2) == -1);
 }
