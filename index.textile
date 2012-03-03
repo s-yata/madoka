@@ -22,9 +22,9 @@ h2. Installation
 
 <div class="float">
 <pre>
-$ wget https://github.com/downloads/s-yata/madoka/madoka-0.0.1.tar.gz
-$ tar zxf madoka-0.0.1.tar.gz
-$ cd madoka-0.0.1/
+$ wget https://github.com/downloads/s-yata/madoka/madoka-0.0.2.tar.gz
+$ tar zxf madoka-0.0.2.tar.gz
+$ cd madoka-0.0.2/
 $ ./configure
 $ make
 $ make check
@@ -33,7 +33,7 @@ $ sudo ldconfig
 </pre>
 </div>
 
-Download a "package of Madoka":https://github.com/downloads/s-yata/madoka/madoka-0.0.1.tar.gz and unpack it. Then, run <kbd>configure</kbd> and <kbd>make</kbd>. You may have to run <kbd>ldconfig</kbd> to use Madoka.
+Download a "package of Madoka":https://github.com/downloads/s-yata/madoka/madoka-0.0.2.tar.gz and unpack it. Then, run <kbd>configure</kbd> and <kbd>make</kbd>. You may have to run <kbd>ldconfig</kbd> to use Madoka.
 
 If you get source files from "GitHub":http://github.com/s-yata/madoka, <kbd>autoreconf -i</kbd> is needed to generate a <kbd>configure</kbd> script.
 
