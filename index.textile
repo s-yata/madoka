@@ -1,10 +1,10 @@
 ---
 layout: default
-title: "Documentation"
+title: "Count-Min Sketch Library"
 lang: en
 ---
 
-h1. Documentation
+h1. Count-Min Sketch Library
 
 h2. Introduction
 
