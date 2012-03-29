@@ -62,6 +62,6 @@ class Timer {
   Timer &operator=(const Timer &);
 };
 
-}  // namespace
+}  // namespace madoka
 
 #endif  // MADOKA_TIMER_H
