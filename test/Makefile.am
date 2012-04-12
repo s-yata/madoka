@@ -2,6 +2,7 @@ AM_CFLAGS = -Wall -Wextra -I../lib
 AM_CXXFLAGS = -Wall -Weffc++ -Wextra -I../lib -std=c++0x
 
 TESTS = \
+  util-test \
   exception-test \
   approx-test \
   header-test \
@@ -11,6 +12,9 @@ TESTS = \
   c-test
 
 check_PROGRAMS = $(TESTS)
+
+util_test_SOURCES = util-test.cc
+util_test_LDADD = ../lib/libmadoka.la
 
 exception_test_SOURCES = exception-test.cc
 exception_test_LDADD = ../lib/libmadoka.la
