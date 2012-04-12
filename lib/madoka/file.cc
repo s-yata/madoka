@@ -24,20 +24,20 @@
 
 #include "file.h"
 
-#ifdef WIN32
+#ifdef _WIN32
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <windows.h>
  #ifdef max
   #undef max
  #endif  // max
-#else  // WIN32
+#else  // _WIN32
  #include <fcntl.h>
  #include <sys/mman.h>
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <unistd.h>
-#endif  // WIN32
+#endif  // _WIN32
 
 #include <cstring>
 #include <limits>
@@ -73,14 +73,14 @@ class FileImpl {
   void *addr_;
   std::size_t size_;
   int flags_;
-#ifdef WIN32
+#ifdef _WIN32
   HANDLE file_handle_;
   HANDLE map_handle_;
   LPVOID view_addr_;
-#else  // WIN32
+#else  // _WIN32
   int fd_;
   void *map_addr_;
-#endif  // WIN32
+#endif  // _WIN32
 
   void create_(const char *path, std::size_t size, int flags) throw(Exception);
   void open_(const char *path, int flags) throw(Exception);
@@ -92,7 +92,7 @@ class FileImpl {
   FileImpl &operator=(const FileImpl &);
 };
 
-#ifdef WIN32
+#ifdef _WIN32
 
 FileImpl::FileImpl() throw()
   : addr_(NULL), size_(0), flags_(0), file_handle_(INVALID_HANDLE_VALUE),
@@ -110,7 +110,7 @@ FileImpl::~FileImpl() throw() {
   }
 }
 
-#else  // WIN32
+#else  // _WIN32
 
 FileImpl::FileImpl() throw()
   : addr_(NULL), size_(0), flags_(0), fd_(-1), map_addr_(MAP_FAILED) {}
@@ -124,7 +124,7 @@ FileImpl::~FileImpl() throw() {
   }
 }
 
-#endif  // WIN32
+#endif  // _WIN32
 
 void FileImpl::create(const char *path, std::size_t size,
                       int flags) throw(Exception) {
@@ -159,14 +159,14 @@ void FileImpl::swap(FileImpl *file) throw() {
   util::swap(addr_, file->addr_);
   util::swap(size_, file->size_);
   util::swap(flags_, file->flags_);
-#ifdef WIN32
+#ifdef _WIN32
   util::swap(file_handle_, file->file_handle_);
   util::swap(map_handle_, file->map_handle_);
   util::swap(view_addr_, file->view_addr_);
-#else  // WIN32
+#else  // _WIN32
   util::swap(fd_, file->fd_);
   util::swap(map_addr_, file->map_addr_);
-#endif  // WIN32
+#endif  // _WIN32
 }
 
 void FileImpl::load_(const char *path, int flags) throw(Exception) {
@@ -182,7 +182,7 @@ void FileImpl::load_(const char *path, int flags) throw(Exception) {
   std::memcpy(addr(), file.addr(), size());
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 
 DWORD get_access_flags(int flags) {
   DWORD access_flags = 0;
@@ -358,7 +358,7 @@ void FileImpl::open_(const char *path, int flags) throw(Exception) {
   }
 }
 
-#else  // WIN32
+#else  // _WIN32
 
 namespace {
 
@@ -504,7 +504,7 @@ void FileImpl::open_(const char *path, int flags) throw(Exception) {
   }
 }
 
-#endif  // WIN32
+#endif  // _WIN32
 
 File::File() throw() : impl_(NULL) {}
 
