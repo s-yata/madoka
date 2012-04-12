@@ -82,22 +82,41 @@ inline void swap(T &lhs, T &rhs) throw() {
 }
 
 // bit_scan_reverse() returns the index of the most significant 1 bit of
-// `value'. Note that bit_scan_reverse() returns 0 or 64 if `value' == 0.
+// `value'. For example, if `value' == 12, the result is 3. Note that if
+// `value' == 0, the result is undefined.
 inline UInt64 bit_scan_reverse(UInt64 value) throw() {
 #ifdef _MSC_VER
   unsigned long index;
  #ifdef WIN64
   ::_BitScanReverse64(&index, value);
   return index;
- #else
-  if (::_BitScanReverse(&index, static_cast<unsigned long>(value)) != 0) {
-    return index;
+ #else  // WIN64
+  if ((value >> 32) == 0) {
+    ::_BitScanReverse(&index, static_cast<unsigned long>(value >> 32));
+    return index + 32;
   }
-  ::_BitScanReverse(&index, static_cast<unsigned long>(value >> 32));
-  return index + 32;
+  ::_BitScanReverse(&index, static_cast<unsigned long>(value));
+  return index;
  #endif  // WIN64
 #else  // _MSC_VER
-  return ::__builtin_clzll(value);
+ #ifdef __x86_64__
+  UInt64 index;
+  __asm__ ("bsrq %1, %0" : "=r"(index) : "r"(value));
+  return index;
+ #else  // __x86_64__
+  #if defined(__PPC__) || defined(__ppc__)
+   return 63 - ::__builtin_clzll(value);
+  #else  // defined(__PPC__) || defined(__ppc__)
+   UInt32 index;
+   if ((value >> 32) != 0) {
+     __asm__ ("bsrl %1, %0"
+       : "=r"(index) : "r"(static_cast<UInt32>(value >> 32)));
+     return index + 32;
+   }
+   __asm__ ("bsrl %1, %0" : "=r"(index) : "r"(static_cast<UInt32>(value)));
+   return index;
+  #endif  // defined(__PPC__) || defined(__ppc__)
+ #endif  // __x86_64__
 #endif  // _MSC_VER
 }
 

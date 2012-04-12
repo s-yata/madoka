@@ -58,7 +58,7 @@ class Approx {
   static UInt64 encode(UInt64 value) throw() {
     value &= APPROX_VALUE_MASK;
     const UInt64 exponent =
-        50 - util::bit_scan_reverse(value | APPROX_SIGNIFICAND_MASK);
+        util::bit_scan_reverse(value | APPROX_SIGNIFICAND_MASK) - 13;
     return (exponent << APPROX_EXPONENT_SHIFT) |
         ((value >> SHIFT_TABLE[exponent]) & APPROX_SIGNIFICAND_MASK);
   }
