@@ -4,7 +4,6 @@ ACLOCAL_AMFLAGS = -I m4
 lib_LTLIBRARIES = libmadoka.la
 
 libmadoka_la_SOURCES = \
-  madoka/approx.cc \
   madoka/file.cc \
   madoka/sketch.cc
 
