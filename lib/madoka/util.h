@@ -116,6 +116,7 @@ inline UInt64 bit_scan_reverse(UInt64 value) throw() {
   #else  // __i386__
    return 63 - ::__builtin_clzll(value);
   #endif  // __i386__
+ #endif  // __x86_64__
 #endif  // _MSC_VER
 }
 
