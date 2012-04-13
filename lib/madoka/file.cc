@@ -195,17 +195,6 @@ DWORD get_access_flags(int flags) {
   return access_flags;
 }
 
-DWORD get_mode_flags(int flags) {
-  DWORD mode_flags = 0;
-  if (flags & FILE_READONLY) {
-    mode_flags |= FILE_SHARE_READ;
-  }
-  if (flags & FILE_WRITABLE) {
-    mode_flags |= FILE_SHARE_READ | FILE_SHARE_WRITE;
-  }
-  return mode_flags;
-}
-
 DWORD get_disposition_type(int flags) {
   DWORD disposition_type = 0;
   if (flags & FILE_CREATE) {
@@ -269,7 +258,7 @@ void FileImpl::create_(const char *path, std::size_t size,
     }
 
     file_handle_ = ::CreateFileA(path, get_access_flags(flags),
-                                 get_mode_flags(flags), NULL,
+                                 FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                                  get_disposition_type(flags),
                                  FILE_ATTRIBUTE_NORMAL, NULL);
     MADOKA_THROW_IF(file_handle_ == INVALID_HANDLE_VALUE);
@@ -329,7 +318,7 @@ void FileImpl::open_(const char *path, int flags) throw(Exception) {
   const std::size_t size = static_cast<std::size_t>(stat.st_size);
 
   file_handle_ = ::CreateFileA(path, get_access_flags(flags),
-                               get_mode_flags(flags), NULL,
+                               FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                                get_disposition_type(flags),
                                FILE_ATTRIBUTE_NORMAL, NULL);
   MADOKA_THROW_IF(file_handle_ == NULL);
