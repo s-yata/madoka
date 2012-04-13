@@ -104,9 +104,7 @@ inline UInt64 bit_scan_reverse(UInt64 value) throw() {
   __asm__ ("bsrq %1, %0" : "=r"(index) : "r"(value));
   return index;
  #else  // __x86_64__
-  #if defined(__PPC__) || defined(__ppc__)
-   return 63 - ::__builtin_clzll(value);
-  #else  // defined(__PPC__) || defined(__ppc__)
+  #ifdef __i386__
    UInt32 index;
    if ((value >> 32) != 0) {
      __asm__ ("bsrl %1, %0"
@@ -115,8 +113,9 @@ inline UInt64 bit_scan_reverse(UInt64 value) throw() {
    }
    __asm__ ("bsrl %1, %0" : "=r"(index) : "r"(static_cast<UInt32>(value)));
    return index;
-  #endif  // defined(__PPC__) || defined(__ppc__)
- #endif  // __x86_64__
+  #else  // __i386__
+   return 63 - ::__builtin_clzll(value);
+  #endif  // __i386__
 #endif  // _MSC_VER
 }
 
