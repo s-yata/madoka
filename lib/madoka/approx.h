@@ -61,11 +61,11 @@ class Approx {
         util::bit_scan_reverse(value | APPROX_SIGNIFICAND_MASK)
         - (APPROX_SIGNIFICAND_SIZE - 1);
 
-#ifdef MADOKA_PREFER_BRANCH
+#ifndef MADOKA_NOT_PREFER_BRANCH
     if (exponent <= 1) {
       return value;
     }
-#endif  // MADOKA_PREFER_BRANCH
+#endif  // MADOKA_NOT_PREFER_BRANCH
 
     return (exponent << APPROX_EXPONENT_SHIFT) |
         ((value >> get_shift(exponent)) & APPROX_SIGNIFICAND_MASK);
@@ -75,61 +75,61 @@ class Approx {
     const UInt64 exponent =
         (approx >> APPROX_EXPONENT_SHIFT) & APPROX_EXPONENT_MASK;
 
-#ifdef MADOKA_PREFER_BRANCH
+#ifndef MADOKA_NOT_PREFER_BRANCH
     if (exponent <= 1) {
       return approx;
     }
-#endif  // MADOKA_PREFER_BRANCH
+#endif  // MADOKA_NOT_PREFER_BRANCH
 
     const UInt64 significand =
         (approx >> APPROX_SIGNIFICAND_SHIFT) & APPROX_SIGNIFICAND_MASK;
 
-#ifdef MADOKA_PREFER_BRANCH
+#ifndef MADOKA_NOT_PREFER_BRANCH
     return get_offset(exponent) | (significand << get_shift(exponent));
-#else  // MADOKA_PREFER_BRANCH
+#else  // MADOKA_NOT_PREFER_BRANCH
     return get_offset(exponent) | (significand << get_shift(exponent));
-#endif  // MADOKA_PREFER_BRANCH
+#endif  // MADOKA_NOT_PREFER_BRANCH
   }
 
   static UInt64 decode(UInt64 approx, Random *random) throw() {
     const UInt64 exponent =
         (approx >> APPROX_EXPONENT_SHIFT) & APPROX_EXPONENT_MASK;
 
-#ifdef MADOKA_PREFER_BRANCH
+#ifndef MADOKA_NOT_PREFER_BRANCH
     if (exponent <= 1) {
       return approx;
     }
-#endif  // MADOKA_PREFER_BRANCH
+#endif  // MADOKA_NOT_PREFER_BRANCH
 
     const UInt64 significand =
         (approx >> APPROX_SIGNIFICAND_SHIFT) & APPROX_SIGNIFICAND_MASK;
 
-#ifdef MADOKA_PREFER_BRANCH
+#ifndef MADOKA_NOT_PREFER_BRANCH
     return get_offset(exponent) | (significand << get_shift(exponent)) |
         ((*random)() & get_mask(exponent));
-#else  // MADOKA_PREFER_BRANCH
+#else  // MADOKA_NOT_PREFER_BRANCH
     return get_offset(exponent) | (significand << get_shift(exponent)) |
         ((*random)() & get_mask(exponent));
-#endif  // MADOKA_PREFER_BRANCH
+#endif  // MADOKA_NOT_PREFER_BRANCH
   }
 
   static UInt64 inc(UInt64 approx, Random *random) throw() {
     const UInt64 exponent =
         (approx >> APPROX_EXPONENT_SHIFT) & APPROX_EXPONENT_MASK;
 
-#ifdef MADOKA_PREFER_BRANCH
+#ifndef MADOKA_NOT_PREFER_BRANCH
     approx += (exponent <= 1) || (((*random)() & get_mask(exponent)) == 0);
-#else  // MADOKA_PREFER_BRANCH
+#else  // MADOKA_NOT_PREFER_BRANCH
     approx += (((*random)() & get_mask(exponent)) - 1ULL) >> 63;
-#endif  // MADOKA_PREFER_BRANCH
+#endif  // MADOKA_NOT_PREFER_BRANCH
     return approx;
   }
 
  private:
   static UInt64 get_offset(UInt64 exponent) {
-#ifdef MADOKA_PREFER_BRANCH
+#ifndef MADOKA_NOT_PREFER_BRANCH
     return 1ULL << (exponent + (APPROX_SIGNIFICAND_SIZE - 1));
-#else  // MADOKA_PREFER_BRANCH
+#else  // MADOKA_NOT_PREFER_BRANCH
     static const UInt64 OFFSET_TABLE[APPROX_MAX_EXPONENT + 1] = {
                0, 1ULL << 14, 1ULL << 15, 1ULL << 16, 1ULL << 17, 1ULL << 18,
       1ULL << 19, 1ULL << 20, 1ULL << 21, 1ULL << 22, 1ULL << 23, 1ULL << 24,
@@ -139,25 +139,25 @@ class Approx {
       1ULL << 43, 1ULL << 44
     };
     return OFFSET_TABLE[exponent];
-#endif  // MADOKA_PREFER_BRANCH
+#endif  // MADOKA_NOT_PREFER_BRANCH
   }
 
   static UInt64 get_shift(UInt64 exponent) {
-#ifdef MADOKA_PREFER_BRANCH
+#ifndef MADOKA_NOT_PREFER_BRANCH
     return exponent - 1;
-#else  // MADOKA_PREFER_BRANCH
+#else  // MADOKA_NOT_PREFER_BRANCH
     static const UInt8 SHIFT_TABLE[APPROX_MAX_EXPONENT + 1] = {
        0,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
       15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
     };
     return SHIFT_TABLE[exponent];
-#endif  // MADOKA_PREFER_BRANCH
+#endif  // MADOKA_NOT_PREFER_BRANCH
   }
 
   static UInt64 get_mask(UInt64 exponent) {
-#ifdef MADOKA_PREFER_BRANCH
+#ifndef MADOKA_NOT_PREFER_BRANCH
     return (1ULL << (exponent - 1)) - 1;
-#else  // MADOKA_PREFER_BRANCH
+#else  // MADOKA_NOT_PREFER_BRANCH
     static const UInt32 MASK_TABLE[APPROX_MAX_EXPONENT + 1] = {
       0x00000000, 0x00000000, 0x00000001, 0x00000003, 0x00000007, 0x0000000F,
       0x0000001F, 0x0000003F, 0x0000007F, 0x000000FF, 0x000001FF, 0x000003FF,
@@ -167,7 +167,7 @@ class Approx {
       0x1FFFFFFF, 0x3FFFFFFF
     };
     return MASK_TABLE[exponent];
-#endif  // MADOKA_PREFER_BRANCH
+#endif  // MADOKA_NOT_PREFER_BRANCH
   }
 };
 
