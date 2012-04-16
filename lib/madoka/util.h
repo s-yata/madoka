@@ -113,7 +113,7 @@ inline UInt64 bit_scan_reverse(UInt64 value) throw() {
      return index + 32;
    }
    __asm__ ("bsrl %1, %%eax; movl %%eax, %0"
-     : "=r"(index) : "r"(static_cast<UInt32>(value)));
+     : "=r"(index) : "r"(static_cast<UInt32>(value)) : "%eax");
    return index;
   #else  // __i386__
    return 63 - ::__builtin_clzll(value);
