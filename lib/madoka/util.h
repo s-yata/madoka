@@ -101,17 +101,19 @@ inline UInt64 bit_scan_reverse(UInt64 value) throw() {
 #else  // _MSC_VER
  #ifdef __x86_64__
   UInt64 index;
-  __asm__ ("bsrq %1, %0" : "=r"(index) : "r"(value));
+  __asm__ ("bsrq %1, %%rax; movq %%rax, %0"
+    : "=r"(index) : "r"(value) : "%rax");
   return index;
  #else  // __x86_64__
   #ifdef __i386__
    UInt32 index;
    if ((value >> 32) != 0) {
-     __asm__ ("bsrl %1, %0"
-       : "=r"(index) : "r"(static_cast<UInt32>(value >> 32)));
+     __asm__ ("bsrl %1, %%eax; movl %%eax, %0"
+       : "=r"(index) : "r"(static_cast<UInt32>(value >> 32)) : "%eax");
      return index + 32;
    }
-   __asm__ ("bsrl %1, %0" : "=r"(index) : "r"(static_cast<UInt32>(value)));
+   __asm__ ("bsrl %1, %%eax; movl %%eax, %0"
+     : "=r"(index) : "r"(static_cast<UInt32>(value)));
    return index;
   #else  // __i386__
    return 63 - ::__builtin_clzll(value);
