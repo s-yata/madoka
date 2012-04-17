@@ -91,7 +91,7 @@ inline UInt64 bit_scan_reverse(UInt64 value) throw() {
   ::_BitScanReverse64(&index, value);
   return index;
  #else  // _WIN64
-  if ((value >> 32) == 0) {
+  if ((value >> 32) != 0) {
     ::_BitScanReverse(&index, static_cast<unsigned long>(value >> 32));
     return index + 32;
   }
