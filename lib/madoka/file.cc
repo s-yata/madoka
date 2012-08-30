@@ -37,6 +37,9 @@
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <unistd.h>
+ #ifndef MAP_ANONYMOUS
+ # define MAP_ANONYMOUS MAP_ANON
+ #endif
 #endif  // _WIN32
 
 #include <cstring>
