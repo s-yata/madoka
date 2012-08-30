@@ -15,6 +15,11 @@
  #endif  // _POSIX_TIMERS
 #endif  // WIN32
 
+// No CLOCK_REALTIME on MacOS X.
+#ifndef CLOCK_REALTIME
+ #undef _POSIX_TIMERS
+#endif
+
 namespace madoka {
 
 class Timer {
