@@ -11,8 +11,13 @@
 #else  // WIN32
  #include <unistd.h>
  #ifdef _POSIX_TIMERS
-  #include <sys/time.h>
+  #if _POSIX_TIMERS > 0
+   #define MADOKA_HAS_CLOCK_GETTIME
+  #endif  // _POSIX_TIMERS > 0
  #endif  // _POSIX_TIMERS
+ #ifndef MADOKA_HAS_CLOCK_GETTIME
+  #include <sys/time.h>
+ #endif  // MADOKA_HAS_CLOCK_GETTIME
 #endif  // WIN32
 
 namespace madoka {
@@ -45,15 +50,15 @@ class Timer {
     return tb.time + (tb.millitm * 0.001);
  #endif  // _MSC_VER
 #else  // WIN32
- #ifdef _POSIX_TIMERS
+ #ifdef MADOKA_HAS_CLOCK_GETTIME
     struct timespec ts;
     ::clock_gettime(CLOCK_REALTIME, &ts);
     return ts.tv_sec + (ts.tv_nsec * 0.000000001);
- #else  // _POSIX_TIMERS
+ #else  // MADOKA_HAS_CLOCK_GETTIME
     struct timeval tv;
     ::gettimeofday(&tv, NULL);
     return tv.tv_sec + (tv.tv_usec * 0.000001);
- #endif  // _POSIX_TIMERS
+ #endif  // MADOKA_HAS_CLOCK_GETTIME
 #endif  // WIN32
   }
 
