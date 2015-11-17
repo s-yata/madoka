@@ -1,7 +1,9 @@
 *.exe
 *.la
 *.lo
+*.log
 *.o
+*.trs
 *~
 .deps
 .libs
@@ -30,3 +32,5 @@
 /test/*-test
 Makefile
 Makefile.in
+compile
+test-driver
