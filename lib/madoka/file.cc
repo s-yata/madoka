@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Susumu Yata
+// Copyright (c) 2012-2015, Susumu Yata
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -345,7 +345,7 @@ void FileImpl::open_(const char *path, int flags) throw(Exception) {
   if (flags & FILE_PRELOAD) {
     volatile UInt64 count = 0;
     for (std::size_t offset = 0; offset < size_; offset += 1024) {
-      count += *static_cast<UInt8 *>(addr_) + offset;
+      count += *(static_cast<UInt8 *>(addr_) + offset);
     }
   }
 }
