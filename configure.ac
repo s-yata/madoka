@@ -34,6 +34,7 @@ AM_CONDITIONAL([HAVE_CLOCK_GETTIME], ["${have_clock_gettime}"])
 AC_CONFIG_FILES([Makefile
                  madoka.pc
                  lib/Makefile
+                 lib/madoka/Makefile
                  src/Makefile
                  test/Makefile])
 AC_OUTPUT
