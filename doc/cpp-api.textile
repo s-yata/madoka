@@ -183,7 +183,7 @@ To customize a sketch, specify <var>width</var> and <var>max_value</var> when cr
 ** <var>max_value</var> must not be greater than <var>madoka::SKETCH_MAX_MAX_VALUE</var> (<var>2<sup>45</sup> - 1</var>).
 ** <code>create()</code> rounds out a given <var>max_value</var> to <var>1</var>, <var>3</var>, <var>15</var>, <var>255</var>, <var>65535</var> or <var>2<sup>45</sup> - 1</var>.
 
-This example creates a customized sketch and prints the size. Note that the size in bytes of a sketch is approximately <var>width x depth x 8</var> if <var>max_value == 2<sup>45</sup> - 1</var>, or otherwise <var>width x depth x log<sub>2</sub>(max_value + 1) / 8</var>.
+This example creates a customized sketch and prints the size. Note that the size in bytes of a sketch is approximately <var>width x 8</var> if <var>max_value == 2<sup>45</sup> - 1</var>, or otherwise <var>width x depth x log<sub>2</sub>(max_value + 1) / 8</var>.
 
 h2. Clear a sketch
 

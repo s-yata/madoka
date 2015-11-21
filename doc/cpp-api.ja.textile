@@ -187,7 +187,7 @@ size: 25165904
 ** <var>max_value</var> には <var>madoka::SKETCH_MAX_MAX_VALUE</var> （<var>2<sup>45</sup> - 1</var>）以下の値を指定する必要があります．
 ** <code>create()</code> は <var>max_value</var> を <var>1</var>, <var>3</var>, <var>15</var>, <var>255</var>, <var>65535</var>, <var>2<sup>45</sup> - 1</var> のいずれかに切り上げます．
 
-サンプルでは，特製のスケッチを作成した後，そのサイズを出力しています．スケッチのサイズについては，<var>max_value</var> が <var>madoka::SKETCH_MAX_MAX_VALUE</var> であれば <var>width x depth x 8</var> によって，<var>max_value</var> が <var>madoka::SKETCH_MAX_MAX_VALUE</var> でなければ <var>width x depth x log<sub>2</sub>(max_value + 1) / 8</var> によって計算できます．
+サンプルでは，特製のスケッチを作成した後，そのサイズを出力しています．スケッチのサイズについては，<var>max_value</var> が <var>madoka::SKETCH_MAX_MAX_VALUE</var> であれば <var>width x 8</var> によって，<var>max_value</var> が <var>madoka::SKETCH_MAX_MAX_VALUE</var> でなければ <var>width x depth x log<sub>2</sub>(max_value + 1) / 8</var> によって計算できます．
 
 h2. Clear a sketch
 
