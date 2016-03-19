@@ -5,7 +5,7 @@ AC_PREREQ([2.67])
 AC_INIT([madoka], [0.0.2], [susumu.yata@gmail.com])
 AC_CONFIG_SRCDIR([lib/madoka.h])
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign])
 
 # Checks for programs.
 LT_INIT
