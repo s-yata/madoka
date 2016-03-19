@@ -1,45 +1,47 @@
-== Introduction ==
+## Introduction
 
 Madoka is an implementation of the Count-Min sketch, a data structure for summarizing data streams. Madoka uses a conservative update mechanism to improve the accurary of sketches. In addition, Madoka uses an authorized update mechanism and an approximate counting algorithm for ultimate sketching. For more information, see the following web sites.
 
 * Count-Min sketch
-** http://en.wikipedia.org/wiki/Count-Min_sketch
-** https://sites.google.com/site/countminsketch/
+ * http://en.wikipedia.org/wiki/Count-Min_sketch
+ * https://sites.google.com/site/countminsketch/
 * Approximate counting algorithm
-** http://en.wikipedia.org/wiki/Approximate_counting_algorithm
+ * http://en.wikipedia.org/wiki/Approximate_counting_algorithm
 
 Madoka was developed as a part of the groonga project (http://groonga.org/), special thanks to Brazil Inc.
 
-== Documentation ==
+## Documentation
 
 * English
-** http://s-yata.github.com/madoka/
+ * http://s-yata.github.com/madoka/
 * Japanese
-** http://s-yata.github.com/madoka/index.ja.html
+ * http://s-yata.github.com/madoka/index.ja.html
 
-== Example ==
+## Example
 
 This is an example of using Madoka through its C++ interface. This example creates a sketch with default parameters and then increments values associated with "Madoka" and "Homura". The example will print "Madoka: 1", "Homura: 2" and "Mami: 0".
 
- #include <iostream>
- #include <madoka.h>
+```cpp
+#include <iostream>
+#include <madoka.h>
 
- int main() {
-   madoka::Sketch sketch;
-   sketch.create();
+int main() {
+  madoka::Sketch sketch;
+  sketch.create();
 
-   sketch.inc("Madoka", 6);
-   sketch.inc("Homura", 6);
-   sketch.inc("Homura", 6);
+  sketch.inc("Madoka", 6);
+  sketch.inc("Homura", 6);
+  sketch.inc("Homura", 6);
 
-   std::cout << "Madoka: " << sketch.get("Madoka", 6) << std::endl;
-   std::cout << "Homura: " << sketch.get("Homura", 6) << std::endl;
-   std::cout << "Mami: " << sketch.get("Mami", 4) << std::endl;
+  std::cout << "Madoka: " << sketch.get("Madoka", 6) << std::endl;
+  std::cout << "Homura: " << sketch.get("Homura", 6) << std::endl;
+  std::cout << "Mami: " << sketch.get("Mami", 4) << std::endl;
 
-   return 0;
- }
+  return 0;
+}
+```
 
-== License ==
+## License
 
 Madoka is licensed under the Simplified BSD License.
 
