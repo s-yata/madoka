@@ -21,7 +21,7 @@ Madoka was developed as a part of the Groonga project ([Groonga - An open-source
 ## Installation
 
 <div class="float">
-<pre>
+```
 $ wget https://github.com/downloads/s-yata/madoka/madoka-0.0.2.tar.gz
 $ tar zxf madoka-0.0.2.tar.gz
 $ cd madoka-0.0.2/
@@ -30,7 +30,7 @@ $ make
 $ make check
 $ sudo make install
 $ sudo ldconfig
-</pre>
+```
 </div>
 
 Download [a package of Madoka](https://github.com/downloads/s-yata/madoka/madoka-0.0.2.tar.gz) and unpack it. Then, run <kbd>configure</kbd> and <kbd>make</kbd>. You may have to run <kbd>ldconfig</kbd> to use Madoka.
@@ -42,7 +42,7 @@ Madoka is tested on Ubuntu 11.10. If you have any problems in this process, plea
 ## Example
 
 <div class="float">
-<pre>
+```cpp
 #include <iostream>
 #include <madoka.h>
 
@@ -60,7 +60,7 @@ int main() {
 
   return 0;
 }
-</pre>
+```
 </div>
 
 This is an example of using Madoka through its C++ interface. This example creates a sketch with default parameters and then increments values associated with <var>"Madoka"</var> and <var>"Homura"</var>. The example will print <var>"Madoka: 1"</var>, <var>"Homura: 2"</var> and <var>"Mami: 0"</var>.
@@ -70,11 +70,11 @@ This is an example of using Madoka through its C++ interface. This example creat
 A Count-Min sketch supports not only counting items, as shown in the above example, but also inner products, which enable a sketch to serve as a feature vector. In addition, Madoka supports merging and shrinking sketches so as to make sketching more useful. See the following for more information about the APIs.
 
 * English
- * "C API Documentation - to be written":doc/c-api.html
- * "C++ API Documentation":doc/cpp-api.html
+ * [C API Documentation - to be written](doc/c-api.html)
+ * [C++ API Documentation](doc/cpp-api.html)
 * Japanese
- * "C API Documentation - to be written":doc/c-api.ja.html
- * "C++ API Documentation":doc/cpp-api.ja.html
+ * [C API Documentation - to be written](doc/c-api.ja.html)
+ * [C++ API Documentation](doc/cpp-api.ja.html)
 
 ## Implementation
 
