@@ -4,21 +4,21 @@ title: "Count-Min Sketch Library"
 lang: en
 ---
 
-h1. Count-Min Sketch Library
+# Count-Min Sketch Library
 
-h2. Introduction
+## Introduction
 
 Madoka is an implementation of a Count-Min sketch, a data structure for summarizing data streams. Madoka uses a conservative update mechanism to improve the accurary of sketches. In addition, Madoka uses an authorized update mechanism and an approximate counting algorithm for ultimate sketching. For more information, see the following web sites.
 
 * Count-Min sketch
-** "Count-Min sketch - Wikipedia, the free encyclopedia":http://en.wikipedia.org/wiki/Count-Min_sketch
-** "Count-Min Sketch":https://sites.google.com/site/countminsketch/
+ * [Count-Min sketch - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Count-Min_sketch)
+ * [Count-Min Sketch](https://sites.google.com/site/countminsketch/)
 * Approximate counting algorithm
-** "Approximate counting algorithm - Wikipedia, the free encyclopedia":http://en.wikipedia.org/wiki/Approximate_counting_algorithm
+ * [Approximate counting algorithm - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Approximate_counting_algorithm)
 
-Madoka was developed as a part of the groonga project ("groonga - An open-source fulltext search engine and column store":http://groonga.org/), special thanks to Brazil Inc.
+Madoka was developed as a part of the Groonga project ([Groonga - An open-source fulltext search engine and column store](http://groonga.org/), special thanks to Brazil Inc.
 
-h2. Installation
+## Installation
 
 <div class="float">
 <pre>
@@ -33,13 +33,13 @@ $ sudo ldconfig
 </pre>
 </div>
 
-Download a "package of Madoka":https://github.com/downloads/s-yata/madoka/madoka-0.0.2.tar.gz and unpack it. Then, run <kbd>configure</kbd> and <kbd>make</kbd>. You may have to run <kbd>ldconfig</kbd> to use Madoka.
+Download [a package of Madoka](https://github.com/downloads/s-yata/madoka/madoka-0.0.2.tar.gz) and unpack it. Then, run <kbd>configure</kbd> and <kbd>make</kbd>. You may have to run <kbd>ldconfig</kbd> to use Madoka.
 
-If you get source files from "GitHub":http://github.com/s-yata/madoka, <kbd>autoreconf -i</kbd> is needed to generate a <kbd>configure</kbd> script.
+If you get source files from [GitHub](http://github.com/s-yata/madoka), <kbd>autoreconf -i</kbd> is needed to generate a <kbd>configure</kbd> script.
 
-Madoka is tested on Ubuntu 11.10. If you have any problems in this process, please report an issue on "GitHub":http://github.com/s-yata/madoka/issues.
+Madoka is tested on Ubuntu 11.10. If you have any problems in this process, please report an issue on [GitHub](http://github.com/s-yata/madoka/issues).
 
-h2. Example
+## Example
 
 <div class="float">
 <pre>
@@ -65,25 +65,25 @@ int main() {
 
 This is an example of using Madoka through its C++ interface. This example creates a sketch with default parameters and then increments values associated with <var>"Madoka"</var> and <var>"Homura"</var>. The example will print <var>"Madoka: 1"</var>, <var>"Homura: 2"</var> and <var>"Mami: 0"</var>.
 
-h2. Interface
+## Interface
 
 A Count-Min sketch supports not only counting items, as shown in the above example, but also inner products, which enable a sketch to serve as a feature vector. In addition, Madoka supports merging and shrinking sketches so as to make sketching more useful. See the following for more information about the APIs.
 
 * English
-** "C API Documentation - to be written":doc/c-api.html
-** "C++ API Documentation":doc/cpp-api.html
+ * "C API Documentation - to be written":doc/c-api.html
+ * "C++ API Documentation":doc/cpp-api.html
 * Japanese
-** "C API Documentation - to be written":doc/c-api.ja.html
-** "C++ API Documentation":doc/cpp-api.ja.html
+ * "C API Documentation - to be written":doc/c-api.ja.html
+ * "C++ API Documentation":doc/cpp-api.ja.html
 
-h2. Implementation
+## Implementation
 
 * Japanese
-** Presentation slides ("PowerPoint":https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pptx, "PDF":https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pdf)
+ * Presentation slides ([PowerPoint](https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pptx), [PDF](https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pdf))
 
-h2. License
+## License
 
-Madoka is licensed under "the Simplified BSD License":http://www.opensource.org/licenses/bsd-license.php.
+Madoka is licensed under [the Simplified BSD License](http://www.opensource.org/licenses/bsd-license.php).
 
 Copyright (c) 2012, Susumu Yata. All rights reserved.
 
