@@ -8,8 +8,7 @@ lang: ja
 
 ## Draw a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 #include <string>
 
@@ -26,15 +25,12 @@ int main(int argc, char *argv[]) {
   sketch.save(argv[1]);
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ draw-a-sketch.cc -lmadoka
 $ ./a.out SKETCH < KEYSET
-</pre>
-</div>
+```
 
 手始めにスケッチを描いてみます．サンプルは，標準入力（<var>std::cin</var>）からキーを一つずつ読み込み，スケッチ（<code>madoka::Sketch</code>）を描いた後，完成したスケッチをコマンドの第一引数（<var>argv[1]</var>）で指定されたファイルに保存しています．注目すべき箇所は以下の通りです．
 
@@ -54,8 +50,7 @@ $ ./a.out SKETCH < KEYSET
 
 ## Look at a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 #include <string>
 
@@ -73,15 +68,12 @@ int main(int argc, char *argv[]) {
   }
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ look-at-a-sketch.cc -lmadoka
 $ ./a.out SKETCH < KEYSET
-</pre>
-</div>
+```
 
 次に，描いたスケッチを眺めます．サンプルでは，コマンドの第一引数（<var>argv[1]</var>）で指定されたファイルからスケッチを入力し，標準入力（<var>std::cin</var>）から読み込んだキーに対応する値をスケッチから読み取っています．注目すべき箇所は以下の通りです．
 
@@ -93,8 +85,7 @@ $ ./a.out SKETCH < KEYSET
 
 h3. Use other brushes
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -111,17 +102,14 @@ int main(int argc, char *argv[]) {
             << sketch.get("QB", 2) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ use-other-brushes.cc -lmadoka
 $ ./a.out
 QB: 15
 QB: 15
-</pre>
-</div>
+```
 
 <code>madoka::Sketch</code> が提供する描画用の関数には，<code>inc()</code> のほかに <code>set()</code> と <code>add()</code> があります．サンプルはそれぞれの役割を示しています．
 
@@ -137,8 +125,7 @@ QB: 15
 
 ## Customize a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -155,18 +142,15 @@ int main(int argc, char *argv[]) {
   std::cout << "size: " << sketch.file_size() << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ customize-a-sketch.cc -lmadoka
 $ ./a.out
 width: 16777216
 max_value: 15
 size: 25165904
-</pre>
-</div>
+```
 
 [Count-Min sketch](https://sites.google.com/site/countminsketch/) は確率的なデータ構造なので，スケッチによって得られる値には誤差が含まれます．そして，誤差の大きさは，スケッチを作成するときに指定するパラメータである <var>width</var> と <var>depth</var>，およびに入力するキーの分布に依存します．そのため，Count-Min sketch の性能を引き出すには，適切なパラメータを与えることが重要になります．
 
@@ -191,8 +175,7 @@ size: 25165904
 
 ## Clear a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -207,16 +190,13 @@ int main(int argc, char *argv[]) {
             << sketch.get("Sayaka", 6) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ clear-a-sketch.cc -lmadoka
 $ ./a.out
 Sayaka: 0
-</pre>
-</div>
+```
 
 <code>madoka::Sketch</code> にはスケッチを白紙の状態に戻すためのインタフェースがあります．サンプルでは，作成したスケッチに更新を加えてから白紙に戻し，更新によって <var>100</var> になった値が <var>0</var> に戻っていることを確認しています．
 
@@ -226,8 +206,7 @@ Sayaka: 0
 
 ## Copy a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -249,17 +228,14 @@ int main(int argc, char *argv[]) {
             << snapshot.get("Kyoko", 5) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ copy-a-sketch.cc -lmadoka
 $ ./a.out
 Kyoko (original): 150
 Kyoko (snapshot): 100
-</pre>
-</div>
+```
 
 <code>madoka::Sketch</code> にはスケッチを複製するためのインタフェースがあります．サンプルでは，スケッチの複製をスナップショットとして残し，オリジナルのスケッチを更新しています．
 
@@ -270,8 +246,7 @@ Kyoko (snapshot): 100
 
 ## Apply a filter
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -296,17 +271,14 @@ int main(int argc, char *argv[]) {
             << sketch.get("Madoka", 6) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ apply-a-filter.cc -lmadoka
 $ ./a.out
 Kaname: 4
 Madoka: 7
-</pre>
-</div>
+```
 
 <code>madoka::Sketch</code> にはフィルタという機能があり，誤差の抑制や減衰のシミュレーションなどに利用できます．サンプルでは，スケッチに含まれるすべての値を <var>1/2</var> にするフィルタを適用しています．
 
@@ -321,8 +293,7 @@ Madoka: 7
 
 ## Shrink a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -352,19 +323,16 @@ int main(int argc, char *argv[]) {
             << new_sketch.get("Homura", 6) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ shrink-a-sketch.cc -lmadoka
 $ ./a.out
 width: 10
 max_value: 15
 Akemi: 8
 Homura: 15
-</pre>
-</div>
+```
 
 <code>madoka::Sketch</code> にはスケッチを縮小するためのインタフェースがあります．スケッチの縮小は <var>width</var> と <var>max_value</var> の設定にも関わる機能です．
 
@@ -380,8 +348,7 @@ Homura: 15
 
 ## Merge sketches
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -405,17 +372,14 @@ int main(int argc, char *argv[]) {
             << sketch.get("Mami", 4) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ merge-sketches.cc -lmadoka
 $ ./a.out
 Tomoe: 1
 Mami: 2
-</pre>
-</div>
+```
 
 <code>madoka::Sketch</code> はスケッチの合成をサポートしています．スケッチの合成はベクトルの加算と同様の操作であり，一方のスケッチ（右）を構成する値を他方のスケッチ（左）を構成する値に足し合わせます．
 
@@ -429,8 +393,7 @@ Mami: 2
 
 ## Estimate the inner product
 
-<div class="float">
-<pre>
+```cpp
 #include <cmath>
 #include <iostream>
 
@@ -459,19 +422,16 @@ int main(int argc, char *argv[]) {
             << (inner_product / length_1 / length_2) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ estimate-the-inner-product.cc -lmadoka
 $ ./a.out
 inner_product: 12
 length_1: 3.60555
 length_2: 6.40312
 cosine: 0.519778
-</pre>
-</div>
+```
 
 Count-Min sketch は内積の推定をサポートしています．<code>madoka::Sketch</code> には，内積の推定とともにスケッチの長さ（仮）を推定できるインタフェースがあります．実際にスケッチの長さという概念が存在するわけではありませんが，コサイン類似度の推定に用いることができます．
 
@@ -483,8 +443,7 @@ Count-Min sketch は内積の推定をサポートしています．<code>madoka
 
 ## Configure memory mapping
 
-<div class="float">
-<pre>
+```cpp
 namespace madoka {
 
 enum FileFlag {
@@ -500,8 +459,7 @@ enum FileFlag {
 };
 
 }  // namespace madoka
-</pre>
-</div>
+```
 
 <code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code>, <code>shrink()</code> は <var>path</var> と <var>flags</var> を引数として指定できるようになっています．<var>path</var> に対して <var>NULL</var> を指定したときは，ファイルとの関連付けをせずにメモリを確保します．<var>flags</var> にはファイルの操作やマッピングの作成に関する振る舞いを指定することができます．
 
@@ -531,8 +489,7 @@ enum FileFlag {
 
 ## Use huge pages
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -548,11 +505,9 @@ int main(int argc, char *argv[]) {
   }
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ use-huge-pages.cc -lmadoka
 $ grep HugePages_Free /proc/meminfo
 HugePages_Free:        0
@@ -564,8 +519,7 @@ $ grep HugePages_Free /proc/meminfo
 HugePages_Free:      512
 $ ./a.out
 HugeTLB: on
-</pre>
-</div>
+```
 
 概略を述べると，Count-Min sketch とは <var>depth</var> 個のハッシュ表を組み合わせたデータ構造です．そして，<code>madoka::Sketch</code> では <var>depth</var> を <var>3</var> に固定しているため，<code>get()</code> 以外の基本操作 <code>set()</code>, <code>inc()</code>, <code>add()</code> は <var>3</var> 回の [ランダムアクセス](http://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%B3%E3%83%80%E3%83%A0%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9) をおこないます．
 
@@ -606,8 +560,7 @@ HugeTLB: on
 
 ## Catch an exception
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -623,16 +576,13 @@ int main(int argc, char *argv[]) {
   }
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ catch-and-exception.cc -lmadoka
 $ ./a.out
 error: madoka/sketch.cc:453: width > SKETCH_MAX_WIDTH
-</pre>
-</div>
+```
 
 Madoka はエラーが起きると例外を投げます．例外のクラスは <code>madoka::Exception</code> です．サンプルは例外の捕まえ方を示しています．
 
@@ -644,8 +594,7 @@ Madoka はエラーが起きると例外を投げます．例外のクラスは 
 
 ## Draw a croquis
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -664,17 +613,14 @@ int main(int argc, char *argv[]) {
             << croquis.get("Hiroshi", 7) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ draw-a-croquis.cc -lmadoka
 $ ./a.out
 Madoka: 1.75
 Hiroshi: 2.5
-</pre>
-</div>
+```
 
 <code>madoka::Croquis</code> は <code>madoka::Sketch</code> を単純化したクラスです．<code>inc()</code>, <code>copy()</code>, <code>filter()</code>, <code>shrink()</code>, <code>merge()</code>, <code>inner_product()</code> は使えません．その代わり，テンプレート引数によって値の型を指定することができます．
 

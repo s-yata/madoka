@@ -8,8 +8,7 @@ lang: en
 
 ## Draw a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 #include <string>
 
@@ -26,15 +25,12 @@ int main(int argc, char *argv[]) {
   sketch.save(argv[1]);
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ draw-a-sketch.cc -lmadoka
 $ ./a.out SKETCH < KEYSET
-</pre>
-</div>
+```
 
 Let's try to draw a sketch. This example reads a keyset from standard input (<var>std::cin</var>) and draws a sketch (<code>madoka::Sketch</code>). Then, this example saves the sketch to a file specified by the 1st command line argument (<var>argv[1]</var>). The following are the points of this example.
 
@@ -54,8 +50,7 @@ Note that an option <kbd>-lmadoka</kbd> is needed to build this example. If you 
 
 ## Look at a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 #include <string>
 
@@ -73,15 +68,12 @@ int main(int argc, char *argv[]) {
   }
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ look-at-a-sketch.cc -lmadoka
 $ ./a.out SKETCH < KEYSET
-</pre>
-</div>
+```
 
 Next, let's try to look at a sketch. This example loads a sketch from a file specified by the 1st command line argument (<var>argv[1]</var>). Then, this example looks up keys read from standard input (<var>std::cin</var>). The following are the points of this example.
 
@@ -93,8 +85,7 @@ Next, let's try to look at a sketch. This example loads a sketch from a file spe
 
 h3. Use other brushes
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -111,17 +102,14 @@ int main(int argc, char *argv[]) {
             << sketch.get("QB", 2) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ use-other-brushes.cc -lmadoka
 $ ./a.out
 QB: 15
 QB: 15
-</pre>
-</div>
+```
 
 <code>madoka::Sketch</code> provides other drawing functions named <code>set()</code> and <code>add()</code>. This example shows how these functions work.
 
@@ -137,8 +125,7 @@ In this example, the 1st <code>set()</code> changes the value associated with <v
 
 ## Customize a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -155,18 +142,15 @@ int main(int argc, char *argv[]) {
   std::cout << "size: " << sketch.file_size() << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ customize-a-sketch.cc -lmadoka
 $ ./a.out
 width: 16777216
 max_value: 15
 size: 25165904
-</pre>
-</div>
+```
 
 Let's customize a sketch for your application. A [Count-Min sketch](https://sites.google.com/site/countminsketch/) is a probabilistic data structure and the accuracy depends on its parameters, <var>width</var> and <var>depth</var>, and the target data stream.
 
@@ -187,8 +171,7 @@ This example creates a customized sketch and prints the size. Note that the size
 
 ## Clear a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -203,16 +186,13 @@ int main(int argc, char *argv[]) {
             << sketch.get("Sayaka", 6) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ clear-a-sketch.cc -lmadoka
 $ ./a.out
 Sayaka: 0
-</pre>
-</div>
+```
 
 <code>madoka::Sketch</code> provides an interface to clear a sketch. This example creates a sketch and updates the value associated with <var>"Sayaka"</var> from <var>0</var> to <var>100</var>, but <code>clear()</code> fills the sketch with <var>0</var>s. As a result, <code>get()</code> returns <var>0</var> for <var>"Sayaka"</var>.
 
@@ -222,8 +202,7 @@ Sayaka: 0
 
 ## Copy a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -245,17 +224,14 @@ int main(int argc, char *argv[]) {
             << snapshot.get("Kyoko", 5) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ copy-a-sketch.cc -lmadoka
 $ ./a.out
 Kyoko (original): 150
 Kyoko (snapshot): 100
-</pre>
-</div>
+```
 
 <code>madoka::Sketch</code> provides an interface to copy a sketch. This example draws a sketch and creates its copy as a snapshot. Then, this example updates the original sketch.
 
@@ -266,8 +242,7 @@ As shown in this example, <code>copy()</code> is useful to create a snapshot in 
 
 ## Apply a filter
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -292,17 +267,14 @@ int main(int argc, char *argv[]) {
             << sketch.get("Madoka", 6) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ apply-a-filter.cc -lmadoka
 $ ./a.out
 Kaname: 4
 Madoka: 7
-</pre>
-</div>
+```
 
 <code>madoka::Sketch</code> provides a filter feature which can be used to reduce errors and to simulate decays. This example uses a filter for dividing all the values in a sketch by <var>2</var>.
 
@@ -317,8 +289,7 @@ For example, by using this feature, you can implement a variety of [lossy conser
 
 ## Shrink a sketch
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -348,19 +319,16 @@ int main(int argc, char *argv[]) {
             << new_sketch.get("Homura", 6) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ shrink-a-sketch.cc -lmadoka
 $ ./a.out
 width: 10
 max_value: 15
 Akemi: 8
 Homura: 15
-</pre>
-</div>
+```
 
 Let's shrink a sketch for saving memory. This is a reasonable answer to the question "How can I determine the best values for <var>width</var> and <var>max_value</var>?".
 
@@ -376,8 +344,7 @@ Due to this feature, you can use large <var>width</var> and <var>max_value</var>
 
 ## Merge sketches
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -401,17 +368,14 @@ int main(int argc, char *argv[]) {
             << sketch.get("Mami", 4) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ merge-sketches.cc -lmadoka
 $ ./a.out
 Tomoe: 1
 Mami: 2
-</pre>
-</div>
+```
 
 <code>madoka::Sketch</code> provides an interface to merge sketches. A sketch merging works like vector addition. It simply adds the values of the right-hand side sketch (rhs-sketch) to the values of the left-hand side sketch (lhs-sketch).
 
@@ -425,8 +389,7 @@ The merging feature allows you to draw a sketch in a distributed manner. For exa
 
 ## Estimate the inner product
 
-<div class="float">
-<pre>
+```cpp
 #include <cmath>
 #include <iostream>
 
@@ -455,19 +418,16 @@ int main(int argc, char *argv[]) {
             << (inner_product / length_1 / length_2) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ estimate-the-inner-product.cc -lmadoka
 $ ./a.out
 inner_product: 12
 length_1: 3.60555
 length_2: 6.40312
 cosine: 0.519778
-</pre>
-</div>
+```
 
 A Count-Min sketch supports inner product estimation. <code>madoka::Sketch</code> provides an interface to estimate the inner product with the length of sketches, actually length is not defined for sketches. This interface is useful to estimate the cosine similarity.
 
@@ -479,8 +439,7 @@ This example creates two sketches and estimates the inner product between the sk
 
 ## Configure memory mapping
 
-<div class="float">
-<pre>
+```cpp
 namespace madoka {
 
 enum FileFlag {
@@ -496,8 +455,7 @@ enum FileFlag {
 };
 
 }  // namespace madoka
-</pre>
-</div>
+```
 
 <code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code> and <code>shrink()</code> have arguments named <var>path</var> and <var>flags</var>. The <var>path</var> argument specifies the target file. Note that <var>NULL</var> specifies to create an anonymous memory mapping. The <var>flags</var> argument specifies the behavior as follows.
 
@@ -527,8 +485,7 @@ enum FileFlag {
 
 ## Use huge pages
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -544,11 +501,9 @@ int main(int argc, char *argv[]) {
   }
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ use-huge-pages.cc -lmadoka
 $ grep HugePages_Free /proc/meminfo
 HugePages_Free:        0
@@ -560,8 +515,7 @@ $ grep HugePages_Free /proc/meminfo
 HugePages_Free:      512
 $ ./a.out
 HugeTLB: on
-</pre>
-</div>
+```
 
 Roughly speaking, a Count-Min sketch is composed of hash tables and the number of hash tables is equal to its <var>depth</var>. The <var>depth</var> of <code>madoka::Sketch</code> is fixed to <var>3</var> and thus basic operations, <code>set()</code>, <code>inc()</code> and <code>add()</code>, except <code>get()</code>, perform at least <var>3</var> random accesses.
 
@@ -602,8 +556,7 @@ This example shows how to use huge pages. You can check whether huge pages are a
 
 ## Catch an exception
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -619,16 +572,13 @@ int main(int argc, char *argv[]) {
   }
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ catch-and-exception.cc -lmadoka
 $ ./a.out
 error: madoka/sketch.cc:453: width > SKETCH_MAX_WIDTH
-</pre>
-</div>
+```
 
 Madoka throws an exception when an error occurs. The exception class is <code>madoka::Exception</code>. This example shows how to catch an exception.
 
@@ -640,8 +590,7 @@ In this example, <code>create()</code> fails to create a sketch because the spec
 
 ## Draw a croquis
 
-<div class="float">
-<pre>
+```cpp
 #include <iostream>
 
 #include <madoka.h>
@@ -660,17 +609,14 @@ int main(int argc, char *argv[]) {
             << croquis.get("Hiroshi", 7) << std::endl;
   return 0;
 }
-</pre>
-</div>
+```
 
-<div class="float">
-<pre>
+```
 $ g++ draw-a-croquis.cc -lmadoka
 $ ./a.out
 Madoka: 1.75
 Hiroshi: 2.5
-</pre>
-</div>
+```
 
 <code>madoka::Croquis</code> is a simplified version of <code>madoka::Sketch</code>. It does not provide <code>inc()</code>, <code>copy()</code>, <code>filter()</code>, <code>shrink()</code>, <code>merge()</code> and <code>inner_product()</code>. Instead, <code>madoka::Croquis</code> has a template parameter that specifies the type of cells. 
 

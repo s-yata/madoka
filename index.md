@@ -20,7 +20,6 @@ Madoka was developed as a part of the Groonga project ([Groonga - An open-source
 
 ## Installation
 
-<div class="float">
 ```
 $ wget https://github.com/downloads/s-yata/madoka/madoka-0.0.2.tar.gz
 $ tar zxf madoka-0.0.2.tar.gz
@@ -31,7 +30,6 @@ $ make check
 $ sudo make install
 $ sudo ldconfig
 ```
-</div>
 
 Download [a package of Madoka](https://github.com/downloads/s-yata/madoka/madoka-0.0.2.tar.gz) and unpack it. Then, run <kbd>configure</kbd> and <kbd>make</kbd>. You may have to run <kbd>ldconfig</kbd> to use Madoka.
 
@@ -41,7 +39,6 @@ Madoka is tested on Ubuntu 11.10. If you have any problems in this process, plea
 
 ## Example
 
-<div class="float">
 ```cpp
 #include <iostream>
 #include <madoka.h>
@@ -61,7 +58,6 @@ int main() {
   return 0;
 }
 ```
-</div>
 
 This is an example of using Madoka through its C++ interface. This example creates a sketch with default parameters and then increments values associated with <var>"Madoka"</var> and <var>"Homura"</var>. The example will print <var>"Madoka: 1"</var>, <var>"Homura: 2"</var> and <var>"Mami: 0"</var>.
 

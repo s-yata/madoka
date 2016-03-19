@@ -20,7 +20,6 @@ Madoka は Groonga プロジェクト（ [Groonga - カラムストア機能付�
 
 ## Installation
 
-<div class="float">
 ```
 $ wget https://github.com/downloads/s-yata/madoka/madoka-0.0.2.tar.gz
 $ tar zxf madoka-0.0.2.tar.gz
@@ -31,7 +30,6 @@ $ make check
 $ sudo make install
 $ sudo ldconfig
 ```
-</div>
 
 [ソースコードのアーカイブ](https://github.com/downloads/s-yata/madoka/madoka-0.0.2.tar.gz) をダウンロードして展開した後，<kbd>configure</kbd> と <kbd>make</kbd> を実行すればビルド・インストールできます．環境によっては <kbd>ldconfig</kbd> が必要になるかもしれません．
 
@@ -41,7 +39,6 @@ Madoka は Ubuntu 11.10 においてテストされています．ビルド・�
 
 ## Example
 
-<div class="float">
 ```cpp
 #include <iostream>
 #include <madoka.h>
@@ -61,7 +58,6 @@ int main() {
   return 0;
 }
 ```
-</div>
 
 Madoka の基本的な使い方を示した C++ のサンプルコードです．この例では，デフォルトの設定を使ってスケッチを作成し，<var>"Madoka"</var> と <var>"Homura"</var> の頻度をカウントした後で，結果を出力しています．実行結果は <var>"Madoka: 1"</var>, <var>"Homura: 2"</var>, <var>"Mami: 0"</var> となります．
 
