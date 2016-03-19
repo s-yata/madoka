@@ -4,6 +4,6 @@ title: "C API Documentation"
 lang: en
 ---
 
-h1. C API Documentation
+# C API Documentation
 
 To be written.
