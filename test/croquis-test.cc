@@ -71,7 +71,7 @@ template <typename T>
 void test_croquis(const std::vector<std::string> &keys,
                   const std::vector<madoka::UInt64> &original_freqs,
                   const std::vector<std::size_t> &ids) {
-  const char PATH[] = "temp.1";
+  const char PATH[] = "croquis-test.temp.1";
 
   std::remove(PATH);
 

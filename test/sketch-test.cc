@@ -73,7 +73,7 @@ void basic_test(madoka::UInt64 max_value,
                 const std::vector<std::string> &keys,
                 const std::vector<madoka::UInt64> &original_freqs,
                 const std::vector<std::size_t> &ids) {
-  const char PATH[] = "temp.1";
+  const char PATH[] = "sketch-test.temp.1";
 
   std::remove(PATH);
 
@@ -183,8 +183,8 @@ void extra_test(madoka::UInt64 max_value,
                 const std::vector<std::string> &keys,
                 const std::vector<madoka::UInt64> &original_freqs,
                 const std::vector<std::size_t> &) {
-  const char PATH_1[] = "temp.1";
-  const char PATH_2[] = "temp.2";
+  const char PATH_1[] = "sketch-test.temp.1";
+  const char PATH_2[] = "sketch-test.temp.2";
 
   std::remove(PATH_1);
   std::remove(PATH_2);

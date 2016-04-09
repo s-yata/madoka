@@ -29,8 +29,8 @@
 #include <madoka/file.h>
 
 int main() try {
-  const char PATH_1[] = "temp.1";
-  const char PATH_2[] = "temp.2";
+  const char PATH_1[] = "file-test.temp.1";
+  const char PATH_2[] = "file-test.temp.2";
 
   std::remove(PATH_1);
   std::remove(PATH_2);

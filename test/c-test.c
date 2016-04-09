@@ -32,8 +32,8 @@ static madoka_uint64 divide_by_2(madoka_uint64 value) {
 }
 
 int main(void) {
-  const char PATH_1[] = "temp.1";
-  const char PATH_2[] = "temp.2";
+  const char PATH_1[] = "c-test.temp.1";
+  const char PATH_2[] = "c-test.temp.2";
 
   remove(PATH_1);
 
