@@ -54,63 +54,63 @@ const UInt64 CROQUIS_DEFAULT_DEPTH = CROQUIS_HASH_SIZE;
 template <typename T>
 class Croquis {
  public:
-  Croquis() throw() : file_(), header_(NULL), table_(NULL) {}
-  ~Croquis() throw() {}
+  Croquis() noexcept : file_(), header_(NULL), table_(NULL) {}
+  ~Croquis() noexcept {}
 
   void create(UInt64 width = 0, UInt64 depth = 0, const char *path = NULL,
-              int flags = 0, UInt64 seed = 0) throw(Exception) {
+              int flags = 0, UInt64 seed = 0) {
     Croquis new_croquis;
     new_croquis.create_(width, depth, path, flags, seed);
     new_croquis.swap(this);
   }
-  void open(const char *path, int flags = 0) throw(Exception) {
+  void open(const char *path, int flags = 0) {
     Croquis new_croquis;
     new_croquis.open_(path, flags);
     new_croquis.swap(this);
   }
-  void close() throw() {
+  void close() noexcept {
     Croquis().swap(this);
   }
 
-  void load(const char *path, int flags = 0) throw(Exception) {
+  void load(const char *path, int flags = 0) {
     Croquis new_croquis;
     new_croquis.load_(path, flags);
     new_croquis.swap(this);
   }
-  void save(const char *path, int flags = 0) const throw(Exception) {
+  void save(const char *path, int flags = 0) const {
     check_header();
     file_.save(path, flags);
   }
 
-  UInt64 width() const throw() {
+  UInt64 width() const noexcept {
     return header().width();
   }
-  UInt64 width_mask() const throw() {
+  UInt64 width_mask() const noexcept {
     return header().width_mask();
   }
-  UInt64 depth() const throw() {
+  UInt64 depth() const noexcept {
     return header().depth();
   }
-  T max_value() const throw() {
+  T max_value() const noexcept {
     return std::numeric_limits<T>::max();
   }
-  UInt64 value_size() const throw() {
+  UInt64 value_size() const noexcept {
     return header().value_size();
   }
-  UInt64 seed() const throw() {
+  UInt64 seed() const noexcept {
     return header().seed();
   }
-  UInt64 table_size() const throw() {
+  UInt64 table_size() const noexcept {
     return header().table_size();
   }
-  UInt64 file_size() const throw() {
+  UInt64 file_size() const noexcept {
     return header().file_size();
   }
-  int flags() const throw() {
+  int flags() const noexcept {
     return file_.flags();
   }
 
-  T get(const void *key_addr, std::size_t key_size) const throw() {
+  T get(const void *key_addr, std::size_t key_size) const noexcept {
     T min_value = std::numeric_limits<T>::max();
 
     const T *table = table_;
@@ -133,7 +133,7 @@ class Croquis {
     return min_value;
   }
 
-  void set(const void *key_addr, std::size_t key_size, T value) throw() {
+  void set(const void *key_addr, std::size_t key_size, T value) noexcept {
     UInt64 cell_ids[CROQUIS_MAX_DEPTH + CROQUIS_HASH_SIZE - 1];
     hash(key_addr, key_size, cell_ids);
 
@@ -147,7 +147,7 @@ class Croquis {
     }
   }
 
-  T add(const void *key_addr, std::size_t key_size, T value) throw() {
+  T add(const void *key_addr, std::size_t key_size, T value) noexcept {
     UInt64 cell_ids[CROQUIS_MAX_DEPTH + CROQUIS_HASH_SIZE - 1];
     hash(key_addr, key_size, cell_ids);
 
@@ -175,11 +175,11 @@ class Croquis {
     return new_value;
   }
 
-  void clear() throw() {
+  void clear() noexcept {
     std::memset(table_, 0, table_size());
   }
 
-  void swap(Croquis *sketch) throw() {
+  void swap(Croquis *sketch) noexcept {
     file_.swap(&sketch->file_);
     util::swap(header_, sketch->header_);
     util::swap(table_, sketch->table_);
@@ -190,15 +190,15 @@ class Croquis {
   Header *header_;
   T *table_;
 
-  const Header &header() const throw() {
+  const Header &header() const noexcept {
     return *header_;
   }
-  Header &header() throw() {
+  Header &header() noexcept {
     return *header_;
   }
 
   void create_(UInt64 width, UInt64 depth, const char *path,
-               int flags, UInt64 seed) throw(Exception) {
+               int flags, UInt64 seed) {
     if (width == 0) {
       width = CROQUIS_DEFAULT_WIDTH;
     }
@@ -232,21 +232,21 @@ class Croquis {
     clear();
   }
 
-  void open_(const char *path, int flags) throw(Exception) {
+  void open_(const char *path, int flags) {
     file_.open(path, flags);
     header_ = static_cast<Header *>(file_.addr());
     table_ = reinterpret_cast<T *>(header_ + 1);
     check_header();
   }
 
-  void load_(const char *path, int flags) throw(Exception) {
+  void load_(const char *path, int flags) {
     file_.load(path, flags);
     header_ = static_cast<Header *>(file_.addr());
     table_ = reinterpret_cast<T *>(header_ + 1);
     check_header();
   }
 
-  void check_header() const throw(Exception) {
+  void check_header() const {
     MADOKA_THROW_IF(width() < CROQUIS_MIN_WIDTH);
     MADOKA_THROW_IF(width() > CROQUIS_MAX_WIDTH);
     MADOKA_THROW_IF((width_mask() != 0) && (width_mask() != (width() - 1)));
@@ -259,7 +259,7 @@ class Croquis {
   }
 
   void hash(const void *key_addr, std::size_t key_size,
-             UInt64 *cell_ids) const throw() {
+             UInt64 *cell_ids) const noexcept {
     for (UInt64 i = 0; i < depth(); i += CROQUIS_HASH_SIZE) {
       hash_(key_addr, key_size, seed() + i, cell_ids);
       cell_ids += CROQUIS_HASH_SIZE;
@@ -267,7 +267,7 @@ class Croquis {
   }
 
   void hash_(const void *key_addr, std::size_t key_size,
-             UInt64 seed, UInt64 cell_ids[CROQUIS_HASH_SIZE]) const throw() {
+             UInt64 seed, UInt64 cell_ids[CROQUIS_HASH_SIZE]) const noexcept {
     UInt64 hash_values[2];
     Hash()(key_addr, key_size, seed, hash_values);
 

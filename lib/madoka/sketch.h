@@ -137,76 +137,74 @@ class Sketch {
   typedef SketchFilter Filter;
   typedef SketchMode Mode;
 
-  Sketch() throw();
-  ~Sketch() throw();
+  Sketch() noexcept;
+  ~Sketch() noexcept;
 
   void create(UInt64 width = 0, UInt64 max_value = 0,
-              const char *path = NULL, int flags = 0,
-              UInt64 seed = 0) throw(Exception);
-  void open(const char *path, int flags = 0) throw(Exception);
-  void close() throw();
+              const char *path = NULL, int flags = 0, UInt64 seed = 0);
+  void open(const char *path, int flags = 0);
+  void close() noexcept;
 
-  void load(const char *path, int flags = 0) throw(Exception);
-  void save(const char *path, int flags = 0) const throw(Exception);
+  void load(const char *path, int flags = 0);
+  void save(const char *path, int flags = 0) const;
 
-  UInt64 width() const throw() {
+  UInt64 width() const noexcept {
     return header().width();
   }
-  UInt64 width_mask() const throw() {
+  UInt64 width_mask() const noexcept {
     return header().width_mask();
   }
-  UInt64 depth() const throw() {
+  UInt64 depth() const noexcept {
     return SKETCH_DEPTH;
   }
-  UInt64 max_value() const throw() {
+  UInt64 max_value() const noexcept {
     return header().max_value();
   }
-  UInt64 value_mask() const throw() {
+  UInt64 value_mask() const noexcept {
     return header().max_value();
   }
-  UInt64 value_size() const throw() {
+  UInt64 value_size() const noexcept {
     return header().value_size();
   }
-  UInt64 seed() const throw() {
+  UInt64 seed() const noexcept {
     return header().seed();
   }
-  UInt64 table_size() const throw() {
+  UInt64 table_size() const noexcept {
     return header().table_size();
   }
-  UInt64 file_size() const throw() {
+  UInt64 file_size() const noexcept {
     return header().file_size();
   }
-  int flags() const throw() {
+  int flags() const noexcept {
     return file_.flags();
   }
-  Mode mode() const throw() {
+  Mode mode() const noexcept {
     return (value_size() == SKETCH_APPROX_VALUE_SIZE) ?
         SKETCH_APPROX_MODE : SKETCH_EXACT_MODE;
   }
 
-  UInt64 get(const void *key_addr, std::size_t key_size) const throw();
-  void set(const void *key_addr, std::size_t key_size, UInt64 value) throw();
-  UInt64 inc(const void *key_addr, std::size_t key_size) throw();
-  UInt64 add(const void *key_addr, std::size_t key_size, UInt64 value) throw();
+  UInt64 get(const void *key_addr, std::size_t key_size) const noexcept;
+  void set(const void *key_addr, std::size_t key_size, UInt64 value) noexcept;
+  UInt64 inc(const void *key_addr, std::size_t key_size) noexcept;
+  UInt64 add(const void *key_addr, std::size_t key_size, UInt64 value) noexcept;
 
-  void clear() throw();
+  void clear() noexcept;
 
-  void copy(const Sketch &src, const char *path = NULL,
-            int flags = 0) throw(Exception);
+  void copy(const Sketch &src, const char *path = NULL, int flags = 0);
 
-  void filter(Filter filter) throw();
+  void filter(Filter filter) noexcept;
 
   void shrink(const Sketch &src, UInt64 width = 0,
               UInt64 max_value = 0, Filter filter = NULL,
-              const char *path = NULL, int flags = 0) throw(Exception);
+              const char *path = NULL, int flags = 0);
 
   void merge(const Sketch &rhs, Filter lhs_filter = NULL,
-             Filter rhs_filter = NULL) throw(Exception);
+             Filter rhs_filter = NULL);
 
-  void swap(Sketch *sketch) throw();
+  void swap(Sketch *sketch) noexcept;
 
   double inner_product(const Sketch &rhs, double *lhs_square_length = NULL,
-      double *rhs_square_length = NULL) const throw(Exception);
+                       double *rhs_square_length = NULL) const;
 
  private:
   File file_;
@@ -214,58 +212,57 @@ class Sketch {
   Random *random_;
   UInt64 *table_;
 
-  const Header &header() const throw() {
+  const Header &header() const noexcept {
     return *header_;
   }
-  Header &header() throw() {
+  Header &header() noexcept {
     return *header_;
   }
 
   void create_(UInt64 width, UInt64 max_value, const char *path,
-               int flags, UInt64 seed) throw(Exception);
-  void open_(const char *path, int flags) throw(Exception);
+               int flags, UInt64 seed);
+  void open_(const char *path, int flags);
 
-  void load_(const char *path, int flags) throw(Exception);
+  void load_(const char *path, int flags);
 
-  void check_header() const throw(Exception);
+  void check_header() const;
 
-  inline UInt64 get_(UInt64 table_id, UInt64 cell_id) const throw();
-  inline void set_(UInt64 table_id, UInt64 cell_id, UInt64 value) throw();
+  inline UInt64 get_(UInt64 table_id, UInt64 cell_id) const noexcept;
+  inline void set_(UInt64 table_id, UInt64 cell_id, UInt64 value) noexcept;
 
-  UInt64 exact_get(const UInt64 cell_ids[3]) const throw();
-  void exact_set(const UInt64 cell_ids[3], UInt64 value) throw();
-  UInt64 exact_inc(const UInt64 cell_ids[3]) throw();
-  UInt64 exact_add(const UInt64 cell_ids[3], UInt64 value) throw();
+  UInt64 exact_get(const UInt64 cell_ids[3]) const noexcept;
+  void exact_set(const UInt64 cell_ids[3], UInt64 value) noexcept;
+  UInt64 exact_inc(const UInt64 cell_ids[3]) noexcept;
+  UInt64 exact_add(const UInt64 cell_ids[3], UInt64 value) noexcept;
 
-  inline UInt64 exact_get_(UInt64 cell_id) const throw();
-  inline void exact_set_(UInt64 cell_id, UInt64 value) throw();
-  inline void exact_set_floor_(UInt64 cell_id, UInt64 value) throw();
+  inline UInt64 exact_get_(UInt64 cell_id) const noexcept;
+  inline void exact_set_(UInt64 cell_id, UInt64 value) noexcept;
+  inline void exact_set_floor_(UInt64 cell_id, UInt64 value) noexcept;
 
-  UInt64 approx_get(const UInt64 cell_ids[3]) const throw();
-  void approx_set(const UInt64 cell_ids[3], UInt64 value) throw();
-  UInt64 approx_inc(const UInt64 cell_ids[3]) throw();
-  UInt64 approx_add(const UInt64 cell_ids[3], UInt64 value) throw();
+  UInt64 approx_get(const UInt64 cell_ids[3]) const noexcept;
+  void approx_set(const UInt64 cell_ids[3], UInt64 value) noexcept;
+  UInt64 approx_inc(const UInt64 cell_ids[3]) noexcept;
+  UInt64 approx_add(const UInt64 cell_ids[3], UInt64 value) noexcept;
 
-  inline UInt64 approx_get_(UInt64 table_id, UInt64 cell_id) const throw();
+  inline UInt64 approx_get_(UInt64 table_id, UInt64 cell_id) const noexcept;
   inline void approx_set_(UInt64 table_id, UInt64 cell_id,
-                          UInt64 approx) throw();
+                          UInt64 approx) noexcept;
   inline void approx_set_(UInt64 table_id, UInt64 cell_id,
-                          UInt64 approx, UInt64 mask) throw();
+                          UInt64 approx, UInt64 mask) noexcept;
 
   inline void hash(const void *key_addr, std::size_t key_size,
-                   UInt64 cell_ids[3]) const throw();
+                   UInt64 cell_ids[3]) const noexcept;
 
-  void copy_(const Sketch &src, const char *path,
-             int flags) throw(Exception);
+  void copy_(const Sketch &src, const char *path, int flags);
 
   void exact_merge_(const Sketch &rhs, Filter lhs_filter,
-                    Filter rhs_filter) throw();
+                    Filter rhs_filter) noexcept;
   void approx_merge_(const Sketch &rhs, Filter lhs_filter,
-                     Filter rhs_filter) throw();
-  void approx_merge_(const Sketch &rhs) throw();
+                     Filter rhs_filter) noexcept;
+  void approx_merge_(const Sketch &rhs) noexcept;
 
   void shrink_(const Sketch &src, UInt64 width, UInt64 max_value,
-               Filter filter, const char *path, int flags) throw(Exception);
+               Filter filter, const char *path, int flags);
 
   // Disallows copy and assignment.
   Sketch(const Sketch &);

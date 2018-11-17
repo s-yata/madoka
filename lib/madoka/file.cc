@@ -50,27 +50,27 @@ namespace madoka {
 
 class FileImpl {
  public:
-  FileImpl() throw();
-  ~FileImpl() throw();
+  FileImpl() noexcept;
+  ~FileImpl() noexcept;
 
-  void create(const char *path, std::size_t size, int flags) throw(Exception);
-  void open(const char *path, int flags) throw(Exception);
-  void close() throw();
+  void create(const char *path, std::size_t size, int flags);
+  void open(const char *path, int flags);
+  void close() noexcept;
 
-  void load(const char *path, int flags) throw(Exception);
-  void save(const char *path, int flags) const throw(Exception);
+  void load(const char *path, int flags);
+  void save(const char *path, int flags);
 
-  void *addr() const throw() {
+  void *addr() const noexcept {
     return addr_;
   }
-  std::size_t size() const throw() {
+  std::size_t size() const noexcept {
     return size_;
   }
-  int flags() const throw() {
+  int flags() const noexcept {
     return flags_;
   }
 
-  void swap(FileImpl *file) throw();
+  void swap(FileImpl *file) noexcept;
 
  private:
   void *addr_;
@@ -85,10 +85,10 @@ class FileImpl {
   void *map_addr_;
 #endif  // _WIN32
 
-  void create_(const char *path, std::size_t size, int flags) throw(Exception);
-  void open_(const char *path, int flags) throw(Exception);
+  void create_(const char *path, std::size_t size, int flags);
+  void open_(const char *path, int flags);
 
-  void load_(const char *path, int flags) throw(Exception);
+  void load_(const char *path, int flags);
 
   // Disallows copy and assignment.
   FileImpl(const FileImpl &);
@@ -97,11 +97,11 @@ class FileImpl {
 
 #ifdef _WIN32
 
-FileImpl::FileImpl() throw()
+FileImpl::FileImpl() noexcept
   : addr_(NULL), size_(0), flags_(0), file_handle_(INVALID_HANDLE_VALUE),
     map_handle_(INVALID_HANDLE_VALUE), view_addr_(NULL) {}
 
-FileImpl::~FileImpl() throw() {
+FileImpl::~FileImpl() noexcept {
   if (view_addr_ != NULL) {
     ::UnmapViewOfFile(view_addr_);
   }
@@ -115,10 +115,10 @@ FileImpl::~FileImpl() throw() {
 
 #else  // _WIN32
 
-FileImpl::FileImpl() throw()
+FileImpl::FileImpl() noexcept
   : addr_(NULL), size_(0), flags_(0), fd_(-1), map_addr_(MAP_FAILED) {}
 
-FileImpl::~FileImpl() throw() {
+FileImpl::~FileImpl() noexcept {
   if (map_addr_ != MAP_FAILED) {
     ::munmap(map_addr_, size_);
   }
@@ -129,36 +129,35 @@ FileImpl::~FileImpl() throw() {
 
 #endif  // _WIN32
 
-void FileImpl::create(const char *path, std::size_t size,
-                      int flags) throw(Exception) {
+void FileImpl::create(const char *path, std::size_t size, int flags) {
   FileImpl new_file;
   new_file.create_(path, size, flags);
   new_file.swap(this);
 }
 
-void FileImpl::open(const char *path, int flags) throw(Exception) {
+void FileImpl::open(const char *path, int flags) {
   FileImpl new_file;
   new_file.open_(path, flags);
   new_file.swap(this);
 }
 
-void FileImpl::close() throw() {
+void FileImpl::close() noexcept {
   FileImpl().swap(this);
 }
 
-void FileImpl::load(const char *path, int flags) throw(Exception) {
+void FileImpl::load(const char *path, int flags) {
   FileImpl new_file;
   new_file.load_(path, flags);
   new_file.swap(this);
 }
 
-void FileImpl::save(const char *path, int flags) const throw(Exception) {
+void FileImpl::save(const char *path, int flags) {
   FileImpl file;
   file.create(path, size(), flags);
   std::memcpy(file.addr(), addr(), size());
 }
 
-void FileImpl::swap(FileImpl *file) throw() {
+void FileImpl::swap(FileImpl *file) noexcept {
   util::swap(addr_, file->addr_);
   util::swap(size_, file->size_);
   util::swap(flags_, file->flags_);
@@ -172,7 +171,7 @@ void FileImpl::swap(FileImpl *file) throw() {
 #endif  // _WIN32
 }
 
-void FileImpl::load_(const char *path, int flags) throw(Exception) {
+void FileImpl::load_(const char *path, int flags) {
   MADOKA_THROW_IF(path == NULL);
 
   const int VALID_FLAGS = FILE_HUGETLB;
@@ -242,8 +241,7 @@ DWORD get_view_type(int flags) {
   return view_type;
 }
 
-void FileImpl::create_(const char *path, std::size_t size,
-                       int flags) throw(Exception) {
+void FileImpl::create_(const char *path, std::size_t size, int flags) {
   const int VALID_FLAGS = FILE_TRUNCATE | FILE_HUGETLB;
   MADOKA_THROW_IF(flags & ~VALID_FLAGS);
 
@@ -298,7 +296,7 @@ void FileImpl::create_(const char *path, std::size_t size,
   flags_ = flags;
 }
 
-void FileImpl::open_(const char *path, int flags) throw(Exception) {
+void FileImpl::open_(const char *path, int flags) {
   MADOKA_THROW_IF(path == NULL);
 
   const int VALID_FLAGS = FILE_READONLY | FILE_PRIVATE |
@@ -354,7 +352,7 @@ void FileImpl::open_(const char *path, int flags) throw(Exception) {
 
 namespace {
 
-int get_open_flags(int flags) throw() {
+int get_open_flags(int flags) noexcept {
   int open_flags = 0;
   if (flags & FILE_CREATE) {
     open_flags |= O_CREAT;
@@ -371,7 +369,7 @@ int get_open_flags(int flags) throw() {
   return open_flags;
 }
 
-int get_prot_flags(int flags) throw() {
+int get_prot_flags(int flags) noexcept {
   int prot_flags = PROT_READ;
   if (flags & FILE_WRITABLE) {
     prot_flags |= PROT_WRITE;
@@ -379,7 +377,7 @@ int get_prot_flags(int flags) throw() {
   return prot_flags;
 }
 
-int get_map_flags(int flags) throw() {
+int get_map_flags(int flags) noexcept {
   int map_flags = 0;
   if (flags & FILE_SHARED) {
     map_flags |= MAP_SHARED;
@@ -400,8 +398,7 @@ int get_map_flags(int flags) throw() {
 
 }  // namespace
 
-void FileImpl::create_(const char *path, std::size_t size,
-                       int flags) throw(Exception) {
+void FileImpl::create_(const char *path, std::size_t size, int flags) {
   const int VALID_FLAGS = FILE_TRUNCATE | FILE_HUGETLB;
   MADOKA_THROW_IF(flags & ~VALID_FLAGS);
 
@@ -445,7 +442,7 @@ void FileImpl::create_(const char *path, std::size_t size,
   flags_ = flags;
 }
 
-void FileImpl::open_(const char *path, int flags) throw(Exception) {
+void FileImpl::open_(const char *path, int flags) {
   MADOKA_THROW_IF(path == NULL);
 
   const int VALID_FLAGS = FILE_READONLY | FILE_PRIVATE |
@@ -498,14 +495,13 @@ void FileImpl::open_(const char *path, int flags) throw(Exception) {
 
 #endif  // _WIN32
 
-File::File() throw() : impl_(NULL) {}
+File::File() noexcept : impl_(NULL) {}
 
-File::~File() throw() {
+File::~File() noexcept {
   delete impl_;
 }
 
-void File::create(const char *path, std::size_t size,
-                  int flags) throw(Exception) {
+void File::create(const char *path, std::size_t size, int flags) {
   if (impl_ == NULL) {
     impl_ = new (std::nothrow) FileImpl;
     MADOKA_THROW_IF(impl_ == NULL);
@@ -513,7 +509,7 @@ void File::create(const char *path, std::size_t size,
   impl_->create(path, size, flags);
 }
 
-void File::open(const char *path, int flags) throw(Exception) {
+void File::open(const char *path, int flags) {
   if (impl_ == NULL) {
     impl_ = new (std::nothrow) FileImpl;
     MADOKA_THROW_IF(impl_ == NULL);
@@ -521,11 +517,11 @@ void File::open(const char *path, int flags) throw(Exception) {
   impl_->open(path, flags);
 }
 
-void File::close() throw() {
+void File::close() noexcept {
   File().swap(this);
 }
 
-void File::load(const char *path, int flags) throw(Exception) {
+void File::load(const char *path, int flags) {
   if (impl_ == NULL) {
     impl_ = new (std::nothrow) FileImpl;
     MADOKA_THROW_IF(impl_ == NULL);
@@ -533,25 +529,25 @@ void File::load(const char *path, int flags) throw(Exception) {
   impl_->load(path, flags);
 }
 
-void File::save(const char *path, int flags) const throw(Exception) {
+void File::save(const char *path, int flags) const {
   if (impl_ != NULL) {
     impl_->save(path, flags);
   }
 }
 
-void *File::addr() const throw() {
+void *File::addr() const noexcept {
   return (impl_ != NULL) ? impl_->addr() : NULL;
 }
 
-std::size_t File::size() const throw() {
+std::size_t File::size() const noexcept {
   return (impl_ != NULL) ? impl_->size() : 0;
 }
 
-int File::flags() const throw() {
+int File::flags() const noexcept {
   return (impl_ != NULL) ? impl_->flags() : 0;
 }
 
-void File::swap(File *file) throw() {
+void File::swap(File *file) noexcept {
   util::swap(impl_, file->impl_);
 }
 

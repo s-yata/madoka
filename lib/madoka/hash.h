@@ -33,7 +33,7 @@ namespace madoka {
 class Hash {
  public:
   void operator()(const void *key_addr, std::size_t key_size,
-                  UInt64 seed, UInt64 hash_values[2]) const throw() {
+                  UInt64 seed, UInt64 hash_values[2]) const noexcept {
     const UInt8 * const bytes = static_cast<const UInt8 *>(key_addr);
     const std::size_t num_blocks = key_size / 16;
 
@@ -147,11 +147,11 @@ class Hash {
   static const UInt64 C1 = 0x87C37B91114253D5ULL;
   static const UInt64 C2 = 0x4CF5AD432745937FULL;
 
-  static UInt64 rotate(UInt64 x, UInt64 y) throw() {
+  static UInt64 rotate(UInt64 x, UInt64 y) noexcept {
     return (x << y) | (x >> (64 - y));
   }
 
-  static UInt64 mix(UInt64 x) throw() {
+  static UInt64 mix(UInt64 x) noexcept {
     x ^= x >> 33;
     x *= 0xFF51AFD7ED558CCDULL;
     x ^= x >> 33;

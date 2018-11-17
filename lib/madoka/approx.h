@@ -55,7 +55,7 @@ class Approx {
   static const UInt8 SHIFT_TABLE[APPROX_MAX_EXPONENT + 1];
   static const UInt32 MASK_TABLE[APPROX_MAX_EXPONENT + 1];
 
-  static UInt64 encode(UInt64 value) throw() {
+  static UInt64 encode(UInt64 value) noexcept {
     value &= APPROX_VALUE_MASK;
     const UInt64 exponent =
         util::bit_scan_reverse(value | APPROX_SIGNIFICAND_MASK)
@@ -71,7 +71,7 @@ class Approx {
         ((value >> get_shift(exponent)) & APPROX_SIGNIFICAND_MASK);
   }
 
-  static UInt64 decode(UInt64 approx) throw() {
+  static UInt64 decode(UInt64 approx) noexcept {
     const UInt64 exponent =
         (approx >> APPROX_EXPONENT_SHIFT) & APPROX_EXPONENT_MASK;
 
@@ -91,7 +91,7 @@ class Approx {
 #endif  // MADOKA_NOT_PREFER_BRANCH
   }
 
-  static UInt64 decode(UInt64 approx, Random *random) throw() {
+  static UInt64 decode(UInt64 approx, Random *random) noexcept {
     const UInt64 exponent =
         (approx >> APPROX_EXPONENT_SHIFT) & APPROX_EXPONENT_MASK;
 
@@ -113,7 +113,7 @@ class Approx {
 #endif  // MADOKA_NOT_PREFER_BRANCH
   }
 
-  static UInt64 inc(UInt64 approx, Random *random) throw() {
+  static UInt64 inc(UInt64 approx, Random *random) noexcept {
     const UInt64 exponent =
         (approx >> APPROX_EXPONENT_SHIFT) & APPROX_EXPONENT_MASK;
 

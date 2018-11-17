@@ -252,40 +252,40 @@ int madoka_inner_product(const madoka_sketch *lhs, const madoka_sketch *rhs,
 
 namespace madoka {
 
-Sketch::Sketch() throw()
+Sketch::Sketch() noexcept
   : file_(), header_(NULL), random_(NULL), table_(NULL) {}
 
-Sketch::~Sketch() throw() {}
+Sketch::~Sketch() noexcept {}
 
 void Sketch::create(UInt64 width, UInt64 max_value, const char *path,
-                    int flags, UInt64 seed) throw(Exception) {
+                    int flags, UInt64 seed) {
   Sketch new_sketch;
   new_sketch.create_(width, max_value, path, flags, seed);
   new_sketch.clear();
   new_sketch.swap(this);
 }
 
-void Sketch::open(const char *path, int flags) throw(Exception) {
+void Sketch::open(const char *path, int flags) {
   Sketch new_sketch;
   new_sketch.open_(path, flags);
   new_sketch.swap(this);
 }
 
-void Sketch::close() throw() {
+void Sketch::close() noexcept {
   Sketch().swap(this);
 }
 
-void Sketch::load(const char *path, int flags) throw(Exception) {
+void Sketch::load(const char *path, int flags) {
   Sketch new_sketch;
   new_sketch.load_(path, flags);
   new_sketch.swap(this);
 }
 
-void Sketch::save(const char *path, int flags) const throw(Exception) {
+void Sketch::save(const char *path, int flags) const {
   file_.save(path, flags);
 }
 
-UInt64 Sketch::get(const void *key_addr, std::size_t key_size) const throw() {
+UInt64 Sketch::get(const void *key_addr, std::size_t key_size) const noexcept {
   UInt64 cell_ids[3];
   hash(key_addr, key_size, cell_ids);
   if (mode() == SKETCH_EXACT_MODE) {
@@ -298,7 +298,7 @@ UInt64 Sketch::get(const void *key_addr, std::size_t key_size) const throw() {
 }
 
 void Sketch::set(const void *key_addr, std::size_t key_size,
-                 UInt64 value) throw() {
+                 UInt64 value) noexcept {
   UInt64 cell_ids[3];
   hash(key_addr, key_size, cell_ids);
   if (mode() == SKETCH_EXACT_MODE) {
@@ -310,7 +310,7 @@ void Sketch::set(const void *key_addr, std::size_t key_size,
   }
 }
 
-UInt64 Sketch::inc(const void *key_addr, std::size_t key_size) throw() {
+UInt64 Sketch::inc(const void *key_addr, std::size_t key_size) noexcept {
   UInt64 cell_ids[3];
   hash(key_addr, key_size, cell_ids);
   if (mode() == SKETCH_EXACT_MODE) {
@@ -323,7 +323,7 @@ UInt64 Sketch::inc(const void *key_addr, std::size_t key_size) throw() {
 }
 
 UInt64 Sketch::add(const void *key_addr, std::size_t key_size,
-                   UInt64 value) throw() {
+                   UInt64 value) noexcept {
   UInt64 cell_ids[3];
   hash(key_addr, key_size, cell_ids);
   if (mode() == SKETCH_EXACT_MODE) {
@@ -335,18 +335,17 @@ UInt64 Sketch::add(const void *key_addr, std::size_t key_size,
   }
 }
 
-void Sketch::clear() throw() {
+void Sketch::clear() noexcept {
   std::memset(table_, 0, static_cast<std::size_t>(table_size()));
 }
 
-void Sketch::copy(const Sketch &src, const char *path,
-                  int flags) throw(Exception) {
+void Sketch::copy(const Sketch &src, const char *path, int flags) {
   Sketch new_sketch;
   new_sketch.copy_(src, path, flags);
   new_sketch.swap(this);
 }
 
-void Sketch::filter(Filter filter) throw() {
+void Sketch::filter(Filter filter) noexcept {
   if (filter != NULL) {
     for (UInt64 table_id = 0; table_id < SKETCH_DEPTH; ++table_id) {
       for (UInt64 cell_id = 0; cell_id < width(); ++cell_id) {
@@ -359,14 +358,13 @@ void Sketch::filter(Filter filter) throw() {
 
 void Sketch::shrink(const Sketch &src, UInt64 width,
                     UInt64 max_value, Filter filter,
-                    const char *path, int flags) throw(Exception) {
+                    const char *path, int flags) {
   Sketch new_sketch;
   new_sketch.shrink_(src, width, max_value, filter, path, flags);
   new_sketch.swap(this);
 }
 
-void Sketch::merge(const Sketch &rhs, Filter lhs_filter,
-                   Filter rhs_filter) throw(Exception) {
+void Sketch::merge(const Sketch &rhs, Filter lhs_filter, Filter rhs_filter) {
   MADOKA_THROW_IF(width() != rhs.width());
   MADOKA_THROW_IF(seed() != rhs.seed());
 
@@ -383,7 +381,7 @@ void Sketch::merge(const Sketch &rhs, Filter lhs_filter,
 }
 
 double Sketch::inner_product(const Sketch &rhs, double *lhs_square_length,
-    double *rhs_square_length) const throw(Exception) {
+                             double *rhs_square_length) const {
   MADOKA_THROW_IF(width() != rhs.width());
   MADOKA_THROW_IF(seed() != rhs.seed());
 
@@ -418,7 +416,7 @@ double Sketch::inner_product(const Sketch &rhs, double *lhs_square_length,
   return inner_product;
 }
 
-void Sketch::swap(Sketch *sketch) throw() {
+void Sketch::swap(Sketch *sketch) noexcept {
   file_.swap(&sketch->file_);
   util::swap(header_, sketch->header_);
   util::swap(random_, sketch->random_);
@@ -426,7 +424,7 @@ void Sketch::swap(Sketch *sketch) throw() {
 }
 
 void Sketch::create_(UInt64 width, UInt64 max_value, const char *path,
-                     int flags, UInt64 seed) throw(Exception) {
+                     int flags, UInt64 seed) {
   if (width == 0) {
     width = SKETCH_DEFAULT_WIDTH;
   }
@@ -477,7 +475,7 @@ void Sketch::create_(UInt64 width, UInt64 max_value, const char *path,
   random_->reset(seed);
 }
 
-void Sketch::open_(const char *path, int flags) throw(Exception) {
+void Sketch::open_(const char *path, int flags) {
   file_.open(path, flags);
   header_ = static_cast<Header *>(file_.addr());
   random_ = reinterpret_cast<Random *>(header_ + 1);
@@ -485,7 +483,7 @@ void Sketch::open_(const char *path, int flags) throw(Exception) {
   check_header();
 }
 
-void Sketch::load_(const char *path, int flags) throw(Exception) {
+void Sketch::load_(const char *path, int flags) {
   file_.load(path, flags);
   header_ = static_cast<Header *>(file_.addr());
   random_ = reinterpret_cast<Random *>(header_ + 1);
@@ -493,7 +491,7 @@ void Sketch::load_(const char *path, int flags) throw(Exception) {
   check_header();
 }
 
-void Sketch::check_header() const throw(Exception) {
+void Sketch::check_header() const {
   MADOKA_THROW_IF(width() < SKETCH_MIN_WIDTH);
   MADOKA_THROW_IF(width() > SKETCH_MAX_WIDTH);
   MADOKA_THROW_IF((width_mask() != 0) && (width_mask() != (width() - 1)));
@@ -510,7 +508,7 @@ void Sketch::check_header() const throw(Exception) {
   MADOKA_THROW_IF(file_size() != file_.size());
 }
 
-UInt64 Sketch::get_(UInt64 table_id, UInt64 cell_id) const throw() {
+UInt64 Sketch::get_(UInt64 table_id, UInt64 cell_id) const noexcept {
   if (mode() == SKETCH_EXACT_MODE) {
     return exact_get_((width() * table_id) + cell_id);
   } else {
@@ -518,7 +516,7 @@ UInt64 Sketch::get_(UInt64 table_id, UInt64 cell_id) const throw() {
   }
 }
 
-void Sketch::set_(UInt64 table_id, UInt64 cell_id, UInt64 value) throw() {
+void Sketch::set_(UInt64 table_id, UInt64 cell_id, UInt64 value) noexcept {
   if (mode() == SKETCH_EXACT_MODE) {
     exact_set_((width() * table_id) + cell_id, value);
   } else {
@@ -526,7 +524,7 @@ void Sketch::set_(UInt64 table_id, UInt64 cell_id, UInt64 value) throw() {
   }
 }
 
-UInt64 Sketch::exact_get(const UInt64 cell_ids[3]) const throw() {
+UInt64 Sketch::exact_get(const UInt64 cell_ids[3]) const noexcept {
   UInt64 min_value = exact_get_(cell_ids[0]);
   if (min_value == 0) {
     return 0;
@@ -543,7 +541,7 @@ UInt64 Sketch::exact_get(const UInt64 cell_ids[3]) const throw() {
   return (value < min_value) ? value : min_value;
 }
 
-void Sketch::exact_set(const UInt64 cell_ids[3], UInt64 value) throw() {
+void Sketch::exact_set(const UInt64 cell_ids[3], UInt64 value) noexcept {
   if (value > max_value()) {
     value = max_value();
   }
@@ -553,7 +551,7 @@ void Sketch::exact_set(const UInt64 cell_ids[3], UInt64 value) throw() {
   exact_set_floor_(cell_ids[2], value);
 }
 
-UInt64 Sketch::exact_inc(const UInt64 cell_ids[3]) throw() {
+UInt64 Sketch::exact_inc(const UInt64 cell_ids[3]) noexcept {
   UInt64 values[3];
   values[0] = exact_get_(cell_ids[0]);
   values[1] = exact_get_(cell_ids[1]);
@@ -593,7 +591,7 @@ UInt64 Sketch::exact_inc(const UInt64 cell_ids[3]) throw() {
   return values[0];
 }
 
-UInt64 Sketch::exact_add(const UInt64 cell_ids[3], UInt64 value) throw() {
+UInt64 Sketch::exact_add(const UInt64 cell_ids[3], UInt64 value) noexcept {
   UInt64 new_value = max_value();
   UInt64 values[3];
 
@@ -628,7 +626,7 @@ UInt64 Sketch::exact_add(const UInt64 cell_ids[3], UInt64 value) throw() {
   return new_value;
 }
 
-UInt64 Sketch::exact_get_(UInt64 cell_id) const throw() {
+UInt64 Sketch::exact_get_(UInt64 cell_id) const noexcept {
   switch (value_size()) {
     case 1: {
       return (table_[cell_id / 64] >> (cell_id % 64)) & value_mask();
@@ -651,7 +649,7 @@ UInt64 Sketch::exact_get_(UInt64 cell_id) const throw() {
   }
 }
 
-void Sketch::exact_set_(UInt64 cell_id, UInt64 value) throw() {
+void Sketch::exact_set_(UInt64 cell_id, UInt64 value) noexcept {
   switch (value_size()) {
     case 1: {
       table_[cell_id / 64] &= ~(value_mask() << (cell_id % 64));
@@ -681,7 +679,7 @@ void Sketch::exact_set_(UInt64 cell_id, UInt64 value) throw() {
   }
 }
 
-void Sketch::exact_set_floor_(UInt64 cell_id, UInt64 value) throw() {
+void Sketch::exact_set_floor_(UInt64 cell_id, UInt64 value) noexcept {
   switch (value_size()) {
     case 1: {
       table_[cell_id / 64] |= value << (cell_id % 64);
@@ -722,7 +720,7 @@ void Sketch::exact_set_floor_(UInt64 cell_id, UInt64 value) throw() {
   }
 }
 
-UInt64 Sketch::approx_get(const UInt64 cell_ids[3]) const throw() {
+UInt64 Sketch::approx_get(const UInt64 cell_ids[3]) const noexcept {
   UInt64 min_approx = approx_get_(0, cell_ids[0]);
   if (min_approx == 0) {
     return 0;
@@ -742,7 +740,7 @@ UInt64 Sketch::approx_get(const UInt64 cell_ids[3]) const throw() {
   return Approx::decode(min_approx, random_);
 }
 
-void Sketch::approx_set(const UInt64 cell_ids[3], UInt64 value) throw() {
+void Sketch::approx_set(const UInt64 cell_ids[3], UInt64 value) noexcept {
   const UInt64 new_approx = (value < APPROX_MAX_VALUE) ?
       Approx::encode(value) : APPROX_MASK;
 
@@ -762,7 +760,7 @@ void Sketch::approx_set(const UInt64 cell_ids[3], UInt64 value) throw() {
   }
 }
 
-UInt64 Sketch::approx_inc(const UInt64 cell_ids[3]) throw() {
+UInt64 Sketch::approx_inc(const UInt64 cell_ids[3]) noexcept {
   const UInt64 flag = 1ULL << ((cell_ids[0] ^ cell_ids[1] ^ cell_ids[2]) & 1);
 
   UInt64 approxes[3];
@@ -805,7 +803,7 @@ UInt64 Sketch::approx_inc(const UInt64 cell_ids[3]) throw() {
   return Approx::decode(new_approx, random_);
 }
 
-UInt64 Sketch::approx_add(const UInt64 cell_ids[3], UInt64 value) throw() {
+UInt64 Sketch::approx_add(const UInt64 cell_ids[3], UInt64 value) noexcept {
   if (value >= APPROX_MAX_VALUE) {
     table_[cell_ids[0]] |= APPROX_MASK;
     table_[cell_ids[1]] |= APPROX_MASK << APPROX_SIZE;
@@ -844,18 +842,18 @@ UInt64 Sketch::approx_add(const UInt64 cell_ids[3], UInt64 value) throw() {
   return new_value;
 }
 
-UInt64 Sketch::approx_get_(UInt64 table_id, UInt64 cell_id) const throw() {
+UInt64 Sketch::approx_get_(UInt64 table_id, UInt64 cell_id) const noexcept {
   return (table_[cell_id] >> (APPROX_SIZE * table_id)) & APPROX_MASK;
 }
 
 void Sketch::approx_set_(UInt64 table_id, UInt64 cell_id,
-                         UInt64 approx) throw() {
+                         UInt64 approx) noexcept {
   table_[cell_id] &= ~(APPROX_MASK << (APPROX_SIZE * table_id));
   table_[cell_id] |= approx << (APPROX_SIZE * table_id);
 }
 
 void Sketch::approx_set_(UInt64 table_id, UInt64 cell_id,
-                         UInt64 approx, UInt64 mask) throw() {
+                         UInt64 approx, UInt64 mask) noexcept {
   table_[cell_id] &= ~((APPROX_MASK << (APPROX_SIZE * table_id)) |
       (3ULL << (SKETCH_OWNER_OFFSET + (2 * table_id))));
   table_[cell_id] |= (approx << (APPROX_SIZE * table_id)) |
@@ -863,7 +861,7 @@ void Sketch::approx_set_(UInt64 table_id, UInt64 cell_id,
 }
 
 void Sketch::hash(const void *key_addr, std::size_t key_size,
-                  UInt64 cell_ids[3]) const throw() {
+                  UInt64 cell_ids[3]) const noexcept {
   UInt64 hash_values[2];
   Hash()(key_addr, key_size, seed(), hash_values);
 
@@ -883,15 +881,14 @@ void Sketch::hash(const void *key_addr, std::size_t key_size,
   }
 }
 
-void Sketch::copy_(const Sketch &src, const char *path,
-                   int flags) throw(Exception) {
+void Sketch::copy_(const Sketch &src, const char *path, int flags) {
   create_(src.width(), src.max_value(), path, flags, src.seed());
   std::memcpy(random_, src.random_, sizeof(Random));
   std::memcpy(table_, src.table_, static_cast<std::size_t>(table_size()));
 }
 
 void Sketch::exact_merge_(const Sketch &rhs, Filter lhs_filter,
-                          Filter rhs_filter) throw() {
+                          Filter rhs_filter) noexcept {
   for (UInt64 table_id = 0; table_id < SKETCH_DEPTH; ++table_id) {
     for (UInt64 cell_id = 0; cell_id < width(); ++cell_id) {
       UInt64 lhs_value = get_(table_id, cell_id);
@@ -915,7 +912,7 @@ void Sketch::exact_merge_(const Sketch &rhs, Filter lhs_filter,
 }
 
 void Sketch::approx_merge_(const Sketch &rhs, Filter lhs_filter,
-                           Filter rhs_filter) throw() {
+                           Filter rhs_filter) noexcept {
   for (UInt64 cell_id = 0; cell_id < width(); ++cell_id) {
     for (UInt64 table_id = 0; table_id < SKETCH_DEPTH; ++table_id) {
       UInt64 lhs_value = get_(table_id, cell_id);
@@ -938,7 +935,7 @@ void Sketch::approx_merge_(const Sketch &rhs, Filter lhs_filter,
   }
 }
 
-void Sketch::approx_merge_(const Sketch &rhs) throw() {
+void Sketch::approx_merge_(const Sketch &rhs) noexcept {
   static const UInt64 MASK_TABLE[4] = { 0, 1, 2, 0 };
 
   for (UInt64 cell_id = 0; cell_id < width(); ++cell_id) {
@@ -965,7 +962,7 @@ void Sketch::approx_merge_(const Sketch &rhs) throw() {
 
 void Sketch::shrink_(const Sketch &src, UInt64 width,
                      UInt64 max_value, Filter filter,
-                     const char *path, int flags) throw(Exception) {
+                     const char *path, int flags) {
   if (width == 0) {
     width = src.width();
   }

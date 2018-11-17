@@ -68,22 +68,21 @@ class FileImpl;
 
 class File {
  public:
-  File() throw();
-  ~File() throw();
+  File() noexcept;
+  ~File() noexcept;
 
-  void create(const char *path, std::size_t size,
-              int flags = 0) throw(Exception);
-  void open(const char *path, int flags = 0) throw(Exception);
-  void close() throw();
+  void create(const char *path, std::size_t size, int flags = 0);
+  void open(const char *path, int flags = 0);
+  void close() noexcept;
 
-  void load(const char *path, int flags = 0) throw(Exception);
-  void save(const char *path, int flags = 0) const throw(Exception);
+  void load(const char *path, int flags = 0);
+  void save(const char *path, int flags = 0) const;
 
-  void *addr() const throw();
-  std::size_t size() const throw();
-  int flags() const throw();
+  void *addr() const noexcept;
+  std::size_t size() const noexcept;
+  int flags() const noexcept;
 
-  void swap(File *file) throw();
+  void swap(File *file) noexcept;
 
  private:
   FileImpl *impl_;

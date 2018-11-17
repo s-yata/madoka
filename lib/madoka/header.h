@@ -32,56 +32,56 @@ namespace madoka {
 
 class Header {
  public:
-  Header() throw()
+  Header() noexcept
     : width_(0), width_mask_(0), depth_(0), max_value_(0), value_size_(0),
       seed_(0), table_size_(0), file_size_(0) {}
-  ~Header() throw() {}
+  ~Header() noexcept {}
 
-  UInt64 width() const throw() {
+  UInt64 width() const noexcept {
     return width_;
   }
-  UInt64 width_mask() const throw() {
+  UInt64 width_mask() const noexcept {
     return width_mask_;
   }
-  UInt64 depth() const throw() {
+  UInt64 depth() const noexcept {
     return depth_;
   }
-  UInt64 max_value() const throw() {
+  UInt64 max_value() const noexcept {
     return max_value_;
   }
-  UInt64 value_size() const throw() {
+  UInt64 value_size() const noexcept {
     return value_size_;
   }
-  UInt64 seed() const throw() {
+  UInt64 seed() const noexcept {
     return seed_;
   }
-  UInt64 table_size() const throw() {
+  UInt64 table_size() const noexcept {
     return table_size_;
   }
-  UInt64 file_size() const throw() {
+  UInt64 file_size() const noexcept {
     return file_size_;
   }
 
-  void set_width(UInt64 width) throw() {
+  void set_width(UInt64 width) noexcept {
     width_ = width;
     width_mask_ = ((width & (width - 1)) == 0) ? (width - 1) : 0;
   }
-  void set_depth(UInt64 depth) throw() {
+  void set_depth(UInt64 depth) noexcept {
     depth_ = depth;
   }
-  void set_max_value(UInt64 max_value) throw() {
+  void set_max_value(UInt64 max_value) noexcept {
     max_value_ = max_value;
   }
-  void set_value_size(UInt64 value_size) throw() {
+  void set_value_size(UInt64 value_size) noexcept {
     value_size_ = value_size;
   }
-  void set_seed(UInt64 seed) throw() {
+  void set_seed(UInt64 seed) noexcept {
     seed_ = seed;
   }
-  void set_table_size(UInt64 table_size) throw() {
+  void set_table_size(UInt64 table_size) noexcept {
     table_size_ = table_size;
   }
-  void set_file_size(UInt64 file_size) throw() {
+  void set_file_size(UInt64 file_size) noexcept {
     file_size_ = file_size;
   }
 

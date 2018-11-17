@@ -75,7 +75,7 @@ typedef ::madoka_uint64 UInt64;
 namespace util {
 
 template <typename T>
-inline void swap(T &lhs, T &rhs) throw() {
+inline void swap(T &lhs, T &rhs) noexcept {
   const T temp = lhs;
   lhs = rhs;
   rhs = temp;
@@ -84,7 +84,7 @@ inline void swap(T &lhs, T &rhs) throw() {
 // bit_scan_reverse() returns the index of the most significant 1 bit of
 // `value'. For example, if `value' == 12, the result is 3. Note that if
 // `value' == 0, the result is undefined.
-inline UInt64 bit_scan_reverse(UInt64 value) throw() {
+inline UInt64 bit_scan_reverse(UInt64 value) noexcept {
 #ifdef _MSC_VER
   unsigned long index;
  #ifdef _WIN64

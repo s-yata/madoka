@@ -46,19 +46,19 @@ namespace madoka {
 
 class Exception {
  public:
-  Exception() throw() : what_("") {}
-  ~Exception() throw() {}
+  Exception() noexcept : what_("") {}
+  ~Exception() noexcept {}
 
-  explicit Exception(const char *what) throw() : what_(what) {}
+  explicit Exception(const char *what) noexcept : what_(what) {}
 
-  Exception(const Exception &exception) throw() : what_(exception.what_) {}
+  Exception(const Exception &exception) noexcept : what_(exception.what_) {}
 
-  Exception &operator=(const Exception &exception) throw() {
+  Exception &operator=(const Exception &exception) noexcept {
     what_ = exception.what_;
     return *this;
   }
 
-  const char *what() const throw() {
+  const char *what() const noexcept {
     return what_;
   }
 

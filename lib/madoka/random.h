@@ -32,21 +32,21 @@ namespace madoka {
 
 class Random {
  public:
-  explicit Random(UInt64 seed = 0) throw()
+  explicit Random(UInt64 seed = 0) noexcept
     : x_(123456789U ^ static_cast<UInt32>(seed & 0xFFFF)),
       y_(362436069U ^ static_cast<UInt32>((seed >> 16) & 0xFFFF)),
       z_(521288629U ^ static_cast<UInt32>((seed >> 32) & 0xFFFF)),
       w_(88675123U ^ static_cast<UInt32>(seed >> 48)) {}
-  ~Random() throw() {}
+  ~Random() noexcept {}
 
-  void reset(UInt64 seed = 0) throw() {
+  void reset(UInt64 seed = 0) noexcept {
     x_ = 123456789U ^ static_cast<UInt32>(seed & 0xFFFF);
     y_ = 362436069U ^ static_cast<UInt32>((seed >> 16) & 0xFFFF);
     z_ = 521288629U ^ static_cast<UInt32>((seed >> 32) & 0xFFFF);
     w_ = 88675123U ^ static_cast<UInt32>(seed >> 48);
   }
 
-  UInt32 operator()() throw() {
+  UInt32 operator()() noexcept {
     const UInt32 t = x_ ^ (x_ << 11);
     x_ = y_;
     y_ = z_;
@@ -55,11 +55,11 @@ class Random {
     return w_;
   }
 
-  UInt32 operator()(UInt32 x) throw() {
+  UInt32 operator()(UInt32 x) noexcept {
     return operator()() % x;
   }
 
-  void swap(Random *random) throw() {
+  void swap(Random *random) noexcept {
     util::swap(x_, random->x_);
     util::swap(y_, random->y_);
     util::swap(z_, random->z_);
