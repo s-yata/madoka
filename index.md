@@ -11,10 +11,10 @@ lang: en
 Madoka is an implementation of a Count-Min sketch, a data structure for summarizing data streams. Madoka uses a conservative update mechanism to improve the accurary of sketches. In addition, Madoka uses an authorized update mechanism and an approximate counting algorithm for ultimate sketching. For more information, see the following web sites.
 
 * Count-Min sketch
-  * [Count-Min sketch - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Count-Min_sketch)
+  * [Count-Min sketch - Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/Count-Min_sketch)
   * [Count-Min Sketch](https://sites.google.com/site/countminsketch/)
 * Approximate counting algorithm
-  * [Approximate counting algorithm - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Approximate_counting_algorithm)
+  * [Approximate counting algorithm - Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/Approximate_counting_algorithm)
 
 Madoka was developed as a part of the Groonga project ([Groonga - An open-source fulltext search engine and column store](http://groonga.org/), special thanks to Brazil Inc.
 
@@ -33,9 +33,9 @@ $ sudo ldconfig
 
 Download [a package of Madoka](https://github.com/downloads/s-yata/madoka/madoka-0.0.2.tar.gz) and unpack it. Then, run <kbd>configure</kbd> and <kbd>make</kbd>. You may have to run <kbd>ldconfig</kbd> to use Madoka.
 
-If you get source files from [GitHub](http://github.com/s-yata/madoka), <kbd>autoreconf -i</kbd> is needed to generate a <kbd>configure</kbd> script.
+If you get source files from [GitHub](https://github.com/s-yata/madoka), <kbd>autoreconf -i</kbd> is needed to generate a <kbd>configure</kbd> script.
 
-Madoka is tested on Ubuntu 11.10. If you have any problems in this process, please report an issue on [GitHub](http://github.com/s-yata/madoka/issues).
+Madoka is tested on Ubuntu 11.10. If you have any problems in this process, please report an issue on [GitHub](https://github.com/s-yata/madoka/issues).
 
 ## Example
 
@@ -79,7 +79,7 @@ A Count-Min sketch supports not only counting items, as shown in the above examp
 
 ## License
 
-Madoka is licensed under [the Simplified BSD License](http://www.opensource.org/licenses/bsd-license.php).
+Madoka is licensed under [the Simplified BSD License](https://www.opensource.org/licenses/bsd-license.php).
 
 Copyright (c) 2012, Susumu Yata. All rights reserved.
 

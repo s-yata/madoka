@@ -519,11 +519,11 @@ HugeTLB: on
 
 Roughly speaking, a Count-Min sketch is composed of hash tables and the number of hash tables is equal to its <var>depth</var>. The <var>depth</var> of <code>madoka::Sketch</code> is fixed to <var>3</var> and thus basic operations, <code>set()</code>, <code>inc()</code> and <code>add()</code>, except <code>get()</code>, perform at least <var>3</var> random accesses.
 
-Because of the random access nature, if a sketch is larger than the [CPU cache](http://en.wikipedia.org/wiki/CPU_cache), cache misses occur in sketching and the memory access latency becomes the bottleneck. In addition, if a sketch is much, much, much larger than the CPU cache, [TLB](http://en.wikipedia.org/wiki/Translation_lookaside_buffer) misses reduce the throughput of sketching.
+Because of the random access nature, if a sketch is larger than the [CPU cache](https://en.wikipedia.org/wiki/CPU_cache), cache misses occur in sketching and the memory access latency becomes the bottleneck. In addition, if a sketch is much, much, much larger than the CPU cache, [TLB](https://en.wikipedia.org/wiki/Translation_lookaside_buffer) misses reduce the throughput of sketching.
 
-<var>madoka::FILE_HUGETLB</var> is an optional flag to enable the use of [huge pages](http://en.wikipedia.org/wiki/Page_%28computer_memory%29#Huge_pages). The use of huge pages reduces TLB misses in sketching. If a sketch is created with <var>madoka::FILE_HUGETLB</var>, the sketch tries to use huge pages. If huge pages are not available, the sketch uses regular pages.
+<var>madoka::FILE_HUGETLB</var> is an optional flag to enable the use of [huge pages](https://en.wikipedia.org/wiki/Page_%28computer_memory%29#Huge_pages). The use of huge pages reduces TLB misses in sketching. If a sketch is created with <var>madoka::FILE_HUGETLB</var>, the sketch tries to use huge pages. If huge pages are not available, the sketch uses regular pages.
 
-This example shows how to use huge pages. You can check whether huge pages are available or not by reading <kbd>/proc/meminfo</kbd>. If disabled, you can enable huge pages by editing <kbd>/proc/sys/vm/nr_hugepages</kbd>. Note that only a user with root authority can enable huge pages. After that, <code>madoka::Sketch</code> can use huge pages. Remember that a sketch backed by a file does not support huge pages unless the file system supports huge pages. For more details, see [information about huge page support](http://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt).
+This example shows how to use huge pages. You can check whether huge pages are available or not by reading <kbd>/proc/meminfo</kbd>. If disabled, you can enable huge pages by editing <kbd>/proc/sys/vm/nr_hugepages</kbd>. Note that only a user with root authority can enable huge pages. After that, <code>madoka::Sketch</code> can use huge pages. Remember that a sketch backed by a file does not support huge pages unless the file system supports huge pages. For more details, see [information about huge page support](https://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt).
 
 ## Specify a seed
 
@@ -620,4 +620,4 @@ Hiroshi: 2.5
 
 <code>madoka::Croquis</code> is a simplified version of <code>madoka::Sketch</code>. It does not provide <code>inc()</code>, <code>copy()</code>, <code>filter()</code>, <code>shrink()</code>, <code>merge()</code> and <code>inner_product()</code>. Instead, <code>madoka::Croquis</code> has a template parameter that specifies the type of cells. 
 
-This example uses [floating point numbers](http://en.wikipedia.org/wiki/Floating_point) with <code>madoka::Croquis<float></code>. The usage is same as that of <code>madoka::Sketch</code>, but remember that a tiny value may be truncated in <code>add()</code> because of the rounding.
+This example uses [floating point numbers](https://en.wikipedia.org/wiki/Floating_point) with <code>madoka::Croquis<float></code>. The usage is same as that of <code>madoka::Sketch</code>, but remember that a tiny value may be truncated in <code>add()</code> because of the rounding.

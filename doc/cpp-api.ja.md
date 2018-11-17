@@ -521,13 +521,13 @@ $ ./a.out
 HugeTLB: on
 ```
 
-概略を述べると，Count-Min sketch とは <var>depth</var> 個のハッシュ表を組み合わせたデータ構造です．そして，<code>madoka::Sketch</code> では <var>depth</var> を <var>3</var> に固定しているため，<code>get()</code> 以外の基本操作 <code>set()</code>, <code>inc()</code>, <code>add()</code> は <var>3</var> 回の [ランダムアクセス](http://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%B3%E3%83%80%E3%83%A0%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9) をおこないます．
+概略を述べると，Count-Min sketch とは <var>depth</var> 個のハッシュ表を組み合わせたデータ構造です．そして，<code>madoka::Sketch</code> では <var>depth</var> を <var>3</var> に固定しているため，<code>get()</code> 以外の基本操作 <code>set()</code>, <code>inc()</code>, <code>add()</code> は <var>3</var> 回の [ランダムアクセス](https://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%B3%E3%83%80%E3%83%A0%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9) をおこないます．
 
-スケッチの描画はランダムアクセスを必要とするため，スケッチが [CPU キャッシュ](http://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%A3%E3%83%83%E3%82%B7%E3%83%A5%E3%83%A1%E3%83%A2%E3%83%AA) に収まらなければ，キャッシュミスが発生するようになり， [メモリのレイテンシ](http://ja.wikipedia.org/wiki/%E3%83%AC%E3%82%A4%E3%83%86%E3%83%B3%E3%82%B7) がボトルネックになります．さらにスケッチを大きくすると， [TLB](http://ja.wikipedia.org/wiki/%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B9%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%BB%E3%83%AB%E3%83%83%E3%82%AF%E3%82%A2%E3%82%B5%E3%82%A4%E3%83%89%E3%83%BB%E3%83%90%E3%83%83%E3%83%95%E3%82%A1) ミスが発生するようになり，描画のスループットを低下させてしまいます．
+スケッチの描画はランダムアクセスを必要とするため，スケッチが [CPU キャッシュ](https://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%A3%E3%83%83%E3%82%B7%E3%83%A5%E3%83%A1%E3%83%A2%E3%83%AA) に収まらなければ，キャッシュミスが発生するようになり， [メモリのレイテンシ](https://ja.wikipedia.org/wiki/%E3%83%AC%E3%82%A4%E3%83%86%E3%83%B3%E3%82%B7) がボトルネックになります．さらにスケッチを大きくすると， [TLB](https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B9%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%BB%E3%83%AB%E3%83%83%E3%82%AF%E3%82%A2%E3%82%B5%E3%82%A4%E3%83%89%E3%83%BB%E3%83%90%E3%83%83%E3%83%95%E3%82%A1) ミスが発生するようになり，描画のスループットを低下させてしまいます．
 
-<var>madoka::FILE_HUGETLB</var> は [HugePage](http://en.wikipedia.org/wiki/Page_%28computer_memory%29#Huge_pages) の使用を許可するフラグです．HugePage を使えば，スケッチの描画における TLB ミスを減らすことができます．スケッチの作成に際して <var>madoka::FILE_HUGETLB</var> を指定すると，HugePage の使用を試みます．このとき，HugePage が使えない状況であれば，通常のページを使います．
+<var>madoka::FILE_HUGETLB</var> は [HugePage](https://en.wikipedia.org/wiki/Page_%28computer_memory%29#Huge_pages) の使用を許可するフラグです．HugePage を使えば，スケッチの描画における TLB ミスを減らすことができます．スケッチの作成に際して <var>madoka::FILE_HUGETLB</var> を指定すると，HugePage の使用を試みます．このとき，HugePage が使えない状況であれば，通常のページを使います．
 
-サンプルは HugePage の使い方を示しています．まず，<kbd>/proc/meminfo</kbd> を見ることにより，HugePage が有効になっているかどうかを確認できます．無効になっているときは，<kbd>/proc/sys/vm/nr_hugepages</kbd> を編集することで有効にすることができます．HugePage を有功にするには root 権限が必要なことに注意してください．HugePage の有効な環境を用意できれば，<code>madoka::Sketch</code> で HugePage を使うことができます．ただし，ファイルと関連付けたスケッチについては，ファイルシステムが HugePage をサポートしていない限りは HugePage を使うことができません．詳細については， [HugePage のサポートに関する情報](http://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt) を参照してください．
+サンプルは HugePage の使い方を示しています．まず，<kbd>/proc/meminfo</kbd> を見ることにより，HugePage が有効になっているかどうかを確認できます．無効になっているときは，<kbd>/proc/sys/vm/nr_hugepages</kbd> を編集することで有効にすることができます．HugePage を有功にするには root 権限が必要なことに注意してください．HugePage の有効な環境を用意できれば，<code>madoka::Sketch</code> で HugePage を使うことができます．ただし，ファイルと関連付けたスケッチについては，ファイルシステムが HugePage をサポートしていない限りは HugePage を使うことができません．詳細については， [HugePage のサポートに関する情報](https://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt) を参照してください．
 
 ## Specify a seed
 
@@ -624,4 +624,4 @@ Hiroshi: 2.5
 
 <code>madoka::Croquis</code> は <code>madoka::Sketch</code> を単純化したクラスです．<code>inc()</code>, <code>copy()</code>, <code>filter()</code>, <code>shrink()</code>, <code>merge()</code>, <code>inner_product()</code> は使えません．その代わり，テンプレート引数によって値の型を指定することができます．
 
-サンプルでは，<code>madoka::Croquis<float></code> とすることにより， [浮動小数点数](http://ja.wikipedia.org/wiki/%E6%B5%AE%E5%8B%95%E5%B0%8F%E6%95%B0%E7%82%B9%E6%95%B0) を値の型として使っています．使い方は <code>madoka::Sketch</code> とほぼ同じですが，丸めによる誤差があるため，小さい値を <code>add()</code> に渡すと切り捨てられる可能性があることに注意してください．
+サンプルでは，<code>madoka::Croquis<float></code> とすることにより， [浮動小数点数](https://ja.wikipedia.org/wiki/%E6%B5%AE%E5%8B%95%E5%B0%8F%E6%95%B0%E7%82%B9%E6%95%B0) を値の型として使っています．使い方は <code>madoka::Sketch</code> とほぼ同じですが，丸めによる誤差があるため，小さい値を <code>add()</code> に渡すと切り捨てられる可能性があることに注意してください．
