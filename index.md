@@ -11,10 +11,10 @@ lang: en
 Madoka is an implementation of a Count-Min sketch, a data structure for summarizing data streams. Madoka uses a conservative update mechanism to improve the accurary of sketches. In addition, Madoka uses an authorized update mechanism and an approximate counting algorithm for ultimate sketching. For more information, see the following web sites.
 
 * Count-Min sketch
- * [Count-Min sketch - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Count-Min_sketch)
- * [Count-Min Sketch](https://sites.google.com/site/countminsketch/)
+  * [Count-Min sketch - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Count-Min_sketch)
+  * [Count-Min Sketch](https://sites.google.com/site/countminsketch/)
 * Approximate counting algorithm
- * [Approximate counting algorithm - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Approximate_counting_algorithm)
+  * [Approximate counting algorithm - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Approximate_counting_algorithm)
 
 Madoka was developed as a part of the Groonga project ([Groonga - An open-source fulltext search engine and column store](http://groonga.org/), special thanks to Brazil Inc.
 
@@ -66,16 +66,16 @@ This is an example of using Madoka through its C++ interface. This example creat
 A Count-Min sketch supports not only counting items, as shown in the above example, but also inner products, which enable a sketch to serve as a feature vector. In addition, Madoka supports merging and shrinking sketches so as to make sketching more useful. See the following for more information about the APIs.
 
 * English
- * [C API Documentation - to be written](doc/c-api.html)
- * [C++ API Documentation](doc/cpp-api.html)
+  * [C API Documentation - to be written](doc/c-api.html)
+  * [C++ API Documentation](doc/cpp-api.html)
 * Japanese
- * [C API Documentation - to be written](doc/c-api.ja.html)
- * [C++ API Documentation](doc/cpp-api.ja.html)
+  * [C API Documentation - to be written](doc/c-api.ja.html)
+  * [C++ API Documentation](doc/cpp-api.ja.html)
 
 ## Implementation
 
 * Japanese
- * Presentation slides ([PowerPoint](https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pptx), [PDF](https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pdf))
+  * Presentation slides ([PowerPoint](https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pptx), [PDF](https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pdf))
 
 ## License
 

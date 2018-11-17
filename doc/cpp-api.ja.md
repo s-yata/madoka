@@ -35,16 +35,16 @@ $ ./a.out SKETCH < KEYSET
 手始めにスケッチを描いてみます．サンプルは，標準入力（<var>std::cin</var>）からキーを一つずつ読み込み，スケッチ（<code>madoka::Sketch</code>）を描いた後，完成したスケッチをコマンドの第一引数（<var>argv[1]</var>）で指定されたファイルに保存しています．注目すべき箇所は以下の通りです．
 
 * <kbd>madoka.h</kbd>
- * Madoka を構成するクラスや定数は <kbd>madoka.h</kbd> の中で定義されています．そのため，<code>#include <madoka.h></code> が必要となります．
+  * Madoka を構成するクラスや定数は <kbd>madoka.h</kbd> の中で定義されています．そのため，<code>#include <madoka.h></code> が必要となります．
 * <code>madoka::Sketch</code>
- * <code>madoka::Sketch</code> はスケッチのクラスであり，スケッチの描画・合成やファイル入出力のインタフェースを持ちます．
+  * <code>madoka::Sketch</code> はスケッチのクラスであり，スケッチの描画・合成やファイル入出力のインタフェースを持ちます．
 * <code>madoka::Sketch::create()</code>
- * <code>create()</code> は白紙のスケッチを作成する関数です．スケッチを作成せずに描画しようとするとマミるので注意してください．
+  * <code>create()</code> は白紙のスケッチを作成する関数です．スケッチを作成せずに描画しようとするとマミるので注意してください．
 * <code>madoka::Sketch::inc()</code>
- * <code>inc()</code> はスケッチを描画するための関数です．正確には，指定されたキーに対応する値をインクリメントします．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．
- * インクリメントの対象が既に飽和しているときは何もしないので，オーバーフローを気にせずスケッチを描くことができます．
+  * <code>inc()</code> はスケッチを描画するための関数です．正確には，指定されたキーに対応する値をインクリメントします．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．
+  * インクリメントの対象が既に飽和しているときは何もしないので，オーバーフローを気にせずスケッチを描くことができます．
 * <code>madoka::Sketch::save()</code>
- * <code>save()</code> はスケッチをファイルに保存する関数です．第一引数にはファイルのパスを指定するようになっています．
+  * <code>save()</code> はスケッチをファイルに保存する関数です．第一引数にはファイルのパスを指定するようになっています．
 
 サンプルのビルドには <kbd>-lmadoka</kbd> というオプションが必要なことに注意してください．Madoka がインストールされている環境であれば，<kbd>pkg-config madoka --libs</kbd> によってオプションを得ることができます．
 
@@ -78,10 +78,10 @@ $ ./a.out SKETCH < KEYSET
 次に，描いたスケッチを眺めます．サンプルでは，コマンドの第一引数（<var>argv[1]</var>）で指定されたファイルからスケッチを入力し，標準入力（<var>std::cin</var>）から読み込んだキーに対応する値をスケッチから読み取っています．注目すべき箇所は以下の通りです．
 
 * <code>madoka::Sketch::load()</code>
- * <code>load()</code> はスケッチをファイルから入力する関数です．第一引数にはファイルのパスを指定するようになっています．
- * <code>open()</code> も同様の関数ですが，ファイル全体を読み込みたくない状況で使うことを想定しています．メモリマップド I/O を使うため，描画した内容が他のプロセスに反映されたり，他のプロセスが描画した内容が反映されたりすることに注意してください．
+  * <code>load()</code> はスケッチをファイルから入力する関数です．第一引数にはファイルのパスを指定するようになっています．
+  * <code>open()</code> も同様の関数ですが，ファイル全体を読み込みたくない状況で使うことを想定しています．メモリマップド I/O を使うため，描画した内容が他のプロセスに反映されたり，他のプロセスが描画した内容が反映されたりすることに注意してください．
 * <code>madoka::Sketch::get()</code>
- * <code>get()</code> はキーに対応する値をスケッチから読み取る関数です．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．読み取った値が戻り値になります．
+  * <code>get()</code> はキーに対応する値をスケッチから読み取る関数です．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．読み取った値が戻り値になります．
 
 h3. Use other brushes
 
@@ -114,12 +114,12 @@ QB: 15
 <code>madoka::Sketch</code> が提供する描画用の関数には，<code>inc()</code> のほかに <code>set()</code> と <code>add()</code> があります．サンプルはそれぞれの役割を示しています．
 
 * <code>madoka::Sketch::set()</code>
- * <code>set()</code> はキーと対応する値を更新する関数です．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．第三引数には新しい値を指定します．
- * 新しい値が現在の値以下のときは何もしないことに注意してください．
- * 指定した新しい値が最大値を超えているときは，キーと対応する値を最大値へと更新します．オーバーフローの心配はありません．
+  * <code>set()</code> はキーと対応する値を更新する関数です．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．第三引数には新しい値を指定します．
+  * 新しい値が現在の値以下のときは何もしないことに注意してください．
+  * 指定した新しい値が最大値を超えているときは，キーと対応する値を最大値へと更新します．オーバーフローの心配はありません．
 * <code>madoka::Sketch::add()</code>
- * <code>add()</code> は加算の関数です．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．第三引数には加える値を指定します．加算の結果が戻り値になります．
- * オーバーフローしそうなときは，加算の結果を最大値へと補正します．
+  * <code>add()</code> は加算の関数です．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．第三引数には加える値を指定します．加算の結果が戻り値になります．
+  * オーバーフローしそうなときは，加算の結果を最大値へと補正します．
 
 サンプルにおいて，最初の <code>set()</code> は <var>"QB"</var> に対応する値を <var>0</var> から <var>10</var> に更新します．次に，<code>add()</code> が <var>5</var> を加算するため，<var>"QB"</var> に対応する値は <var>15</var> になります．二回目の <code>set()</code> に指定された値（<var>7</var>）は <var>15</var> より小さいため，値の更新はおこなわれず，<code>get()</code> の戻り値は <var>15</var> となります．
 
@@ -163,13 +163,13 @@ size: 25165904
 特製のスケッチが欲しいときは，<code>create()</code> に対して <var>width</var> と <var>max_value</var> を指定します．以下の情報を参考に，いろいろと試してみてください．
 
 * <var>width</var>
- * <var>0</var> を指定したときは，デフォルトの値である <var>madoka::SKETCH_DEFAULT_WIDTH</var> （<var>2<sup>20</sup></var>）が採用されます．
- * <var>width</var> には <var>madoka::SKETCH_MAX_WIDTH</var> （<var>2<sup>42</sup></var>）以下の値を指定する必要があります．
- * <var>width</var> を 2 のべき乗にすることによって，スケッチの描画にかかる時間を短縮できます．
+  * <var>0</var> を指定したときは，デフォルトの値である <var>madoka::SKETCH_DEFAULT_WIDTH</var> （<var>2<sup>20</sup></var>）が採用されます．
+  * <var>width</var> には <var>madoka::SKETCH_MAX_WIDTH</var> （<var>2<sup>42</sup></var>）以下の値を指定する必要があります．
+  * <var>width</var> を 2 のべき乗にすることによって，スケッチの描画にかかる時間を短縮できます．
 * <var>max_value</var>
- * <var>0</var> を指定したときは，デフォルトの値である <var>madoka::SKETCH_DEFAULT_MAX_VALUE</var> （<var>2<sup>45</sup> - 1</var>）が採用されます．
- * <var>max_value</var> には <var>madoka::SKETCH_MAX_MAX_VALUE</var> （<var>2<sup>45</sup> - 1</var>）以下の値を指定する必要があります．
- * <code>create()</code> は <var>max_value</var> を <var>1</var>, <var>3</var>, <var>15</var>, <var>255</var>, <var>65535</var>, <var>2<sup>45</sup> - 1</var> のいずれかに切り上げます．
+  * <var>0</var> を指定したときは，デフォルトの値である <var>madoka::SKETCH_DEFAULT_MAX_VALUE</var> （<var>2<sup>45</sup> - 1</var>）が採用されます．
+  * <var>max_value</var> には <var>madoka::SKETCH_MAX_MAX_VALUE</var> （<var>2<sup>45</sup> - 1</var>）以下の値を指定する必要があります．
+  * <code>create()</code> は <var>max_value</var> を <var>1</var>, <var>3</var>, <var>15</var>, <var>255</var>, <var>65535</var>, <var>2<sup>45</sup> - 1</var> のいずれかに切り上げます．
 
 サンプルでは，特製のスケッチを作成した後，そのサイズを出力しています．スケッチのサイズについては，<var>max_value</var> が <var>madoka::SKETCH_MAX_MAX_VALUE</var> であれば <var>width x 8</var> によって，<var>max_value</var> が <var>madoka::SKETCH_MAX_MAX_VALUE</var> でなければ <var>width x depth x log<sub>2</sub>(max_value + 1) / 8</var> によって計算できます．
 
@@ -201,8 +201,8 @@ Sayaka: 0
 <code>madoka::Sketch</code> にはスケッチを白紙の状態に戻すためのインタフェースがあります．サンプルでは，作成したスケッチに更新を加えてから白紙に戻し，更新によって <var>100</var> になった値が <var>0</var> に戻っていることを確認しています．
 
 * <code>madoka::Sketch::clear()</code>
- * <code>clear()</code> はスケッチを白紙に戻す関数であり，すべての値を <var>0</var> にします．
- * <var>width</var> と <var>max_value</var> はそのままになります．
+  * <code>clear()</code> はスケッチを白紙に戻す関数であり，すべての値を <var>0</var> にします．
+  * <var>width</var> と <var>max_value</var> はそのままになります．
 
 ## Copy a sketch
 
@@ -240,7 +240,7 @@ Kyoko (snapshot): 100
 <code>madoka::Sketch</code> にはスケッチを複製するためのインタフェースがあります．サンプルでは，スケッチの複製をスナップショットとして残し，オリジナルのスケッチを更新しています．
 
 * <code>madoka::Sketch::copy()</code>
- * <code>copy()</code> はスケッチを複製する関数です．第一引数には複製元のスケッチを指定するようになっています．
+  * <code>copy()</code> はスケッチを複製する関数です．第一引数には複製元のスケッチを指定するようになっています．
 
 サンプルでおこなっているように，<code>copy()</code> はメモリ上でスナップショットを作成する用途に使えます．スナップショットをファイルとして残したいときは，<code>save()</code> を使う方が簡単です．
 
@@ -283,11 +283,11 @@ Madoka: 7
 <code>madoka::Sketch</code> にはフィルタという機能があり，誤差の抑制や減衰のシミュレーションなどに利用できます．サンプルでは，スケッチに含まれるすべての値を <var>1/2</var> にするフィルタを適用しています．
 
 * <code>madoka::Sketch::filter()</code>
- * <code>filter()</code> はスケッチにフィルタを適用する関数です．具体的には，フィルタとして渡された関数をスケッチに含まれるすべての値に適用します．第一引数にはフィルタを指定するようになっています．
- * フィルタとして指定できるのは，現在の値（<code>madoka::UInt64</code>）を受け取り，適用後の値（<code>madoka::UInt64</code>）を返す関数へのポインタです．
- * 関数オブジェクトを渡すことも可能ですが，引数と戻り値の型を <code>madoka::UInt64</code> にする必要があります．
- * フィルタが <var>max_value</var> を超える値を返したときは自動的に <var>max_value</var> へと補正するため，<code>UINT64_MAX</code> を超えなければ問題にはなりません．
- * <var>NULL</var> を引数にしたときは何もしません．
+  * <code>filter()</code> はスケッチにフィルタを適用する関数です．具体的には，フィルタとして渡された関数をスケッチに含まれるすべての値に適用します．第一引数にはフィルタを指定するようになっています．
+  * フィルタとして指定できるのは，現在の値（<code>madoka::UInt64</code>）を受け取り，適用後の値（<code>madoka::UInt64</code>）を返す関数へのポインタです．
+  * 関数オブジェクトを渡すことも可能ですが，引数と戻り値の型を <code>madoka::UInt64</code> にする必要があります．
+  * フィルタが <var>max_value</var> を超える値を返したときは自動的に <var>max_value</var> へと補正するため，<code>UINT64_MAX</code> を超えなければ問題にはなりません．
+  * <var>NULL</var> を引数にしたときは何もしません．
 
 フィルタ機能を用いれば， [Lossy Conservative Update (PDF)](http://www.umiacs.umd.edu/%7Eamit/Papers/goyalLCUSketchAAAI11.pdf) を実装することができます．また，カウンタが飽和したときに全体を <var>1/2</var> にすることでスケッチの延命を図るという使い方があります．さらに，すべての値を対数に変換することで圧縮するなどの使い方もあります．
 
@@ -339,8 +339,8 @@ Homura: 15
 たとえば，スケッチに割り当てた <var>width</var> もしくは <var>max_value</var> が大きすぎると分かったときは，スケッチを縮小することができます．正確には，新たに小さなスケッチを作成して，既存のスケッチを構成する値を新しいスケッチに対して設定しなおすという手順になります．
 
 * <code>madoka::Sketch::shrink()</code>
- * <code>shrink()</code> はスケッチを縮小する関数です．第一引数には元のスケッチを指定するようになっています．第二引数には新しいスケッチの <var>width</var>，第三引数には新しいスケッチの <var>max_value</var> を指定するようになっています．第四引数には，値の再設定に際して適用するフィルタを指定することができます．
- * 新しいスケッチの <var>width</var> は，元になるスケッチの <var>width</var> を割り切れる値にする必要があります．一方の <var>max_value</var> には制約がありません．元になるスケッチの <var>max_value</var> より大きな値でも指定することができます．
+  * <code>shrink()</code> はスケッチを縮小する関数です．第一引数には元のスケッチを指定するようになっています．第二引数には新しいスケッチの <var>width</var>，第三引数には新しいスケッチの <var>max_value</var> を指定するようになっています．第四引数には，値の再設定に際して適用するフィルタを指定することができます．
+  * 新しいスケッチの <var>width</var> は，元になるスケッチの <var>width</var> を割り切れる値にする必要があります．一方の <var>max_value</var> には制約がありません．元になるスケッチの <var>max_value</var> より大きな値でも指定することができます．
 
 サンプルでは，<var>"Akemi: 256"</var> と <var>"Homura: 16777216"</var> を描き込んだスケッチを縮小しています．新しいスケッチの <var>width</var> と <var>max_value</var> はそれぞれ <var>10</var> と <var>15</var> です．<code>logarimize()</code> をフィルタとして適用しているため，新しいスケッチから読み取ることができる値は対数になります．たとえば，<var>"Akemi: 256"</var> は <var>"Akemi: 8"</var> となります．ただし，新しいスケッチの <var>max_value</var> は <var>15</var> であることから，<var>"Homura: 16777216"</var> は <var>"Homura: 15"</var> となります．
 
@@ -384,8 +384,8 @@ Mami: 2
 <code>madoka::Sketch</code> はスケッチの合成をサポートしています．スケッチの合成はベクトルの加算と同様の操作であり，一方のスケッチ（右）を構成する値を他方のスケッチ（左）を構成する値に足し合わせます．
 
 * <code>madoka::Sketch::merge()</code>
- * <code>merge()</code> はスケッチを合成する関数です．第一引数には右スケッチを指定するようになっています．第二引数には左スケッチから値を読み取るときに適用するフィルタ，第三引数には右スケッチから値を読み取るときに適用するフィルタを指定することができます．
- * <var>width</var> が等しいスケッチの組に対してのみ有効です．
+  * <code>merge()</code> はスケッチを合成する関数です．第一引数には右スケッチを指定するようになっています．第二引数には左スケッチから値を読み取るときに適用するフィルタ，第三引数には右スケッチから値を読み取るときに適用するフィルタを指定することができます．
+  * <var>width</var> が等しいスケッチの組に対してのみ有効です．
 
 サンプルでは，<var>"Mami: 1"</var> を描き込んだスケッチ同士を合成しています．そのため，合成により得られたスケッチからは <var>"Mami: 2"</var> を読み取ることができます．このサンプルでは <code>copy()</code> を使うことで元のスケッチを残していますが，上書きが問題にならない状況であれば，直接 <code>merge()</code> を呼び出しても問題ありません．
 
@@ -436,8 +436,8 @@ cosine: 0.519778
 Count-Min sketch は内積の推定をサポートしています．<code>madoka::Sketch</code> には，内積の推定とともにスケッチの長さ（仮）を推定できるインタフェースがあります．実際にスケッチの長さという概念が存在するわけではありませんが，コサイン類似度の推定に用いることができます．
 
 * <code>madoka::Sketch::inner_product()</code>
- * <code>inner_product()</code> は内積を推定する関数です．第一引数には右スケッチを指定するようになっています．第二引数には左スケッチの長さを受け取る変数，第三引数には右スケッチの長さを受け取る変数を指定することができます．内積の推定値が戻り値になります．
- * <var>width</var> が等しいスケッチの組に対してのみ有効です．
+  * <code>inner_product()</code> は内積を推定する関数です．第一引数には右スケッチを指定するようになっています．第二引数には左スケッチの長さを受け取る変数，第三引数には右スケッチの長さを受け取る変数を指定することができます．内積の推定値が戻り値になります．
+  * <var>width</var> が等しいスケッチの組に対してのみ有効です．
 
 サンプルでは，描画したスケッチの内積を求めています．また，<code>inner_product()</code> の結果を用いてコサイン類似度を推定しています．
 
@@ -464,28 +464,28 @@ enum FileFlag {
 <code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code>, <code>shrink()</code> は <var>path</var> と <var>flags</var> を引数として指定できるようになっています．<var>path</var> に対して <var>NULL</var> を指定したときは，ファイルとの関連付けをせずにメモリを確保します．<var>flags</var> にはファイルの操作やマッピングの作成に関する振る舞いを指定することができます．
 
 * <var>madoka::FILE_CREATE</var>
- * <var>FILE_CREATE</var> はファイルを作成するときに暗黙的に指定されるフラグです．
+  * <var>FILE_CREATE</var> はファイルを作成するときに暗黙的に指定されるフラグです．
 * <var>madoka::FILE_TRUNCATE</var>
- * <var>FILE_TRUNCATE</var> は <code>create()</code>, <code>copy()</code>, <code>shrink()</code> において <var>path</var> が <var>NULL</var> でないときに指定できるフラグです．
- * <var>FILE_TRUNCATE</var> はファイルの上書きを許可するフラグです．<var>FILE_TRUNCATE</var> が指定されていないときにファイルが存在していれば，例外が投げられます．
+  * <var>FILE_TRUNCATE</var> は <code>create()</code>, <code>copy()</code>, <code>shrink()</code> において <var>path</var> が <var>NULL</var> でないときに指定できるフラグです．
+  * <var>FILE_TRUNCATE</var> はファイルの上書きを許可するフラグです．<var>FILE_TRUNCATE</var> が指定されていないときにファイルが存在していれば，例外が投げられます．
 * <var>madoka::FILE_READONLY</var>
- * <var>FILE_READONLY</var> は <code>open()</code> において指定できるフラグです．
- * <var>FILE_READONLY</var> は更新を禁止するフラグです．読み込み専用のスケッチを更新しようとするとマミるので注意してください．
+  * <var>FILE_READONLY</var> は <code>open()</code> において指定できるフラグです．
+  * <var>FILE_READONLY</var> は更新を禁止するフラグです．読み込み専用のスケッチを更新しようとするとマミるので注意してください．
 * <var>madoka::FILE_WRITABLE</var>
- * <var>FILE_WRITABLE</var> は書き込み可能なマッピングを作成するときに暗黙的に指定されるフラグです．
+  * <var>FILE_WRITABLE</var> は書き込み可能なマッピングを作成するときに暗黙的に指定されるフラグです．
 * <var>madoka::FILE_SHARED</var>
- * <var>FILE_SHARED</var> は更新内容を他のプロセスに反映させるために暗黙的に指定されるフラグです．
+  * <var>FILE_SHARED</var> は更新内容を他のプロセスに反映させるために暗黙的に指定されるフラグです．
 * <var>madoka::FILE_PRIVATE</var>
- * <var>FILE_PRIVATE</var> は <code>open()</code> において指定できるフラグです．
- * <var>FILE_PRIVATE</var> は更新内容を他のプロセスに反映させないためのフラグです．
+  * <var>FILE_PRIVATE</var> は <code>open()</code> において指定できるフラグです．
+  * <var>FILE_PRIVATE</var> は更新内容を他のプロセスに反映させないためのフラグです．
 * <var>madoka::FILE_ANONYMOUS</var>
- * <var>FILE_ANONYMOUS</var> はファイルとの関連付けをおこなわないときに暗黙的に指定されるフラグです．
+  * <var>FILE_ANONYMOUS</var> はファイルとの関連付けをおこなわないときに暗黙的に指定されるフラグです．
 * <var>madoka::FILE_HUGETLB</var>
- * <var>FILE_HUGETLB</var> は <code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code>, <code>shrink()</code> において指定できるフラグです．
- * <var>FILE_HUGETLB</var> は HugePage の使用を許可するフラグです．詳細については次のセクションを参照してください．
+  * <var>FILE_HUGETLB</var> は <code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code>, <code>shrink()</code> において指定できるフラグです．
+  * <var>FILE_HUGETLB</var> は HugePage の使用を許可するフラグです．詳細については次のセクションを参照してください．
 * <var>madoka::FILE_PRELOAD</var>
- * <var>FILE_PRELOAD</var> は <code>open()</code> において指定できるフラグです．
- * <var>FILE_PRELOAD</var> はファイル全体の読み込みを指示するフラグです．ディスクに対するランダムアクセスを回避したいときに有用です．
+  * <var>FILE_PRELOAD</var> は <code>open()</code> において指定できるフラグです．
+  * <var>FILE_PRELOAD</var> はファイル全体の読み込みを指示するフラグです．ディスクに対するランダムアクセスを回避したいときに有用です．
 
 ## Use huge pages
 
@@ -536,27 +536,27 @@ HugeTLB: on
 ## Get information of a sketch
 
 * <code>madoka::Sketch::width()</code>
- * <code>width()</code> は <var>width</var> を返します．
+  * <code>width()</code> は <var>width</var> を返します．
 * <code>madoka::Sketch::width_mask()</code>
- * <code>width_mask()</code> は，<var>width</var> が 2 のべき乗であれば <var>width - 1</var> を返し，そうでなければ <var>0</var> を返します．
+  * <code>width_mask()</code> は，<var>width</var> が 2 のべき乗であれば <var>width - 1</var> を返し，そうでなければ <var>0</var> を返します．
 * <code>madoka::Sketch::depth()</code>
- * <code>depth()</code> は <var>madoka::SKETCH_DEPTH</var> を返します．
+  * <code>depth()</code> は <var>madoka::SKETCH_DEPTH</var> を返します．
 * <code>madoka::Sketch::max_value()</code>
- * <code>max_value()</code> は <var>max_value</var> を返します．
+  * <code>max_value()</code> は <var>max_value</var> を返します．
 * <code>madoka::Sketch::value_mask()</code>
- * <code>value_mask()</code> は <var>max_value</var> を返します．
+  * <code>value_mask()</code> は <var>max_value</var> を返します．
 * <code>madoka::Sketch::value_size()</code>
- * <code>value_size()</code> は <var>log<sub>2</sub>(max_value + 1)</var> を返します．
+  * <code>value_size()</code> は <var>log<sub>2</sub>(max_value + 1)</var> を返します．
 * <code>madoka::Sketch::seed()</code>
- * <code>seed()</code> は <var>seed</var> を返します．
+  * <code>seed()</code> は <var>seed</var> を返します．
 * <code>madoka::Sketch::table_size()</code>
- * <code>table_size()</code> はスケッチのサイズをバイト単位で返します．
+  * <code>table_size()</code> はスケッチのサイズをバイト単位で返します．
 * <code>madoka::Sketch::file_size()</code>
- * <code>file_size()</code> はスケッチのファイルサイズをバイト単位で返します．ファイルサイズはヘッダのサイズとスケッチのサイズを加算することによって求められます．
+  * <code>file_size()</code> はスケッチのファイルサイズをバイト単位で返します．ファイルサイズはヘッダのサイズとスケッチのサイズを加算することによって求められます．
 * <code>madoka::Sketch::flags()</code>
- * <code>flags()</code> はメモリマップド I/O に関するフラグの論理和を返します．
+  * <code>flags()</code> はメモリマップド I/O に関するフラグの論理和を返します．
 * <code>madoka::Sketch::mode()</code>
- * <code>mode()</code> は， <var>value_size</var> が <var>madoka::SKETCH_APPROX_VALUE_SIZE</var> であれば <var>madoka::SKETCH_APPROX_MODE</var> を返し，そうでなければ <var>madoka::SKETCH_EXACT_MODE</var> を返します．
+  * <code>mode()</code> は， <var>value_size</var> が <var>madoka::SKETCH_APPROX_VALUE_SIZE</var> であれば <var>madoka::SKETCH_APPROX_MODE</var> を返し，そうでなければ <var>madoka::SKETCH_EXACT_MODE</var> を返します．
 
 ## Catch an exception
 
@@ -587,8 +587,8 @@ error: madoka/sketch.cc:453: width > SKETCH_MAX_WIDTH
 Madoka はエラーが起きると例外を投げます．例外のクラスは <code>madoka::Exception</code> です．サンプルは例外の捕まえ方を示しています．
 
 * <code>madoka::Exception::what()</code>
- * <code>what()</code> はエラーメッセージを返す関数です．エラーメッセージの書式は，<code>__FILE__</code> << <var>":"</var> << <code>__LINE__</code> << <var>": "</var> << <var>the-reason-of-the-error</var> となっています．
- * <kbd>madoka/sketch.h</kbd> の例外指定子を確認することにより，どの関数が例外を投げるのかを確認できます．
+  * <code>what()</code> はエラーメッセージを返す関数です．エラーメッセージの書式は，<code>__FILE__</code> << <var>":"</var> << <code>__LINE__</code> << <var>": "</var> << <var>the-reason-of-the-error</var> となっています．
+  * <kbd>madoka/sketch.h</kbd> の例外指定子を確認することにより，どの関数が例外を投げるのかを確認できます．
 
 サンプルでは，指定した <var>width</var> が大きすぎるため，<code>create()</code> が例外を投げます．エラーが起きたときは <code>madoka::Sketch</code> の内容が更新されないようになっています．
 

@@ -11,10 +11,10 @@ lang: ja
 Madoka は Count-Min sketch というデータ構造のライブラリであり，大規模なデータに含まれるアイテムの頻度を求めたいときなどに有用です．Madoka は Conservative update という手法を使ってスケッチの精度を高めています．また，不要なカウントを抑える手法や近似的なカウンタなどの導入により，高い空間効率を実現しています．詳細については，以下のサイトを参照してください．
 
 * Count-Min sketch と Conservative update について
- * [Count-Min sketch - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Count-Min_sketch)
- * [Count-Min Sketch](https://sites.google.com/site/countminsketch/)
+  * [Count-Min sketch - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Count-Min_sketch)
+  * [Count-Min Sketch](https://sites.google.com/site/countminsketch/)
 * 近似的なカウンタについて
- * [Approximate counting algorithm - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Approximate_counting_algorithm)
+  * [Approximate counting algorithm - Wikipedia, the free encyclopedia](http://en.wikipedia.org/wiki/Approximate_counting_algorithm)
 
 Madoka は Groonga プロジェクト（ [Groonga - カラムストア機能付き全文検索エンジン](http://groonga.org/ja/) ）の一環として開発されました．
 
@@ -66,16 +66,16 @@ Madoka の基本的な使い方を示した C++ のサンプルコードです�
 Count-Min sketch の基本機能はアイテムの頻度を求めることですが，スケッチ同士の内積を推定できることから，スケッチを特徴ベクトルとして使うことも可能です．さらに，Madoka ではスケッチの合成や縮小をサポートしています．詳細については，以下のドキュメントを参照してください．
 
 * 英語
- * [C API Documentation - 準備中](doc/c-api.html)
- * [C++ API Documentation](doc/cpp-api.html)
+  * [C API Documentation - 準備中](doc/c-api.html)
+  * [C++ API Documentation](doc/cpp-api.html)
 * 日本語
- * [C API Documentation - 準備中](doc/c-api.ja.html)
- * [C++ API Documentation](doc/cpp-api.ja.html)
+  * [C API Documentation - 準備中](doc/c-api.ja.html)
+  * [C++ API Documentation](doc/cpp-api.ja.html)
 
 ## Implementation
 
 * 日本語
- * [第 9 回自然言語処理勉強会](http://atnd.org/events/25020) の発表スライド ([PowerPoint](https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pptx), [PDF](https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pdf))
+  * [第 9 回自然言語処理勉強会](http://atnd.org/events/25020) の発表スライド ([PowerPoint](https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pptx), [PDF](https://github.com/downloads/s-yata/madoka/TokyoNLP-09-madoka.pdf))
 
 ## License
 

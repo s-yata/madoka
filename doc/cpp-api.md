@@ -35,16 +35,16 @@ $ ./a.out SKETCH < KEYSET
 Let's try to draw a sketch. This example reads a keyset from standard input (<var>std::cin</var>) and draws a sketch (<code>madoka::Sketch</code>). Then, this example saves the sketch to a file specified by the 1st command line argument (<var>argv[1]</var>). The following are the points of this example.
 
 * <kbd>madoka.h</kbd>
- * <code>#include <madoka.h></code> is needed to use Madoka. Data types, constants and classes are defined in <kbd>madoka.h</kbd>.
+  * <code>#include <madoka.h></code> is needed to use Madoka. Data types, constants and classes are defined in <kbd>madoka.h</kbd>.
 * <code>madoka::Sketch</code>
- * <code>madoka::Sketch</code> represents a sketch and provides functions for sketching.
+  * <code>madoka::Sketch</code> represents a sketch and provides functions for sketching.
 * <code>madoka::Sketch::create()</code>
- * <code>create()</code> is a function to make a sketch. You must not start sketching before making a sketch.
+  * <code>create()</code> is a function to make a sketch. You must not start sketching before making a sketch.
 * <code>madoka::Sketch::inc()</code>
- * <code>inc()</code> is a function to increment a value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. Yeah, this is sketching.
- * Note that <code>inc()</code> does nothing if the current value is saturated.
+  * <code>inc()</code> is a function to increment a value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. Yeah, this is sketching.
+  * Note that <code>inc()</code> does nothing if the current value is saturated.
 * <code>madoka::Sketch::save()</code>
- * <code>save()</code> is a function to save a sketch. The 1st argument specifies the path of the file.
+  * <code>save()</code> is a function to save a sketch. The 1st argument specifies the path of the file.
 
 Note that an option <kbd>-lmadoka</kbd> is needed to build this example. If you have installed Madoka, <kbd>pkg-config madoka --libs</kbd> is available to get the required options.
 
@@ -78,10 +78,10 @@ $ ./a.out SKETCH < KEYSET
 Next, let's try to look at a sketch. This example loads a sketch from a file specified by the 1st command line argument (<var>argv[1]</var>). Then, this example looks up keys read from standard input (<var>std::cin</var>). The following are the points of this example.
 
 * <code>madoka::Sketch::load()</code>
- * <code>load()</code> is a function to load a sketch from a file. The 1st argument specifies the path of the file.
- * Note that <code>open()</code> is also available to access a sketch file when you don't want to load the whole file. <code>open()</code> uses memory mapped I/O instead of reading the whole sketch into memory.
+  * <code>load()</code> is a function to load a sketch from a file. The 1st argument specifies the path of the file.
+  * Note that <code>open()</code> is also available to access a sketch file when you don't want to load the whole file. <code>open()</code> uses memory mapped I/O instead of reading the whole sketch into memory.
 * <code>madoka::Sketch::get()</code>
- * <code>get()</code> is a function to get the value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key.
+  * <code>get()</code> is a function to get the value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key.
 
 h3. Use other brushes
 
@@ -114,12 +114,12 @@ QB: 15
 <code>madoka::Sketch</code> provides other drawing functions named <code>set()</code> and <code>add()</code>. This example shows how these functions work.
 
 * <code>madoka::Sketch::set()</code>
- * <code>set()</code> is a function to update a value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value.
- * Note that <code>set()</code> does nothing when the specified value is not greater than the current associated value.
- * Also note that the new value is saturated when the specified value is greater than the upper limit.
+  * <code>set()</code> is a function to update a value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value.
+  * Note that <code>set()</code> does nothing when the specified value is not greater than the current associated value.
+  * Also note that the new value is saturated when the specified value is greater than the upper limit.
 * <code>madoka::Sketch::add()</code>
- * <code>add()</code> is a function to perform an addition. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value to be added. The return value of <code>add()</code> is the result of the addition.
- * Note that the result is saturated when the sum is greater than the upper limit.
+  * <code>add()</code> is a function to perform an addition. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key. The 3rd argument specifies the value to be added. The return value of <code>add()</code> is the result of the addition.
+  * Note that the result is saturated when the sum is greater than the upper limit.
 
 In this example, the 1st <code>set()</code> changes the value associated with <var>"QB"</var> from <var>0</var> to <var>10</var>. Then, <code>add()</code> adds <var>5</var> to that value (from <var>10</var> to <var>15</var>). After that, the 2nd <code>set()</code> does nothing because the specified value (<var>7</var>) is less than the current value (<var>15</var>).
 
@@ -159,13 +159,13 @@ Basically, accurate sketching requires a large <var>width</var> and a longer str
 To customize a sketch, specify <var>width</var> and <var>max_value</var> when creating a sketch. See the following for more details.
 
 * <var>width</var>
- * <var>0</var> is replaced with the default value <var>madoka::SKETCH_DEFAULT_WIDTH</var> (<var>2<sup>20</sup></var>).
- * <var>width</var> must not be greater than <var>madoka::SKETCH_MAX_WIDTH</var> (<var>2<sup>42</sup></var>).
- * Note that you can quickly draw and look at a sketch if the <var>width</var> of the sketch is a power of 2.
+  * <var>0</var> is replaced with the default value <var>madoka::SKETCH_DEFAULT_WIDTH</var> (<var>2<sup>20</sup></var>).
+  * <var>width</var> must not be greater than <var>madoka::SKETCH_MAX_WIDTH</var> (<var>2<sup>42</sup></var>).
+  * Note that you can quickly draw and look at a sketch if the <var>width</var> of the sketch is a power of 2.
 * <var>max_value</var>
- * <var>0</var> is replaced with the default value <var>madoka::SKETCH_DEFAULT_MAX_VALUE</var> (<var>2<sup>45</sup> - 1</var>).
- * <var>max_value</var> must not be greater than <var>madoka::SKETCH_MAX_MAX_VALUE</var> (<var>2<sup>45</sup> - 1</var>).
- * <code>create()</code> rounds out a given <var>max_value</var> to <var>1</var>, <var>3</var>, <var>15</var>, <var>255</var>, <var>65535</var> or <var>2<sup>45</sup> - 1</var>.
+  * <var>0</var> is replaced with the default value <var>madoka::SKETCH_DEFAULT_MAX_VALUE</var> (<var>2<sup>45</sup> - 1</var>).
+  * <var>max_value</var> must not be greater than <var>madoka::SKETCH_MAX_MAX_VALUE</var> (<var>2<sup>45</sup> - 1</var>).
+  * <code>create()</code> rounds out a given <var>max_value</var> to <var>1</var>, <var>3</var>, <var>15</var>, <var>255</var>, <var>65535</var> or <var>2<sup>45</sup> - 1</var>.
 
 This example creates a customized sketch and prints the size. Note that the size in bytes of a sketch is approximately <var>width x 8</var> if <var>max_value == 2<sup>45</sup> - 1</var>, or otherwise <var>width x depth x log<sub>2</sub>(max_value + 1) / 8</var>.
 
@@ -197,8 +197,8 @@ Sayaka: 0
 <code>madoka::Sketch</code> provides an interface to clear a sketch. This example creates a sketch and updates the value associated with <var>"Sayaka"</var> from <var>0</var> to <var>100</var>, but <code>clear()</code> fills the sketch with <var>0</var>s. As a result, <code>get()</code> returns <var>0</var> for <var>"Sayaka"</var>.
 
 * <code>madoka::Sketch::clear()</code>
- * <code>clear()</code> is a function to clear a sketch, or more precisely, <code>clear()</code> fills a sketch with <var>0</var>s.
- * Note that <var>width</var> and <var>max_value</var> of the sketch remain unchanged.
+  * <code>clear()</code> is a function to clear a sketch, or more precisely, <code>clear()</code> fills a sketch with <var>0</var>s.
+  * Note that <var>width</var> and <var>max_value</var> of the sketch remain unchanged.
 
 ## Copy a sketch
 
@@ -236,7 +236,7 @@ Kyoko (snapshot): 100
 <code>madoka::Sketch</code> provides an interface to copy a sketch. This example draws a sketch and creates its copy as a snapshot. Then, this example updates the original sketch.
 
 * <code>madoka::Sketch::copy()</code>
- * <code>copy()</code> is a function to create a copy of a sketch. The 1st argument specifies the source sketch.
+  * <code>copy()</code> is a function to create a copy of a sketch. The 1st argument specifies the source sketch.
 
 As shown in this example, <code>copy()</code> is useful to create a snapshot in memory. If you want to save a snapshot as a file, <code>save()</code> is an easier choice.
 
@@ -279,11 +279,11 @@ Madoka: 7
 <code>madoka::Sketch</code> provides a filter feature which can be used to reduce errors and to simulate decays. This example uses a filter for dividing all the values in a sketch by <var>2</var>.
 
 * <code>madoka::Sketch::filter()</code>
- * <code>filter()</code> is a function to apply a filter to a sketch, or more precisely, <code>filter()</code> applies a filter to all the values in a sketch. The 1st argument specifies the filter.
- * <code>filter()</code> accepts a pointer to a function that takes the current value (<code>madoka::UInt64</code>) and returns the filtered value (<code>madoka::UInt64</code>).
- * A function object is also acceptable if the type of its argument and return value is <code>madoka::UInt64</code>.
- * Note that if the filter returns a value greater than <var>max_value</var>, that value is replaced with <var>max_value</var>.
- * <code>filter()</code> does nothing if the argument is <var>NULL</var>.
+  * <code>filter()</code> is a function to apply a filter to a sketch, or more precisely, <code>filter()</code> applies a filter to all the values in a sketch. The 1st argument specifies the filter.
+  * <code>filter()</code> accepts a pointer to a function that takes the current value (<code>madoka::UInt64</code>) and returns the filtered value (<code>madoka::UInt64</code>).
+  * A function object is also acceptable if the type of its argument and return value is <code>madoka::UInt64</code>.
+  * Note that if the filter returns a value greater than <var>max_value</var>, that value is replaced with <var>max_value</var>.
+  * <code>filter()</code> does nothing if the argument is <var>NULL</var>.
 
 For example, by using this feature, you can implement a variety of [lossy conservative updates (PDF)](http://www.umiacs.umd.edu/%7Eamit/Papers/goyalLCUSketchAAAI11.pdf). Also, you can divide all the values by <var>2</var> when one of the values reaches <var>max_value</var>. In addition, you can replace all the values with their binary logarithms for compression, etc.
 
@@ -335,8 +335,8 @@ Let's shrink a sketch for saving memory. This is a reasonable answer to the ques
 During or after sketching, you may find that <var>width</var> and <var>max_value</var> are too large. In such a case, you can shrink the sketch, or more precisely, you can create a smaller sketch and copies the contents of the source sketch to the smaller sketch.
 
 * <code>madoka::Sketch::shrink()</code>
- * <code>shrink()</code> is a function to shrink a sketch. The 1st argument specifies the source sketch. The 2nd argument specifies <var>width</var> and the 3rd argument specifies <var>max_value</var> of the new sketch. The 4th argument specifies a filter to be applied in shrinking.
- * Note that the new <var>width</var> must be a factor of the source <var>width</var>. On the other hand, a <var>max_value</var> greater than the source <var>max_value</var> is acceptable.
+  * <code>shrink()</code> is a function to shrink a sketch. The 1st argument specifies the source sketch. The 2nd argument specifies <var>width</var> and the 3rd argument specifies <var>max_value</var> of the new sketch. The 4th argument specifies a filter to be applied in shrinking.
+  * Note that the new <var>width</var> must be a factor of the source <var>width</var>. On the other hand, a <var>max_value</var> greater than the source <var>max_value</var> is acceptable.
 
 This example creates a sketch and shrinks the sketch to a smaller sketch. The new <var>width</var> and the new <var>max_value</var> are <var>10</var> and <var>15</var> respectively. Note that the values are replaced with their logarithms by <code>logarimize()</code>. For example, <var>"Akemi: 256"</var> is replaced with <var>"Akemi: 8"</var>. Also note that <var>"Homura: 16777216"</var> is replaced with <var>"Homura: 24"</var> but the output is <var>"Homura: 15"</var> because of saturation.
 
@@ -380,8 +380,8 @@ Mami: 2
 <code>madoka::Sketch</code> provides an interface to merge sketches. A sketch merging works like vector addition. It simply adds the values of the right-hand side sketch (rhs-sketch) to the values of the left-hand side sketch (lhs-sketch).
 
 * <code>madoka::Sketch::merge()</code>
- * <code>merge()</code> is a function to merge sketches. The 1st argument specifies the rhs-sketch. The 2nd argument specifies a filter that is applied to the lhs-sketch values. The 3rd argument specifies a filter that is applied to the rhs-sketch values.
- * Note that the sketches must have the same <var>width</var>.
+  * <code>merge()</code> is a function to merge sketches. The 1st argument specifies the rhs-sketch. The 2nd argument specifies a filter that is applied to the lhs-sketch values. The 3rd argument specifies a filter that is applied to the rhs-sketch values.
+  * Note that the sketches must have the same <var>width</var>.
 
 This example creates two sketches with <var>"Mami: 1"</var> and merges the sketches. So, the resultant sketch has <var>"Mami: 2"</var>. Note that this example uses <code>copy()</code> to keep the lhs-sketch. If you don't mind overwriting the lhs-sketch, you can call <code>merge()</code> directly.
 
@@ -432,8 +432,8 @@ cosine: 0.519778
 A Count-Min sketch supports inner product estimation. <code>madoka::Sketch</code> provides an interface to estimate the inner product with the length of sketches, actually length is not defined for sketches. This interface is useful to estimate the cosine similarity.
 
 * <code>madoka::Sketch::inner_product()</code>
- * <code>inner_product()</code> is a function to estimate inner product. The 1st argument specifies the rhs-sketch. The 2nd argument can be used to get the estimated squared length of the lhs-sketch. The 3rd argument can be used to get the estimated squared length of the rhs-sketch. The return value of <code>inner_product()</code> is the estimated inner product.
- * Note that the sketches must have the same <var>width</var>.
+  * <code>inner_product()</code> is a function to estimate inner product. The 1st argument specifies the rhs-sketch. The 2nd argument can be used to get the estimated squared length of the lhs-sketch. The 3rd argument can be used to get the estimated squared length of the rhs-sketch. The return value of <code>inner_product()</code> is the estimated inner product.
+  * Note that the sketches must have the same <var>width</var>.
 
 This example creates two sketches and estimates the inner product between the sketches. This example also computes the cosine similarity from the obtained values.
 
@@ -460,28 +460,28 @@ enum FileFlag {
 <code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code> and <code>shrink()</code> have arguments named <var>path</var> and <var>flags</var>. The <var>path</var> argument specifies the target file. Note that <var>NULL</var> specifies to create an anonymous memory mapping. The <var>flags</var> argument specifies the behavior as follows.
 
 * <var>madoka::FILE_CREATE</var>
- * <var>FILE_CREATE</var> is used internally to create a file.
+  * <var>FILE_CREATE</var> is used internally to create a file.
 * <var>madoka::FILE_TRUNCATE</var>
- * <code>create()</code>, <code>copy()</code> and <code>shrink()</code> accept <var>FILE_TRUNCATE</var> unless <var>path == NULL</var>.
- * <var>FILE_TRUNCATE</var> is used to overwrite an existing file. Note that a creation without <var>FILE_TRUNCATE</var> to an existing file throws an exception.
+  * <code>create()</code>, <code>copy()</code> and <code>shrink()</code> accept <var>FILE_TRUNCATE</var> unless <var>path == NULL</var>.
+  * <var>FILE_TRUNCATE</var> is used to overwrite an existing file. Note that a creation without <var>FILE_TRUNCATE</var> to an existing file throws an exception.
 * <var>madoka::FILE_READONLY</var>
- * <code>open()</code> accepts <var>FILE_READONLY</var>.
- * <var>FILE_READONLY</var> is used to disable modifications. Note that a modification to a read-only sketch will cause a segmentation fault.
+  * <code>open()</code> accepts <var>FILE_READONLY</var>.
+  * <var>FILE_READONLY</var> is used to disable modifications. Note that a modification to a read-only sketch will cause a segmentation fault.
 * <var>madoka::FILE_WRITABLE</var>
- * <var>FILE_WRITABLE</var> is used internally to enable modifications.
+  * <var>FILE_WRITABLE</var> is used internally to enable modifications.
 * <var>madoka::FILE_SHARED</var>
- * <var>FILE_SHARED</var> is used internally to make modifications visible to other processes.
+  * <var>FILE_SHARED</var> is used internally to make modifications visible to other processes.
 * <var>madoka::FILE_PRIVATE</var>
- * <code>open()</code> accepts <var>FILE_PRIVATE</var>.
- * <var>FILE_PRIVATE</var> is used to make modifications invisible to other processes.
+  * <code>open()</code> accepts <var>FILE_PRIVATE</var>.
+  * <var>FILE_PRIVATE</var> is used to make modifications invisible to other processes.
 * <var>madoka::FILE_ANONYMOUS</var>
- * <var>FILE_ANONYMOUS</var> is used internally to map memory not backed by a file.
+  * <var>FILE_ANONYMOUS</var> is used internally to map memory not backed by a file.
 * <var>madoka::FILE_HUGETLB</var>
- * <code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code> and <code>shrink()</code> accept <var>FILE_HUGETLB</var>.
- * <var>FILE_HUGETLB</var> is used to enable huge pages. See the next section for details.
+  * <code>create()</code>, <code>open()</code>, <code>load()</code>, <code>save()</code>, <code>copy()</code> and <code>shrink()</code> accept <var>FILE_HUGETLB</var>.
+  * <var>FILE_HUGETLB</var> is used to enable huge pages. See the next section for details.
 * <var>madoka::FILE_PRELOAD</var>
- * <code>open()</code> accepts <var>FILE_PRELOAD</var>.
- * <var>FILE_PRELOAD</var> is used to preload the entire file after mapping a file. Preloading is useful to avoid random disk access.
+  * <code>open()</code> accepts <var>FILE_PRELOAD</var>.
+  * <var>FILE_PRELOAD</var> is used to preload the entire file after mapping a file. Preloading is useful to avoid random disk access.
 
 ## Use huge pages
 
@@ -532,27 +532,27 @@ This example shows how to use huge pages. You can check whether huge pages are a
 ## Get information of a sketch
 
 * <code>madoka::Sketch::width()</code>
- * <code>width()</code> returns <var>width</var> of the sketch.
+  * <code>width()</code> returns <var>width</var> of the sketch.
 * <code>madoka::Sketch::width_mask()</code>
- * <code>width_mask()</code> returns <var>width - 1</var> if <var>width</var> is a power of 2, otherwise returns <var>0</var>.
+  * <code>width_mask()</code> returns <var>width - 1</var> if <var>width</var> is a power of 2, otherwise returns <var>0</var>.
 * <code>madoka::Sketch::depth()</code>
- * <code>depth()</code> returns <var>madoka::SKETCH_DEPTH</var>.
+  * <code>depth()</code> returns <var>madoka::SKETCH_DEPTH</var>.
 * <code>madoka::Sketch::max_value()</code>
- * <code>max_value()</code> returns <var>max_value</var> of the sketch.
+  * <code>max_value()</code> returns <var>max_value</var> of the sketch.
 * <code>madoka::Sketch::value_mask()</code>
- * <code>value_mask()</code> returns <var>max_value</var>.
+  * <code>value_mask()</code> returns <var>max_value</var>.
 * <code>madoka::Sketch::value_size()</code>
- * <code>value_size()</code> returns <var>log<sub>2</sub>(max_value + 1)</var>.
+  * <code>value_size()</code> returns <var>log<sub>2</sub>(max_value + 1)</var>.
 * <code>madoka::Sketch::seed()</code>
- * <code>seed()</code> returns <var>seed</var> of the sketch.
+  * <code>seed()</code> returns <var>seed</var> of the sketch.
 * <code>madoka::Sketch::table_size()</code>
- * <code>table_size()</code> returns the size in bytes of the sketch.
+  * <code>table_size()</code> returns the size in bytes of the sketch.
 * <code>madoka::Sketch::file_size()</code>
- * <code>file_size()</code> returns the file size in bytes of the sketch. The file size is equal to the sum of the header size and the sketch size.
+  * <code>file_size()</code> returns the file size in bytes of the sketch. The file size is equal to the sum of the header size and the sketch size.
 * <code>madoka::Sketch::flags()</code>
- * <code>flags()</code> returns memory mapping related flags.
+  * <code>flags()</code> returns memory mapping related flags.
 * <code>madoka::Sketch::mode()</code>
- * <code>mode()</code> returns <var>madoka::SKETCH_APPROX_MODE</var> if <var>value_size == madoka::SKETCH_APPROX_VALUE_SIZE</var>, otherwise returns <var>madoka::SKETCH_EXACT_MODE</var>.
+  * <code>mode()</code> returns <var>madoka::SKETCH_APPROX_MODE</var> if <var>value_size == madoka::SKETCH_APPROX_VALUE_SIZE</var>, otherwise returns <var>madoka::SKETCH_EXACT_MODE</var>.
 
 ## Catch an exception
 
@@ -583,8 +583,8 @@ error: madoka/sketch.cc:453: width > SKETCH_MAX_WIDTH
 Madoka throws an exception when an error occurs. The exception class is <code>madoka::Exception</code>. This example shows how to catch an exception.
 
 * <code>madoka::Exception::what()</code>
- * <code>what()</code> is a function to get an error message. The format is <code>__FILE__</code> << <var>":"</var> << <code>__LINE__</code> << <var>": "</var> << <var>the-reason-of-the-error</var>.
- * Note that exception specifiers in <kbd>madoka/sketch.h</kbd> tell you which function is possible to throw an exception.
+  * <code>what()</code> is a function to get an error message. The format is <code>__FILE__</code> << <var>":"</var> << <code>__LINE__</code> << <var>": "</var> << <var>the-reason-of-the-error</var>.
+  * Note that exception specifiers in <kbd>madoka/sketch.h</kbd> tell you which function is possible to throw an exception.
 
 In this example, <code>create()</code> fails to create a sketch because the specifed <var>width</var> is too large. Remember that <code>madoka::Sketch</code> is guaranteed to be unchanged when an error has occurred.
 
