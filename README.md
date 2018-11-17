@@ -3,19 +3,19 @@
 Madoka is an implementation of the Count-Min sketch, a data structure for summarizing data streams. Madoka uses a conservative update mechanism to improve the accurary of sketches. In addition, Madoka uses an authorized update mechanism and an approximate counting algorithm for ultimate sketching. For more information, see the following web sites.
 
 * Count-Min sketch
-  * http://en.wikipedia.org/wiki/Count-Min_sketch
+  * https://en.wikipedia.org/wiki/Count-Min_sketch
   * https://sites.google.com/site/countminsketch/
 * Approximate counting algorithm
-  * http://en.wikipedia.org/wiki/Approximate_counting_algorithm
+  * https://en.wikipedia.org/wiki/Approximate_counting_algorithm
 
 Madoka was developed as a part of the groonga project (http://groonga.org/), special thanks to Brazil Inc.
 
 ## Documentation
 
 * English
-  * http://s-yata.github.com/madoka/
+  * https://s-yata.github.com/madoka/
 * Japanese
-  * http://s-yata.github.com/madoka/index.ja.html
+  * https://s-yata.github.com/madoka/index.ja.html
 
 ## Example
 
