@@ -285,7 +285,7 @@ Madoka: 7
   * Note that if the filter returns a value greater than <var>max_value</var>, that value is replaced with <var>max_value</var>.
   * <code>filter()</code> does nothing if the argument is <var>NULL</var>.
 
-For example, by using this feature, you can implement a variety of [lossy conservative updates (PDF)](http://www.umiacs.umd.edu/%7Eamit/Papers/goyalLCUSketchAAAI11.pdf). Also, you can divide all the values by <var>2</var> when one of the values reaches <var>max_value</var>. In addition, you can replace all the values with their binary logarithms for compression, etc.
+For example, by using this feature, you can implement a variety of [lossy conservative updates](https://www.aaai.org/ocs/index.php/AAAI/AAAI11/paper/view/3757). Also, you can divide all the values by <var>2</var> when one of the values reaches <var>max_value</var>. In addition, you can replace all the values with their binary logarithms for compression, etc.
 
 ## Shrink a sketch
 

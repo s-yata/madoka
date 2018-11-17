@@ -289,7 +289,7 @@ Madoka: 7
   * フィルタが <var>max_value</var> を超える値を返したときは自動的に <var>max_value</var> へと補正するため，<code>UINT64_MAX</code> を超えなければ問題にはなりません．
   * <var>NULL</var> を引数にしたときは何もしません．
 
-フィルタ機能を用いれば， [Lossy Conservative Update (PDF)](http://www.umiacs.umd.edu/%7Eamit/Papers/goyalLCUSketchAAAI11.pdf) を実装することができます．また，カウンタが飽和したときに全体を <var>1/2</var> にすることでスケッチの延命を図るという使い方があります．さらに，すべての値を対数に変換することで圧縮するなどの使い方もあります．
+フィルタ機能を用いれば， [Lossy Conservative Updates](https://www.aaai.org/ocs/index.php/AAAI/AAAI11/paper/view/3757) を実装することができます．また，カウンタが飽和したときに全体を <var>1/2</var> にすることでスケッチの延命を図るという使い方があります．さらに，すべての値を対数に変換することで圧縮するなどの使い方もあります．
 
 ## Shrink a sketch
 
