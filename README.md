@@ -13,9 +13,9 @@ Madoka was developed as a part of the groonga project (http://groonga.org/), spe
 ## Documentation
 
 * English
-  * https://s-yata.github.com/madoka/
+  * https://s-yata.github.io/madoka/
 * Japanese
-  * https://s-yata.github.com/madoka/index.ja.html
+  * https://s-yata.github.io/madoka/index.ja.html
 
 ## Example
 
