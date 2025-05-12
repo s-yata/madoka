@@ -34,6 +34,7 @@
 #include <iostream>
 #include <map>
 #include <numeric>
+#include <random>
 #include <set>
 #include <sstream>
 #include <string>
@@ -215,19 +216,20 @@ void parse_args(int argc, char *argv[]) {
 void gen_keys(std::vector<std::string> *keys,
               std::vector<madoka::UInt64> *freqs,
               std::vector<madoka::UInt64> *ids) {
-  madoka::Random random;
+  std::random_device seed_gen;
+  std::mt19937 random_engine(seed_gen());
 
   std::string key;
   std::set<std::string> keyset;
   while (keyset.size() != NUM_KEYS) {
     const madoka::UInt64 length =
-        MIN_LENGTH + (random() % (MAX_LENGTH - MIN_LENGTH - 1));
+        MIN_LENGTH + (random_engine() % (MAX_LENGTH - MIN_LENGTH - 1));
     MADOKA_THROW_IF(length < MIN_LENGTH);
     MADOKA_THROW_IF(length > MAX_LENGTH);
 
     key.resize(static_cast<std::size_t>(length));
     for (madoka::UInt64 i = 0; i < length; ++i) {
-      key[i] = static_cast<char>('A' + (random() % 26));
+      key[i] = static_cast<char>('A' + (random_engine() % 26));
     }
     keyset.insert(key);
   }
@@ -244,7 +246,7 @@ void gen_keys(std::vector<std::string> *keys,
       ids->push_back(i);
     }
   }
-  std::random_shuffle(ids->begin(), ids->end(), random);
+  std::shuffle(ids->begin(), ids->end(), random_engine);
 }
 
 void load_keys(std::vector<std::string> *keys,
@@ -303,8 +305,9 @@ void load_keys(std::vector<std::string> *keys,
     }
   }
 
-  madoka::Random random;
-  std::random_shuffle(ids->begin(), ids->end(), random);
+  std::random_device seed_gen;
+  std::mt19937 random_engine(seed_gen());
+  std::shuffle(ids->begin(), ids->end(), random_engine);
 }
 
 madoka::UInt64 threshold_filter(madoka::UInt64 value) {
