@@ -285,6 +285,19 @@ void Sketch::save(const char *path, int flags) const {
   file_.save(path, flags);
 }
 
+void Sketch::deserialize(const void *buf, UInt64 size, int flags) {
+  Sketch new_sketch;
+  new_sketch.deserialize_(buf, size, flags);
+  new_sketch.swap(this);
+}
+
+void Sketch::serialize(void *buf, UInt64 size) const {
+  MADOKA_THROW_IF(buf == NULL);
+  MADOKA_THROW_IF(size != file_size());
+  MADOKA_THROW_IF(file_.addr() == NULL);
+  std::memcpy(buf, file_.addr(), size);
+}
+
 UInt64 Sketch::get(const void *key_addr, std::size_t key_size) const noexcept {
   UInt64 cell_ids[3];
   hash(key_addr, key_size, cell_ids);
@@ -485,6 +498,15 @@ void Sketch::open_(const char *path, int flags) {
 
 void Sketch::load_(const char *path, int flags) {
   file_.load(path, flags);
+  header_ = static_cast<Header *>(file_.addr());
+  random_ = reinterpret_cast<Random *>(header_ + 1);
+  table_ = reinterpret_cast<UInt64 *>(random_ + 1);
+  check_header();
+}
+
+void Sketch::deserialize_(const void *buf, UInt64 size, int flags) {
+  file_.create(NULL, size, flags);
+  std::memcpy(file_.addr(), buf, size);
   header_ = static_cast<Header *>(file_.addr());
   random_ = reinterpret_cast<Random *>(header_ + 1);
   table_ = reinterpret_cast<UInt64 *>(random_ + 1);
