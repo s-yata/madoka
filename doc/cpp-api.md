@@ -35,7 +35,7 @@ $ ./a.out SKETCH < KEYSET
 Let's try to draw a sketch. This example reads a keyset from standard input (<var>std::cin</var>) and draws a sketch (<code>madoka::Sketch</code>). Then, this example saves the sketch to a file specified by the 1st command line argument (<var>argv[1]</var>). The following are the points of this example.
 
 * <kbd>madoka.h</kbd>
-  * <code>#include <madoka.h></code> is needed to use Madoka. Data types, constants and classes are defined in <kbd>madoka.h</kbd>.
+  * <code>#include &lt;madoka.h&gt;</code> is needed to use Madoka. Data types, constants and classes are defined in <kbd>madoka.h</kbd>.
 * <code>madoka::Sketch</code>
   * <code>madoka::Sketch</code> represents a sketch and provides functions for sketching.
 * <code>madoka::Sketch::create()</code>

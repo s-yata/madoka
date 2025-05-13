@@ -35,7 +35,7 @@ $ ./a.out SKETCH < KEYSET
 手始めにスケッチを描いてみます．サンプルは，標準入力（<var>std::cin</var>）からキーを一つずつ読み込み，スケッチ（<code>madoka::Sketch</code>）を描いた後，完成したスケッチをコマンドの第一引数（<var>argv[1]</var>）で指定されたファイルに保存しています．注目すべき箇所は以下の通りです．
 
 * <kbd>madoka.h</kbd>
-  * Madoka を構成するクラスや定数は <kbd>madoka.h</kbd> の中で定義されています．そのため，<code>#include <madoka.h></code> が必要となります．
+  * Madoka を構成するクラスや定数は <kbd>madoka.h</kbd> の中で定義されています．そのため，<code>#include &lt;madoka.h&gt;</code> が必要となります．
 * <code>madoka::Sketch</code>
   * <code>madoka::Sketch</code> はスケッチのクラスであり，スケッチの描画・合成やファイル入出力のインタフェースを持ちます．
 * <code>madoka::Sketch::create()</code>
