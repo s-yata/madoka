@@ -57,6 +57,12 @@ madoka_sketch *madoka_load(const char *path, int flags, const char **what);
 int madoka_save(const madoka_sketch *sketch, const char *path, int flags,
                 const char **what);
 
+madoka_sketch *madoka_deserialize(const void *buf, madoka_uint64 size,
+                                  int flags, const char **what);
+
+int madoka_serialize(const madoka_sketch *sketch, void *buf,
+                     madoka_uint64 size, const char **what);
+
 madoka_uint64 madoka_get_width(const madoka_sketch *sketch);
 madoka_uint64 madoka_get_width_mask(const madoka_sketch *sketch);
 madoka_uint64 madoka_get_depth(const madoka_sketch *sketch);

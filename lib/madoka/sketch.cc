@@ -104,6 +104,32 @@ int madoka_save(const madoka_sketch *sketch, const char *path, int flags,
   return -1;
 }
 
+madoka_sketch *madoka_deserialize(const void *buf, madoka_uint64 size,
+                                  int flags, const char **what) try {
+  madoka::Sketch impl;
+  impl.deserialize(buf, size, flags);
+  madoka_sketch * const sketch = new (std::nothrow) madoka_sketch;
+  MADOKA_THROW_IF(sketch == NULL);
+  sketch->impl.swap(&impl);
+  return sketch;
+} catch (const madoka::Exception &ex) {
+  if (what != NULL) {
+    *what = ex.what();
+  }
+  return NULL;
+}
+
+int madoka_serialize(const madoka_sketch *sketch, void *buf,
+                     madoka_uint64 size, const char **what) try {
+  sketch->impl.serialize(buf, size);
+  return 0;
+} catch (const madoka::Exception &ex) {
+  if (what != NULL) {
+    *what = ex.what();
+  }
+  return -1;
+}
+
 madoka_uint64 madoka_get_width(const madoka_sketch *sketch) {
   return sketch->impl.width();
 }
