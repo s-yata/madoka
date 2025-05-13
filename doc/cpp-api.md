@@ -83,7 +83,7 @@ Next, let's try to look at a sketch. This example loads a sketch from a file spe
 * <code>madoka::Sketch::get()</code>
   * <code>get()</code> is a function to get the value associated with a key. The 1st argument specifies the starting address and the 2nd argument specifies the length in bytes of the key.
 
-h3. Use other brushes
+## Use other brushes
 
 ```cpp
 #include <iostream>

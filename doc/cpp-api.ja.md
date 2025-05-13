@@ -83,7 +83,7 @@ $ ./a.out SKETCH < KEYSET
 * <code>madoka::Sketch::get()</code>
   * <code>get()</code> はキーに対応する値をスケッチから読み取る関数です．第一引数にはキーの開始アドレス，第二引数にはキーのバイト数を指定するようになっています．読み取った値が戻り値になります．
 
-h3. Use other brushes
+## Use other brushes
 
 ```cpp
 #include <iostream>
