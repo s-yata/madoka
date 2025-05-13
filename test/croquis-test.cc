@@ -26,12 +26,12 @@
 #include <cstdio>
 #include <iomanip>
 #include <iostream>
+#include <random>
 #include <set>
 #include <string>
 #include <vector>
 
 #include <madoka/croquis.h>
-#include <madoka/random.h>
 
 namespace {
 
@@ -42,16 +42,17 @@ const std::size_t MAX_KEY_LENGTH = 16;
 void generate_keys(std::vector<std::string> *keys,
                    std::vector<madoka::UInt64> *freqs,
                    std::vector<std::size_t> *ids) {
-  madoka::Random random;
+  std::random_device seed_gen;
+  std::mt19937 random_engine(seed_gen());
 
   std::set<std::string> unique_keys;
   std::string key;
   while (unique_keys.size() < NUM_KEYS) {
     const std::size_t key_length = MIN_KEY_LENGTH +
-        (random() % (MAX_KEY_LENGTH - MIN_KEY_LENGTH + 1));
+        (random_engine() % (MAX_KEY_LENGTH - MIN_KEY_LENGTH + 1));
     key.resize(key_length);
     for (std::size_t j = 0; j < key_length; ++j) {
-      key[j] = 'A' + (random() % 26);
+      key[j] = 'A' + (random_engine() % 26);
     }
     unique_keys.insert(key);
   }
@@ -64,7 +65,7 @@ void generate_keys(std::vector<std::string> *keys,
       ids->push_back(i);
     }
   }
-  std::random_shuffle(ids->begin(), ids->end(), random);
+  std::shuffle(ids->begin(), ids->end(), random_engine);
 }
 
 template <typename T>
@@ -153,13 +154,14 @@ void benchmark_croquis(const std::vector<std::string> &keys,
 
   std::cout.setf(std::ios::fixed);
 
-  madoka::Random random;
+  std::random_device seed_gen;
+  std::mt19937 random_engine(seed_gen());
   for (madoka::UInt64 width = keys.size() / 8;
        width <= keys.size() * 8; width *= 2) {
     std::cout << "info: " << std::setw(6) << width << ':' << std::flush;
     for (int i = 0; i < 8; ++i) {
       madoka::Croquis<madoka::UInt32> croquis;
-      croquis.create(width, 0, NULL, 0, random());
+      croquis.create(width, 0, NULL, 0, random_engine());
       for (std::size_t i = 0; i < ids.size(); ++i) {
         croquis.add(keys[ids[i]].c_str(), keys[ids[i]].length(), 1);
       }
