@@ -319,7 +319,7 @@ void Sketch::deserialize(const void *buf, UInt64 size, int flags) {
 
 void Sketch::serialize(void *buf, UInt64 size) const {
   MADOKA_THROW_IF(buf == NULL);
-  MADOKA_THROW_IF(size != file_size());
+  MADOKA_THROW_IF(size < file_size());
   MADOKA_THROW_IF(file_.addr() == NULL);
   std::memcpy(buf, file_.addr(), size);
 }
