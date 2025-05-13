@@ -82,6 +82,20 @@ class Croquis {
     file_.save(path, flags);
   }
 
+  void deserialize(const void *buf, UInt64 size, int flags = 0) {
+    MADOKA_THROW_IF(buf == NULL);
+    MADOKA_THROW_IF(size == 0);
+    Croquis new_croquis;
+    new_croquis.deserialize_(buf, size, flags);
+    new_croquis.swap(this);
+  }
+  void serialize(void *buf, UInt64 size) const {
+    MADOKA_THROW_IF(buf == NULL);
+    MADOKA_THROW_IF(size < file_size());
+    MADOKA_THROW_IF(file_.addr() == NULL);
+    std::memcpy(buf, file_.addr(), size);
+  }
+
   UInt64 width() const noexcept {
     return header().width();
   }
@@ -241,6 +255,14 @@ class Croquis {
 
   void load_(const char *path, int flags) {
     file_.load(path, flags);
+    header_ = static_cast<Header *>(file_.addr());
+    table_ = reinterpret_cast<T *>(header_ + 1);
+    check_header();
+  }
+
+  void deserialize_(const void *buf, UInt64 size, int flags) {
+    file_.create(NULL, size, flags);
+    std::memcpy(file_.addr(), buf, size);
     header_ = static_cast<Header *>(file_.addr());
     table_ = reinterpret_cast<T *>(header_ + 1);
     check_header();
