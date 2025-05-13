@@ -84,7 +84,7 @@ class Croquis {
 
   void deserialize(const void *buf, UInt64 size, int flags = 0) {
     MADOKA_THROW_IF(buf == NULL);
-    MADOKA_THROW_IF(size == 0);
+    MADOKA_THROW_IF(size <= sizeof(Header));
     Croquis new_croquis;
     new_croquis.deserialize_(buf, size, flags);
     new_croquis.swap(this);

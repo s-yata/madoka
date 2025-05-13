@@ -312,6 +312,8 @@ void Sketch::save(const char *path, int flags) const {
 }
 
 void Sketch::deserialize(const void *buf, UInt64 size, int flags) {
+  MADOKA_THROW_IF(buf == NULL);
+  MADOKA_THROW_IF(size <= sizeof(Header));
   Sketch new_sketch;
   new_sketch.deserialize_(buf, size, flags);
   new_sketch.swap(this);
