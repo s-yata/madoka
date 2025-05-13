@@ -79,6 +79,7 @@ void basic_test(madoka::UInt64 max_value,
   std::remove(PATH);
 
   madoka::Sketch sketch;
+  std::vector<char> sketch_buf;
 
   sketch.create(keys.size(), max_value, PATH);
   MADOKA_THROW_IF(sketch.width() != keys.size());
@@ -166,6 +167,21 @@ void basic_test(madoka::UInt64 max_value,
   sketch.close();
 
   sketch.open(PATH);
+  for (std::size_t i = 0; i < keys.size(); ++i) {
+    if (sketch.mode() == madoka::SKETCH_EXACT_MODE) {
+      MADOKA_THROW_IF(sketch.get(keys[i].c_str(), keys[i].length()) <
+                      freqs[i]);
+    } else {
+      MADOKA_THROW_IF(sketch.get(keys[i].c_str(), keys[i].length()) <
+                      (freqs[i] * 0.975));
+    }
+  }
+
+  sketch_buf.resize(sketch.file_size());
+  sketch.serialize(sketch_buf.data(), sketch_buf.size());
+  sketch.close();
+
+  sketch.deserialize(sketch_buf.data(), sketch_buf.size());
   for (std::size_t i = 0; i < keys.size(); ++i) {
     if (sketch.mode() == madoka::SKETCH_EXACT_MODE) {
       MADOKA_THROW_IF(sketch.get(keys[i].c_str(), keys[i].length()) <
