@@ -39,6 +39,17 @@ class Random {
       w_(88675123U ^ static_cast<UInt32>(seed >> 48)) {}
   ~Random() noexcept {}
 
+  Random(const Random &random) noexcept
+    : x_(random.x_), y_(random.y_), z_(random.z_), w_(random.w_) {}
+
+  Random &operator=(const Random &rhs) noexcept {
+    x_ = rhs.x_;
+    y_ = rhs.y_;
+    z_ = rhs.z_;
+    w_ = rhs.w_;
+    return *this;
+  }
+
   void reset(UInt64 seed = 0) noexcept {
     x_ = 123456789U ^ static_cast<UInt32>(seed & 0xFFFF);
     y_ = 362436069U ^ static_cast<UInt32>((seed >> 16) & 0xFFFF);
@@ -71,10 +82,6 @@ class Random {
   UInt32 y_;
   UInt32 z_;
   UInt32 w_;
-
-  // Disallows copy and assignment.
-  Random(const Random &);
-  Random &operator=(const Random &);
 };
 
 }  // namespace madoka
