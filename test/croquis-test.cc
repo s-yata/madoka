@@ -77,6 +77,7 @@ void test_croquis(const std::vector<std::string> &keys,
   std::remove(PATH);
 
   madoka::Croquis<T> croquis;
+  std::vector<char> croquis_buf;
   MADOKA_THROW_IF(croquis.max_value() != std::numeric_limits<T>::max());
 
   std::vector<T> freqs;
@@ -141,6 +142,20 @@ void test_croquis(const std::vector<std::string> &keys,
     MADOKA_THROW_IF(croquis.get(keys[i].c_str(), keys[i].length()) < freqs[i]);
   }
   croquis.close();
+
+  croquis.open(PATH);
+  for (std::size_t i = 0; i < keys.size(); ++i) {
+    MADOKA_THROW_IF(croquis.get(keys[i].c_str(), keys[i].length()) < freqs[i]);
+  }
+
+  croquis_buf.resize(croquis.file_size());
+  croquis.serialize(croquis_buf.data(), croquis_buf.size());
+  croquis.close();
+
+  croquis.deserialize(croquis_buf.data(), croquis_buf.size());
+  for (std::size_t i = 0; i < keys.size(); ++i) {
+    MADOKA_THROW_IF(croquis.get(keys[i].c_str(), keys[i].length()) < freqs[i]);
+  }
 
   MADOKA_THROW_IF(std::remove(PATH) == -1);
 }
