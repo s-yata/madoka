@@ -624,4 +624,4 @@ Hiroshi: 2.5
 
 <code>madoka::Croquis</code> は <code>madoka::Sketch</code> を単純化したクラスです．<code>inc()</code>, <code>copy()</code>, <code>filter()</code>, <code>shrink()</code>, <code>merge()</code>, <code>inner_product()</code> は使えません．その代わり，テンプレート引数によって値の型を指定することができます．
 
-サンプルでは，<code>madoka::Croquis<float></code> とすることにより， [浮動小数点数](https://ja.wikipedia.org/wiki/%E6%B5%AE%E5%8B%95%E5%B0%8F%E6%95%B0%E7%82%B9%E6%95%B0) を値の型として使っています．使い方は <code>madoka::Sketch</code> とほぼ同じですが，丸めによる誤差があるため，小さい値を <code>add()</code> に渡すと切り捨てられる可能性があることに注意してください．
+サンプルでは，<code>madoka::Croquis&lt;float&gt;</code> とすることにより， [浮動小数点数](https://ja.wikipedia.org/wiki/%E6%B5%AE%E5%8B%95%E5%B0%8F%E6%95%B0%E7%82%B9%E6%95%B0) を値の型として使っています．使い方は <code>madoka::Sketch</code> とほぼ同じですが，丸めによる誤差があるため，小さい値を <code>add()</code> に渡すと切り捨てられる可能性があることに注意してください．

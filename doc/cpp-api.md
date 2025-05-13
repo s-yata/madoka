@@ -620,4 +620,4 @@ Hiroshi: 2.5
 
 <code>madoka::Croquis</code> is a simplified version of <code>madoka::Sketch</code>. It does not provide <code>inc()</code>, <code>copy()</code>, <code>filter()</code>, <code>shrink()</code>, <code>merge()</code> and <code>inner_product()</code>. Instead, <code>madoka::Croquis</code> has a template parameter that specifies the type of cells. 
 
-This example uses [floating point numbers](https://en.wikipedia.org/wiki/Floating_point) with <code>madoka::Croquis<float></code>. The usage is same as that of <code>madoka::Sketch</code>, but remember that a tiny value may be truncated in <code>add()</code> because of the rounding.
+This example uses [floating point numbers](https://en.wikipedia.org/wiki/Floating_point) with <code>madoka::Croquis&lt;float&gt;</code>. The usage is same as that of <code>madoka::Sketch</code>, but remember that a tiny value may be truncated in <code>add()</code> because of the rounding.
